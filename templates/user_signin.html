@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<main class="flex-1 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto">
+        <!-- Form Container -->
+        <div class="bg-white py-8 px-6 shadow-sm rounded-lg">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-medium text-gray-900">Login</h2>
+            </div>
+
+            {% if messages %}
+
+            {% for msg in messages %}
+
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} text-center mb-4">
+                {{ msg }}
+            </div>
+
+            {% endfor %}
+
+            {% endif %}
+
+            <form class="space-y-6" action="{% url 'signin' %}" method="POST">
+                {% csrf_token %}
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                    </label>
+                    {{form.email}}
+                    {% if form.email.errors %}
+
+                    <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
+
+                    {% endif %}
+                </div>
+
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                        Password
+                    </label>
+                    {{form.password}}
+                    {% if form.password.errors %}
+
+                    <p class="text-red-500 text-sm mt-1">{{ form.password.errors.0 }}</p>
+
+                    {% endif %}
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4">
+                    <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">
+                        Login
+                    </button>
+                </div>
+
+                <!-- Sign In Link -->
+                <div class="text-center pt-4">
+                    
+                        <a href="{% url 'forgotpswd' %}" class="font-medium text-red-600 hover:text-red-500">
+                            Forgot your Password?
+                        </a><br><br>
+                        <a href="{% url 'signup' %}" class="font-medium text-green-600 hover:text-red-500">
+                            New Customer? Register Now!!
+                        </a>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+
+
+{% endblock %}
