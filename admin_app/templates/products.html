@@ -1,0 +1,25 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+
+<h1>list products</h1>
+
+
+<div>
+    <form action="">
+    <input type="text" name="q" autocomplete="off" hx-get="{% url 'searching' %}" hx-trigger="keyup changed delay:300ms" hx-target="#product-list" hx-swap="innerHTML">
+    <button type="reset" hx-get="{% url 'searching' %}" hx-target="#product-list" hx-swap="innerHTML">cancel</button>
+    </form>
+    
+</div>
+
+
+
+<div id="product-list">
+    {% include 'partial_product.html' %}
+</div>
+
+
+
+
+{% endblock %}

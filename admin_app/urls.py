@@ -3,5 +3,16 @@ from . import views
 
 urlpatterns=[
     path("dashboard/",views.admin_dashboard,name="dashboard_home"),
-    path("login/",views.admin_login,name="admin_signin")
+    path("login/",views.admin_login,name="admin_signin"),
+    path("category/add/",views.add_category,name="addCategory"),
+    path("categories/",views.list_category,name="listCategory"),
+    path("category/edit/<int:id>",views.edit_category,name="editCategory"),
+    path("category/delete/<int:id>",views.delete_category,name="deleteCategory"),
+    path("products/",views.products,name="listProduct"),
+    path("product/add/",views.add_products,name="addProduct"),
+    path("product/edit/<int:id>",views.edit_product,name="editProduct"),
+    path("product/delete/<int:id>",views.soft_delete_product,name="deleteProduct"),
+    path("product/restore/<int:id>",views.restore_product,name="restoreProduct"),
+    path("search/",views.search,name="searching"),
+    path("search/category",views.search,name="category_search")
 ]

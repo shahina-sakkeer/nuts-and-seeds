@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Nuts & Seeds</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="flex flex-col min-h-screen bg-[#FFF8F8] min-h-screen font-[Poppins]">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <span class="text-lg font-semibold text-gray-900">🌰 Nuts & Seeds</span>
+                    </div>
+                
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="flex-shrink-0 flex items-center">
+                        <span class="text-lg font-semibold text-gray-900">{{user}}</span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+{% block content %}
+
+{% endblock %}
+
+</body>
+</html>

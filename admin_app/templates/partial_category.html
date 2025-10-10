@@ -1,0 +1,23 @@
+{% if category %}
+
+{% for cat in category %}
+<h1>category name</h1>
+<h3>{{cat.name}}</h3>
+<h1>category descr</h1>
+<h3>{{cat.description}}</h3>
+<h1>category image</h1>
+<a href="{% url 'editCategory' cat.id %}"><button>EDIT CATEGORY</button></a>
+<a href="{% url 'deleteCategory' cat.id %}"><button>DELETE CATEGORY</button></a>
+{% if cat.image %}
+<img src="{{cat.image.url}}" alt="{{ cat.name }}">
+{% else %}
+<p>no image</p>
+{% endif %}
+
+{% endfor %}
+
+{% else %}
+
+<p>no category found</p>
+
+{% endif %}

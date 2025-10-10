@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Categories Section -->
+<div class="bg-yellow-50 p-4">
+  <div class="flex space-x-4 overflow-x-auto">
+    {% for cat in categories %}
+    <a href="#"
+      class="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium hover:bg-green-200 transition"
+      hx-get="{% url 'filtering' cat.id %}" hx-target="#category-product" hx-swap="innerHTML"
+      hx-include="#min-price, #max-price, #sort-option">
+      {{ cat.name }}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Filter and Sort Section -->
+<div class="bg-yellow-50 p-4 flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+  <!-- Filter by Price -->
+  <div class="flex items-center space-x-2">
+    <span class="text-sm font-medium text-gray-700">Filter by Price:</span>
+    <input type="number" id="min-price" name="minimum_price" value="" placeholder="Min Price"
+      class="px-3 py-1 border rounded">
+    <input type="number" id="max-price" name="maximum_price" value="" placeholder="Max Price"
+      class="px-3 py-1 border rounded">
+    <button hx-get="{% url 'filtering' %}" hx-target="#category-product" hx-swap="innerHTML"
+      hx-include="#min-price, #max-price, #sort-option"
+      class="px-3 py-1 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition">
+      Apply
+    </button>
+    <button type="reset" hx-get="{% url 'filtering' %}" hx-target="#category-product" hx-swap="innerHTML"
+    class="px-3 py-1 bg-red-100 text-blue-800 rounded hover:bg-blue-200 transition"
+    >Cancel</button>
+  </div>
+
+  <!-- Sort By -->
+  <div class="flex items-center space-x-2">
+    <span class="text-sm font-medium text-gray-700">Sort By:</span>
+    <select id="sort-option" name="sort"
+      class="px-3 py-1 border rounded">
+      <option value="">Default</option>
+      <option value="name_asc">Name: A → Z</option>
+      <option value="name_desc">Name: Z → A</option>
+      <option value="price_asc">Price: Low to High</option>
+      <option value="price_desc">High to Low</option>
+    </select>
+    <button hx-get="{% url 'filtering' %}" hx-target="#category-product" hx-swap="innerHTML"
+      hx-include="#min-price, #max-price, #sort-option"
+      class="px-3 py-1 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition">
+      Apply
+    </button>
+    <button type="reset" hx-get="{% url 'filtering' %}" hx-target="#category-product" hx-swap="innerHTML"
+    class="px-3 py-1 bg-red-100 text-blue-800 rounded hover:bg-blue-200 transition"
+    >Cancel</button>
+  </div>
+</div>
+
+  <div id="product-search">
+        
+    </div>
+
+
+  <div id="category-product">
+    {% include 'partial_filter.html' %}
+  </div>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- {% for cat in categories %}
+<div>
+    <button hx-get="{% url 'filtering' cat.id %}" hx-target="#category-product" hx-swap="innerHTML" hx-include="#min-price, #max-price">{{cat.name}}</button>
+</div>
+{% endfor %}
+
+
+
+<div style="margin-top: 10px;">
+  <label>Min Price:</label>
+  <input type="number" id="min-price" name="minimum_price" value="0">
+
+  <label>Max Price:</label>
+  <input type="number" id="max-price" name="maximum_price" value="10000">
+
+  <button hx-get="{% url 'filtering' %}" hx-target="#category-product" hx-swap="innerHTML" hx-include="#min-price, #max-price">Apply</button>
+</div>
+
+<div style="margin-top: 10px;">
+  <label>Sort:</label>
+  <select id="sort-option" name="sort">
+    <option value="">Default</option>
+    <option value="name_asc">Aa → Zz</option>
+    <option value="name_desc">Zz → Aa</option>
+  </select>
+</div> -->
+
+    <!-- sorting -->
+    <!-- <button hx-get="{% url 'filtering' %}" hx-target="#category-product" hx-swap="innerHTML" hx-include="#min-price, #max-price, #sort-option">
+  Apply
+</button>
+
+
+<div id="category-product">
+    {% include 'partial_filter.html' %}
+</div> -->
+
+    {% endblock %}

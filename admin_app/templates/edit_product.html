@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {{form.as_p}}
+    
+    <h1>PRODUCT VARIANT</h1>
+    {{variant.management_form}}
+    {% for v in variant %}
+            <div>
+                <h3>Variant {{ forloop.counter }}</h3>
+                {{ v.as_p }}
+            </div>
+        {% endfor %}
+
+    <h1>existing images</h1> 
+    {% for img in exist_img %}
+     
+    <div>
+        <img src="{{img.image.url}}" alt="">
+        <label>
+                    <input type="checkbox" name="delete_images" value="{{ img.id }}">
+                    Delete
+                </label>
+    </div>
+    {% endfor %}
+
+    <h3>Add New Images</h3>
+    <input type="file" name="images" multiple>
+
+    <br><br>
+    <button type="submit">submit</button>
+</form>
+
+{% endblock %}

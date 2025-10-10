@@ -1,25 +1,37 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from .forms import UserRegistrationForm,UserLoginForm
 import random
 from django.core.mail import send_mail
 from django.core.cache import cache
+from django.views.decorators.cache import cache_control
 from django.contrib import messages
 from .models import CustomUser
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login,logout
+from admin_app.models import Products,Category,ProductVariant
+from django.db.models import Q
 
 # Create your views here.
 
 #USER REGISTRATION VIEW#
+
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def register(request):
+    if request.user.is_authenticated:
+        return redirect("home")
+    
+    # if request.session.get("pending_email"):
+    #     return redirect("verify_otp")
+    
     if request.method=="POST":
         form=UserRegistrationForm(request.POST)
         if form.is_valid():
             user=form.save(commit=False)
             user.set_password(form.cleaned_data["password"])
             user.is_active=False
-            user.save()
+            # user.save()
 
             otp=random.randint(100000,999999)
+            print(f'otp:{otp}')
             cache.set(f"otp:{user.email}", otp, timeout=60)
 
             send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[user.email])
@@ -33,8 +45,14 @@ def register(request):
     return render(request,"user_signup.html",{"form":form}) 
 
 #OTP VERIFICATION#
-def verify_otp(request):
+
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+def verify_otp(request):    
     email = request.session.get("pending_email")
+
+    if not email:
+        return redirect("signin")
+    
     if request.method=="POST":
         entered_otp=request.POST.get('otp')
         cached_otp = cache.get(f"otp:{email}")
@@ -68,7 +86,12 @@ def resend_otp(request):
     return redirect("verify_otp")
       
 #USER LOGIN#
+
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def signin(request):
+    if request.user.is_authenticated:
+        return redirect("home")
+    
     if request.method =="POST":
         form=UserLoginForm(request.POST)
         if form.is_valid():
@@ -95,7 +118,12 @@ def signin(request):
     return render(request,"user_signin.html",{"form":form})
 
 #FORGOT PASSWORD#
+
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def forgot_password(request):
+    if request.session.get("reset_email"):
+        return redirect("forgot_password_otp")
+    
     if request.method=="POST":
         email=request.POST.get("email")
 
@@ -117,14 +145,17 @@ def forgot_password(request):
 #VERIFY FORGOT OTP#
 def verify_forgot_otp(request):
     email=request.session.get("reset_email")
+
     if not email:
         messages.error(request,"Session expired. Try again.")
         return redirect("forgotpswd")
+    
     if request.method == "POST":
         entered_otp=request.POST.get('otp')
         cached_otp = cache.get(f"reset_otp:{email}")
         if str(entered_otp) == str(cached_otp):
             cache.delete(f"reset_otp:{email}")
+            request.session["otp_verified"] = True
             return redirect("reset_password")
         else:
             messages.error(request, "Invalid OTP. Try again.")
@@ -138,6 +169,7 @@ def reset_password(request):
     if not email:
         messages.error(request,"Session expired. Try again.")
         return redirect("forgotpswd")
+    
     if request.method=="POST":
         password1=request.POST.get("password1")
         password2=request.POST.get("password2")
@@ -155,10 +187,97 @@ def reset_password(request):
             user.save()
 
             del request.session["reset_email"]
+            del request.session["otp_verified"]
             messages.success(request, "Password reset successful! Please login.")
             return redirect("signin")
     return render(request,"password_reset.html")
 
 #HOME PAGE#
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def home_page(request):
-    return render(request,"home.html")
+    category=Category.objects.all()
+    products=Products.objects.all()
+    return render(request,"home.html",{"products":products,"category":category})
+
+
+#logout#
+def signout(request):
+    logout(request)
+    cache.clear()
+    return redirect("signin")
+
+def landing(request):
+    categories=Category.objects.all()
+    products=Products.objects.all()
+    return render(request,"landing.html",{"products":products,"category":categories})
+
+
+def searchProduct(request):
+    q=request.GET.get("q")
+    if q:
+        products=Products.objects.filter(Q(name__icontains=q) | Q(category__name__icontains=q)).order_by("-id")
+    else:
+        products=Products.objects.all().order_by("-id")
+
+    return render(request,"product_partial.html",{"products":products})
+
+#LIST CATEGORY PRODUCTS
+def products_by_category(request,id):
+    category=get_object_or_404(Category,id=id)
+    products=Products.objects.filter(category=category).prefetch_related("variants").all()
+    return render(request,"products_by_catg.html",{"products":products})
+
+#LISTING ALL PRODUCTS
+def list_products(request):
+    categories=Category.objects.all()
+    products=Products.objects.all()
+    return render(request,"list_by_products.html",{"products":products,"categories":categories})
+
+#FILETRING AND SORTING
+def filterProducts(request,id=None):
+    min_price=request.GET.get("minimum_price")
+    max_price=request.GET.get("maximum_price")
+    sort=request.GET.get("sort")
+    products=Products.objects.prefetch_related("variants","images").all()
+
+    if id: 
+        category=get_object_or_404(Category,id=id)   
+        products=Products.objects.filter(category=category).prefetch_related("variants").all()
+
+   
+    if min_price and max_price:
+        try:
+            min_price = float(min_price)
+            max_price = float(max_price)
+            if min_price <= max_price:
+                products = products.filter(variants__price__gte=min_price,variants__price__lte=max_price).distinct()
+            else:
+                products = products.none()
+        except ValueError:
+            pass 
+
+    if sort:
+        try:
+            if sort=="name_asc":
+                products=products.order_by("name")
+            else:
+                products=products.order_by("-name")
+            
+        except ValueError:
+            pass
+    
+
+    return render(request,"partial_filter.html",{"products":products})
+
+
+#PRODUCT DETAILS PAGE
+def productDetail(request,id=id):
+    product=get_object_or_404(Products,id=id)
+    variants=product.variants.all()
+    first_variant=variants.first()
+    return render(request,"product_detail.html",{"prod":product,"variants":variants,"first":first_variant})
+
+
+def weightFilter(request,id):
+    product_variant=get_object_or_404(ProductVariant,id=id)
+    return render(request,"partial_detail.html",{"variant":product_variant})

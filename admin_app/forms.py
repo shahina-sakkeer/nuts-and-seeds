@@ -1,16 +1,78 @@
 from django import forms
-
-class AdminLoginForms(forms.Form):
-    username=forms.CharField(max_length=150)
-    password=forms.CharField(widget=forms.PasswordInput)
+from admin_app.models import Category,Products,ProductVariant,ProductImage
+from django.forms import formset_factory,ValidationError,inlineformset_factory
+import re
     
-# class AdminLoginForm(forms.forms):
-#     username=forms.CharField(widget=forms.TextInput(attrs={
-#         "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
-#         "placeholder": "Username"
-#     }))
-#     password=forms.CharField(widget=forms.PasswordInput(attrs={
-#         "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
-#         "placeholder": "Password"
-#     }))
+class AdminLoginForm(forms.Form):
+    username=forms.CharField(widget=forms.TextInput(attrs={
+        "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
+        "placeholder": "Username"
+    }))
+    password=forms.CharField(widget=forms.PasswordInput(attrs={
+        "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
+        "placeholder": "Password"
+    }))
 
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model=Category
+        fields=["id","name","description","image"]
+
+    widgets={
+        "name": forms.TextInput(attrs={
+                "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
+                "placeholder": "Enter name",
+                'autocomplete': 'off'
+            }),
+            "description": forms.TextInput(attrs={
+                "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
+                "placeholder": "Enter descr",
+                'autocomplete': 'off'
+            }),
+
+    }
+
+    def clean_name(self):
+        name=self.cleaned_data.get("name")
+        if name and not re.match(r'^[a-zA-Z\s]+$', name):
+            raise ValidationError("Category name must contain only letters and spaces (no numbers or special characters)")
+        
+        if Category.all_category.filter(name__iexact=name).exclude(id=self.instance.id).exists():
+                raise ValidationError("A category with this name already exists")
+        return name
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model=Products
+        fields=["id","category","name","description","status"]
+
+    def clean_name(self):
+        name=self.cleaned_data.get("name")
+        if name and not re.match(r'^[a-zA-Z\s]+$', name):
+            raise ValidationError("Category name must contain only letters and spaces (no numbers or special characters)")
+        
+        
+        return name
+    
+
+class ProductVariantForm(forms.ModelForm):
+    class Meta:
+        model=ProductVariant
+        fields=["id","weight","unit","quantity_stock","price"]
+        widgets={
+            "unit":forms.Select(),
+            "weight":forms.NumberInput(),
+            "price":forms.NumberInput(),
+            "quantity_stock":forms.NumberInput()
+        }
+
+class ProductImageForm(forms.ModelForm):
+    class Meta:
+        model=ProductImage
+        fields=["image"]
+
+
+ProductVariantFormSet=formset_factory(ProductVariantForm,extra=3)
+
+ProductVariantInlineFormSet=inlineformset_factory(Products,ProductVariant,form=ProductVariantForm,extra=0)

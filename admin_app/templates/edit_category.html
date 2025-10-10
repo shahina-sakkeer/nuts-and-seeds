@@ -1,0 +1,25 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+
+{% if messages %}
+
+{% for m in messages %}
+
+{{m}}
+
+{% endfor %}
+{% endif %}
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form.as_p}}
+    {{variant.as_p}}
+
+    <button type="submit">submit</button>
+
+    <a href="{% url 'listCategory' %}">cancel</a>
+</form>
+
+
+
+{% endblock %}

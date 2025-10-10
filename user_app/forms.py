@@ -5,11 +5,13 @@ import re
 class UserRegistrationForm(forms.ModelForm):
     password=forms.CharField(widget=forms.PasswordInput(attrs={
             "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
-            "placeholder": "Enter your password"
+            "placeholder": "Enter your password",
+            'autocomplete': 'off'
         }))
     confirm_password=forms.CharField(widget=forms.PasswordInput(attrs={
             "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
-            "placeholder": "Enter your password"
+            "placeholder": "Enter your password",
+            'autocomplete': 'off'
         }))
 
     class Meta:
@@ -19,19 +21,23 @@ class UserRegistrationForm(forms.ModelForm):
         widgets = {
             "firstname": forms.TextInput(attrs={
                 "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
-                "placeholder": "Enter your first name"
+                "placeholder": "Enter your first name",
+                'autocomplete': 'off'
             }),
             "lastname": forms.TextInput(attrs={
                 "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
-                "placeholder": "Enter your last name"
+                "placeholder": "Enter your last name",
+                'autocomplete': 'off'
             }),
             "email": forms.EmailInput(attrs={
                 "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
-                "placeholder": "Enter your email"
+                "placeholder": "Enter your email",
+                'autocomplete': 'off'
             }),
             "phone_number": forms.TextInput(attrs={
                 "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
-                "placeholder": "Enter your phone name"
+                "placeholder": "Enter your phone name",
+                'autocomplete': 'off'
             })
         }
 
@@ -53,9 +59,11 @@ class UserRegistrationForm(forms.ModelForm):
 class UserLoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={
         "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
-        "placeholder": "Enter your email"
+        "placeholder": "Enter your email",
+        'autocomplete': 'off'
     }))
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
-        "placeholder": "Enter your password"
+        "placeholder": "Enter your password",
+        'autocomplete': 'off'
     }))

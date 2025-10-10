@@ -1,0 +1,50 @@
+
+<!-- listing all products -->
+{% if products %}
+{% for p in products %}
+
+<div>
+    namee: {{p.name}} category: {{p.category}} desc: {{p.description}} status: {{p.status}}
+</div>
+ {% for v in p.variants.all %}
+<div>
+    weight: {{v.weight}}
+    unit: {{v.unit}} stock: {{v.quantity_stock}} price: {{v.price}}
+</div>
+
+
+
+{% endfor %}
+
+ {% for img in p.images.all %}
+
+<div>
+<img src="{{img.image.url}}" alt="{{ p.name }}">
+</div>
+
+
+{% endfor %}
+<a href="{% url 'editProduct' p.id %}">edit product</a>
+
+
+
+{% if product.is_deleted %}
+
+<a href="{% url 'restoreProduct' p.id %}">restore product</a>
+
+{% else %}
+
+<a href="{% url 'deleteProduct' p.id %}">delete product</a>
+<br><br><br>
+{% endif %}
+
+
+{% endfor %}
+</div>
+{% else %}
+<p>no product found</p>
+
+{% endif %}
+
+<a href="{% url 'addProduct' %}">add product</a>
+

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Filter Bar -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <div class="flex flex-wrap gap-3">
+                <div class="relative dropdown">
+                    <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                        Price: Low to High
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                    <div class="dropdown-content absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg min-w-[180px]">
+                        <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50">Price: Low to High</a>
+                        <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50">Price: High to Low</a>
+                        <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50">Name: A to Z</a>
+                        <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50">Newest First</a>
+                    </div>
+                </div>
+                
+                <div class="relative dropdown">
+                    <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                        Price: High to Low
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="text-sm text-gray-600">
+                Showing <span class="font-semibold"></span> products
+            </div>
+        </div>
+        
+        <!-- Products Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+            
+            {% for p in products %}
+            <a href="{% url 'product_details' p.id %}" class="product-card bg-white rounded-xl shadow-md overflow-hidden relative group fade-in">
+                
+                <!-- Product Image -->
+                <div class="aspect-square bg-gray-100 overflow-hidden">
+                     {% for img in p.images.all %}
+                    <img src="{{img.image.url}}" 
+                         alt="" 
+                         class="product-image w-full h-full object-cover">
+                         {% endfor %}
+                </div>
+                
+                <!-- Product Info -->
+                <div class="p-4">
+                    <h3 class="text-sm font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[40px]">{{p.name}}</h3>
+                    
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Available in</p>
+                            <p class="text-lg font-bold text-orange-600">
+                               {% for v in p.variants.all %}
+                                <span class="text-xs font-normal text-gray-500">Rs. {{v.price}}</span>
+                                {% endfor %}
+                            </p>
+                        </div>
+                        
+                        <!-- Add to Cart Button -->
+                        <button class="opacity-0 group-hover:opacity-100 transition-opacity bg-orange-600 hover:bg-orange-700 text-white p-2 rounded-lg">
+                            <i class="fas fa-cart-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+            
+        </div>
+
+  <div id="product-search">
+        
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- {% for p in products %} -->
+
+<!-- while listing products in user side, only name and prize is enough. then we can go to details for more info -->
+<!-- <div>
+    namee: {{p.name}}
+</div>
+ {% for v in p.variants.all %}
+<div>
+    price: {{v.price}}
+</div>
+
+
+
+{% endfor %}
+
+{% endfor %} -->
+
+{% endblock %}

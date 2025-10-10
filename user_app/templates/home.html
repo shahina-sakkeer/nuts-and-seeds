@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Hero Banner -->
+<section class="relative h-96 md:h-[500px] overflow-hidden">
+    <!-- <img src="" alt="Hero Banner" class="w-full h-full object-cover"> -->
+    <div class="absolute inset-0 banner-overlay flex items-center justify-center">
+        <div class="text-center text-white px-4">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">Freshly Packed Dry Fruits & Snacks</h1>
+            <p class="text-lg md:text-xl mb-6 drop-shadow">Premium Quality | Delivered Fresh to Your Doorstep</p>
+            <a href=""
+                class="inline-block bg-amber-600 hover:bg-amber-700 text-white font-semibold px-8 py-3 rounded-full transition transform hover:scale-105">
+                Shop Now
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Shop by Category -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h2 class="text-3xl md:text-4xl font-bold text-center text-amber-900 mb-12">Shop by Category</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {% for cat in category %}
+        <a href="{% url 'products_on_category' cat.id%}" class="card-hover">
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="aspect-square overflow-hidden">
+                    {% if cat.image %}
+                    <img src="{{cat.image.url}}" alt="" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    {% else %}
+                    <p>no image</p>
+                    {% endif %}
+                </div>
+                <div class="p-4 text-center">
+                    <h3 class="text-lg font-semibold text-gray-800">{{cat.name}}</h3>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+  <div id="product-search">
+        
+    </div>
+
+
+<!-- Why Choose Us -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h2 class="text-3xl md:text-4xl font-bold text-center text-amber-900 mb-12">Why Choose Nuts & Snacks?</h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-2xl shadow-lg p-8 text-center card-hover">
+            <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-box-open text-amber-600 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-3">Freshly Packed</h3>
+            <p class="text-gray-600">All our products are packed fresh on order to ensure maximum freshness and quality.
+            </p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-8 text-center card-hover">
+            <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-award text-amber-600 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-3">Premium Quality</h3>
+            <p class="text-gray-600">Handpicked and hygienically processed dry fruits and snacks from the best sources.
+            </p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-8 text-center card-hover">
+            <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-shipping-fast text-amber-600 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-3">Fast Delivery</h3>
+            <p class="text-gray-600">Your order ships within 24 hours for quick and reliable delivery to your doorstep.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- <a href="{% url 'signout' %}"><button type="button">logout</button></a>
+
+<h1>list products</h1>
+
+
+<div>
+    <form action="">
+    <input type="text" name="q" autocomplete="off" hx-get="{% url 'search_product' %}" hx-trigger="keyup changed delay:300ms" hx-target="#list-product" hx-swap="innerHTML">
+    <button type="reset" hx-get="{% url 'search_product' %}" hx-target="#list-product" hx-swap="innerHTML">cancel</button>
+    </form>
+    
+</div>
+
+
+
+<div id="list-product">
+    {% include 'product_partial.html' %}
+</div> -->
+
+{% endblock %}

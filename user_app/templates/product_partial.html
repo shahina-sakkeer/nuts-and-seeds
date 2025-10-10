@@ -1,0 +1,24 @@
+{% if products %}
+{% for p in products %}
+    <a href="{% url 'product_details' p.id %}" class="group">
+        <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition">
+            <div class="aspect-square p-2 flex items-center justify-center">
+                {% if p.images.all %}
+                <img src="{{ p.images.all.0.image.url }}" alt="{{ p.name }}" class="w-full h-full object-contain">
+                {% else %}
+                <p>no images</p>
+                {% endif %}
+            </div>
+            <div class="p-2 text-center">
+                <h3 class="text-sm font-medium text-gray-900">{{ p.name }}</h3>
+                {% if p.variants.all %}
+                <p class="text-sm font-semibold text-gray-900">Rs. {{ p.variants.all.0.price }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+{% else %}
+<p>no product found</p>
+
+{% endif %}
