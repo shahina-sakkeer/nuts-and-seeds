@@ -12,7 +12,6 @@ urlpatterns=[
     path("reset-password/",views.reset_password,name="reset_password"),
     path("logout/",views.signout,name="signout"),
     path("landing-page/",views.landing,name="landing_page"),
-    path("search/products/",views.searchProduct,name="search_product"),
     path("category/<int:id>/products/",views.products_by_category,name="products_on_category"),
     path("products/",views.list_products,name="all_products"),
     path("products/filter/<int:id>/",views.filterProducts,name="filtering"),

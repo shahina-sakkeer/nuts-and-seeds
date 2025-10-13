@@ -1,244 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuts & Snacks - Premium Dry Fruits & Snacks</title>
+    <title>Nuts & Seeds</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-        body {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .product-card {
-            transition: all 0.3s ease;
-        }
-
-        .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
-        }
-
-        .product-image {
-            transition: transform 0.5s ease;
-        }
-
-        .product-card:hover .product-image {
-            transform: scale(1.1);
-        }
-
-        .fade-in {
-            animation: fadeIn 0.6s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .dropdown-content {
-            display: none;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        .card-hover {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .banner-overlay {
-            background: linear-gradient(135deg, rgba(139, 69, 19, 0.7), rgba(210, 180, 140, 0.5));
-        }
-
-        .smooth-scroll {
-            scroll-behavior: smooth;
-        }
-
-        .image-zoom-container {
-            overflow: hidden;
-        }
-
-        .image-zoom-container img {
-            transition: transform 0.5s ease;
-        }
-
-        .image-zoom-container:hover img {
-            transform: scale(1.5);
-        }
-
-
-        .image-radio {
-            display: none;
-        }
-
-        .main-image {
-            display: none;
-        }
-
-        #img1:checked~.image-display #main-img1,
-        #img2:checked~.image-display #main-img2,
-        #img3:checked~.image-display #main-img3 {
-            display: block;
-        }
-
-        #img1:checked~.thumbnails label[for="img1"],
-        #img2:checked~.thumbnails label[for="img2"],
-        #img3:checked~.thumbnails label[for="img3"] {
-            border-color: #ea580c;
-            box-shadow: 0 0 0 2px #ea580c;
-        }
-
-
-        /* .qty-input {
-            -moz-appearance: textfield;
-        } */
-
-        .qty-input::-webkit-outer-spin-button,
-        .qty-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-    </style>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
 </head>
-
-<body class="bg-amber-50 smooth-scroll">
-
+<body class="bg-gray-50">
     <!-- Navbar -->
-    <nav class="bg-white shadow-md sticky top-0 z-50">
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-
-                <!-- Logo & Name -->
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center">
-                        <i class="fas fa-seedling text-white text-xl"></i>
-                    </div>
-                    <a href="" class="text-2xl font-bold text-amber-800">Nuts & Seeds</a>
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <span class="text-2xl font-bold text-gray-900">Nuts & Seeds</span>
                 </div>
-
-                <!-- Center Navigation -->
+                
+                <!-- Navigation Links -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="{% url 'home' %}"
-                        class="text-gray-700 hover:text-amber-600 font-medium transition">Home</a>
-                    <a href="{% url 'all_products' %}"
-                        class="text-gray-700 hover:text-amber-600 font-medium transition">Products</a>
-                    <a href="" class="text-gray-700 hover:text-amber-600 font-medium transition">About</a>
-                    <a href="" class="text-gray-700 hover:text-amber-600 font-medium transition">Contact</a>
+                    <a href="{% url 'home' %}" class="text-gray-900 font-medium hover:text-gray-600 transition">Home</a>
+                    <a href="{% url 'all_products' %}" class="text-gray-600 hover:text-gray-900 transition">Products</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 transition">About Us</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 transition">Contact</a>
                 </div>
-
+                
                 <!-- Right Side Icons -->
                 <div class="flex items-center space-x-4">
-                    <div class="hidden sm:block relative">
-
-                        <form action="" >
-                        <input type="text" name="q" placeholder="Search..." autocomplete="off"
-                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 w-48"
-                            hx-get="{% url 'search_product' %}" hx-trigger="keyup changed delay:300ms"
-                            hx-target="#product-search" hx-swap="innerHTML">
-                        </form>
-
-                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-
-                        <button type="reset" hx-get="{% url 'search_product' %}" hx-target="#product-search"
-                            hx-swap="innerHTML"
-                            class="px-3 py-1 bg-red-100 text-blue-800 rounded hover:bg-blue-200 transition">Cancel</button>
+                    <!-- Search Bar -->
+                    <form action="">
+                    <div class="hidden sm:block">
+                        <input type="hidden" id="category-id" name="category_id" value="{{ cat.id|default:'' }}">
+                        <input type="text" name="search" placeholder="Search..." class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
+                        hx-get="{% url 'filtering' %}" hx-trigger="keyup changed delay:300ms"
+                        hx-target="#category-product" hx-swap="innerHTML" hx-include="#category-id">
                     </div>
-                    <a href="" class="relative text-gray-700 hover:text-amber-600 transition">
-                        <i class="fas fa-shopping-cart text-2xl"></i>
-                        <span
-                            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
-                    </a>
-                    <a href="" class="text-gray-700 hover:text-amber-600 transition">
-                        <i class="fas fa-user text-2xl"></i>
-                    </a>
-                    <button class="md:hidden text-gray-700">
-                        <i class="fas fa-bars text-2xl"></i>
+                    </form>
+                    
+                    <!-- Wishlist Icon -->
+                    <button class="p-2 hover:bg-gray-100 rounded-lg transition">
+                        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- Cart Icon -->
+                    <button class="p-2 hover:bg-gray-100 rounded-lg transition relative">
+                        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        <span class="absolute -top-1 -right-1 bg-gray-900 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
+    
 
     {% block content %}
 
-  
+
 
     {% endblock %}
 
-    <footer class="bg-amber-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-8 mb-8">
-                <div>
-                    <h4 class="text-xl font-bold mb-4">Nuts & Snacks</h4>
-                    <p class="text-amber-200">Your trusted source for premium quality dry fruits and healthy snacks.</p>
-                </div>
-
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="" class="text-amber-200 hover:text-white transition">Products</a></li>
-                        <li><a href="" class="text-amber-200 hover:text-white transition">About Us</a></li>
-                        <li><a href="" class="text-amber-200 hover:text-white transition">Contact</a></li>
-                        <li><a href="" class="text-amber-200 hover:text-white transition">Privacy Policy</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Customer Care</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-amber-200 hover:text-white transition">Track Order</a></li>
-                        <li><a href="#" class="text-amber-200 hover:text-white transition">Returns</a></li>
-                        <li><a href="#" class="text-amber-200 hover:text-white transition">Shipping Info</a></li>
-                        <li><a href="#" class="text-amber-200 hover:text-white transition">FAQs</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Follow Us</h4>
-                    <div class="flex space-x-4 mb-4">
-                        <a href="#"
-                            class="w-10 h-10 bg-amber-800 hover:bg-amber-700 rounded-full flex items-center justify-center transition">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 bg-amber-800 hover:bg-amber-700 rounded-full flex items-center justify-center transition">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 bg-amber-800 hover:bg-amber-700 rounded-full flex items-center justify-center transition">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    </div>
-                    <p class="text-amber-200 text-sm">Stay updated with our latest offers and products!</p>
-                </div>
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex flex-wrap justify-center gap-8 mb-8">
+                <a href="#" class="text-gray-600 hover:text-gray-900 transition">About Us</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900 transition">Contact</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900 transition">Privacy Policy</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900 transition">Terms of Service</a>
             </div>
-
-            <div class="border-t border-amber-800 pt-6 text-center">
-                <p class="text-amber-200">&copy; 2025 Nuts & Snacks. All rights reserved.</p>
+            <div class="text-center text-gray-500 text-sm">
+                <p>&copy; 2025 ShopSmart. All rights reserved.</p>
             </div>
         </div>
+        <div>
+        <a href="{% url 'signout' %}">logout</a>
+    </div>
     </footer>
-
-
 </body>
-
 </html>
+
+
+
+
+
+
+
+
+
+<!-- 
+<form action="{% url 'filtering' %}">
+
+                            <input type="text" name="search" placeholder="Search..." autocomplete="off"
+                                class="pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 w-48"
+                                hx-get="{% url 'filtering' %}" hx-trigger="keyup changed delay:300ms"
+                                hx-target="#category-product" hx-swap="innerHTML"> 
+                       
+
+                            <button type="reset" hx-get="{% url 'filtering' %}" hx-target="#category-product"
+                                hx-swap="innerHTML"
+                                class="px-3 py-1 bg-red-100 text-blue-800 rounded hover:bg-blue-200 transition">Cancel</button>
+                        </form>
+                  -->

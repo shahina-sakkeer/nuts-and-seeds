@@ -8,7 +8,7 @@ from django.contrib import messages
 from .models import CustomUser
 from django.contrib.auth import authenticate,login,logout
 from admin_app.models import Products,Category,ProductVariant
-from django.db.models import Q
+from django.db.models import Q,Min,Max
 
 # Create your views here.
 
@@ -19,8 +19,6 @@ def register(request):
     if request.user.is_authenticated:
         return redirect("home")
     
-    # if request.session.get("pending_email"):
-    #     return redirect("verify_otp")
     
     if request.method=="POST":
         form=UserRegistrationForm(request.POST)
@@ -28,7 +26,7 @@ def register(request):
             user=form.save(commit=False)
             user.set_password(form.cleaned_data["password"])
             user.is_active=False
-            # user.save()
+            user.save()
 
             otp=random.randint(100000,999999)
             print(f'otp:{otp}')
@@ -212,15 +210,6 @@ def landing(request):
     return render(request,"landing.html",{"products":products,"category":categories})
 
 
-def searchProduct(request):
-    q=request.GET.get("q")
-    if q:
-        products=Products.objects.filter(Q(name__icontains=q) | Q(category__name__icontains=q)).order_by("-id")
-    else:
-        products=Products.objects.all().order_by("-id")
-
-    return render(request,"product_partial.html",{"products":products})
-
 #LIST CATEGORY PRODUCTS
 def products_by_category(request,id):
     category=get_object_or_404(Category,id=id)
@@ -235,37 +224,44 @@ def list_products(request):
 
 #FILETRING AND SORTING
 def filterProducts(request,id=None):
-    min_price=request.GET.get("minimum_price")
-    max_price=request.GET.get("maximum_price")
+    search=request.GET.get("search")
+    id=request.GET.get("category_id")
     sort=request.GET.get("sort")
+    min_price=request.GET.get("minimum")
+    max_price=request.GET.get("maximum")
     products=Products.objects.prefetch_related("variants","images").all()
 
     if id: 
         category=get_object_or_404(Category,id=id)   
         products=Products.objects.filter(category=category).prefetch_related("variants").all()
 
-   
-    if min_price and max_price:
-        try:
-            min_price = float(min_price)
-            max_price = float(max_price)
-            if min_price <= max_price:
-                products = products.filter(variants__price__gte=min_price,variants__price__lte=max_price).distinct()
-            else:
-                products = products.none()
-        except ValueError:
-            pass 
-
+    if search:
+        products=products.filter(name__icontains=search).order_by("-id")
+        
     if sort:
         try:
             if sort=="name_asc":
                 products=products.order_by("name")
-            else:
+            elif sort=="name_desc":
                 products=products.order_by("-name")
+            elif sort=="price_asc":
+                products=products.annotate(minim_price=Min("variants__price")).order_by("minim_price")
+            else:
+                products=products.annotate(maxim_price=Max("variants__price")).order_by("-maxim_price")
             
         except ValueError:
             pass
     
+    if min_price and max_price:
+        try:
+            min_price=float(min_price)
+            max_price=float(max_price)
+
+            if min_price < max_price:
+                products=products.filter(variants__price__gte=min_price,variants__price__lte=max_price).distinct()
+        except ValueError:
+            pass
+
 
     return render(request,"partial_filter.html",{"products":products})
 

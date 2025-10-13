@@ -3,25 +3,21 @@
 
 {% block content %}
 
-<h1>list categories</h1>
 
 
 <div>
     <form action="">
-    <input type="text" name="q" autocomplete="off" hx-get="{% url 'category_search' %}" hx-trigger="keyup changed delay:300ms" hx-target="#category-list" hx-swap="innerHTML">
-    <button type="reset" hx-get="{% url 'category_search' %}" hx-target="#category-list" hx-swap="innerHTML">cancel</button>
+        <input type="text" name="q" autocomplete="off" hx-get="{% url 'category_search' %}"
+            hx-trigger="keyup changed delay:300ms" hx-target="#category-list" hx-swap="innerHTML">
+        <button type="reset" hx-get="{% url 'category_search' %}" hx-target="#category-list"
+            hx-swap="innerHTML">cancel</button>
     </form>
-    
+
 </div>
 
-
-
-<div id="category-list">
+<div id="category-list" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
     {% include 'partial_category.html' %}
 </div>
-
-<a href="{% url 'addCategory' %}"><button>ADD CATEGORY</button></a>
-
 
 
 {% endblock %}

@@ -1,4 +1,36 @@
-<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
+<!-- Product Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Product Card 1 -->
+         {% for p in products %}
+        <div class="bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition">
+            
+            <a href="{% url 'product_details' p.id %}" class="block">
+                {% if p.images.all %}
+                <img src="{{ p.images.all.0.image.url }}" alt="{{p.name}}"
+                    class="w-full h-64 object-cover">
+                {% endif %}
+            </a>
+            <div class="p-4">
+                <a href="#" class="block">
+                    <h3 class="text-base font-medium text-gray-900 hover:text-gray-600 transition">{{ p.name }}</h3>
+                </a>
+                {% if p.variants.all %}
+                <p class="text-lg font-semibold text-gray-900 mt-2">Rs. {{ p.variants.all.0.price }}</p>
+                {% endif %}
+            </div>
+            
+        </div>
+        {% endfor %}
+    </div>
+
+
+
+
+
+
+
+
+<!-- <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
     {% if products %}
     {% for p in products %}
     <a href="{% url 'product_details' p.id %}" class="group">
@@ -24,43 +56,4 @@
         <h3>No products found matching the filters.</h3>
         <p>Try adjusting your category or price range.</p>
     </div>
-    {% endif %}
-
-
-
-
-
-
-
-    <!-- {% if products %}
-{% for p in products %}
-
-<div>
-    <a href="{% url 'product_details' p.id %}">{{p.name}}</a>
-</div>
- {% for v in p.variants.all %}
-<div>
-    price: {{v.price}}
-</div>
-
-{% endfor %}
-
- {% for img in p.images.all %}
-
-<div>
-<img src="{{img.image.url}}" alt="{{ p.name }}">
-</div>
-
-
-{% endfor %}
-
-{% endfor %}
-
-{% else %}
-    <div style="text-align: center; padding: 20px;">
-        <h3>No products found matching the filters.</h3>
-        <p>Try adjusting your category or price range.</p>
-    </div>
-{% endif %} -->
-
-    <!-- listing category filtered products -->
+    {% endif %} -->

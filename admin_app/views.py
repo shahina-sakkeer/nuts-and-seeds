@@ -7,6 +7,9 @@ from admin_app.models import Category,Products,ProductImage
 from django.db import transaction,IntegrityError
 from django.db.models import Q
 from django.core.paginator import Paginator
+from user_app.models import CustomUser
+import base64
+from django.core.files.base import ContentFile
 
 
 # Create your views here.
@@ -14,6 +17,14 @@ from django.core.paginator import Paginator
 #DASHOBOARD OF ADMIN#
 @staff_required
 def admin_dashboard(request):
+    user=CustomUser.objects.filter(is_staff=False,is_superuser=False)
+    return render(request,"dashboard.html",{"user":user})
+
+
+def editUser(request,id):
+    user=get_object_or_404(CustomUser,id=id)
+    user.is_blocked=True
+    user.save()
     return render(request,"dashboard.html")
 
 
@@ -113,8 +124,6 @@ def add_products(request):
     if request.method=="POST":
         form=ProductForm(request.POST)
         variant_formset=ProductVariantFormSet(request.POST)
-        image_form=ProductImageForm()
-        images=request.FILES.getlist("images")
 
         if form.is_valid() and variant_formset.is_valid():
             try:
@@ -128,8 +137,13 @@ def add_products(request):
                             variant.product=product  
                             variant.save()
 
-                    for img in images:
-                            ProductImage.objects.create(product=product,image=img)
+                    for i in range(1, 5):   # assuming 4 image boxes
+                        cropped_data = request.POST.get(f"cropped_image_{i}")
+                        if cropped_data:
+                            format, imgstr = cropped_data.split(';base64,')
+                            ext = format.split('/')[-1]
+                            file = ContentFile(base64.b64decode(imgstr), name=f"product_{product.id}_{i}.{ext}")
+                            ProductImage.objects.create(product=product,image=file)
                     
                     messages.success(request,"product is successfully added")
                     return redirect("listProduct")
@@ -139,9 +153,8 @@ def add_products(request):
     else:
         form=ProductForm()
         variant_formset=ProductVariantFormSet()
-        image_form=ProductImageForm()
 
-    return render(request,"add_product.html",{"form":form,"variant":variant_formset,"image":image_form})
+    return render(request,"add_product.html",{"form":form,"variant":variant_formset})
 
 
 #EDIT PRODUCTS#
@@ -158,7 +171,6 @@ def edit_product(request,id):
         delete_img_id=request.POST.getlist("delete_images")
 
         if form.is_valid() and variant_formset.is_valid():
-            print("loaded")
             
             try:
                 with transaction.atomic():

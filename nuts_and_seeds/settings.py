@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -41,6 +43,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user_app',
     'admin_app',
+    'cloudinary',
+    'cloudinary_storage',
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
 ]
 
 AUTH_USER_MODEL = 'user_app.CustomUser' 
@@ -53,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'nuts_and_seeds.urls'
@@ -82,10 +92,11 @@ WSGI_APPLICATION = 'nuts_and_seeds.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER':'admin',
-        'PASSWORD':'admin',
-        'HOST':'localhost'
+        'NAME': config('DB_NAME'),
+        'USER':config('DB_USER'),
+        'PASSWORD':config('DB_PASSWORD'),
+        'HOST':config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
 
@@ -148,3 +159,39 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CLOUDINARY = {
+    'cloud_name': config('CLOUDINARY_CLOUD_NAME'),
+    'api_key': config('CLOUDINARY_API_KEY'),
+    'api_secret': config('CLOUDINARY_API_SECRET')
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+SITE_ID = 1
+
+LOGIN_REDIRECT_URL = "/user/home/"
+LOGOUT_REDIRECT_URL = "/user/login/"
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": "31413795335-0ucl4rffnuvvph9ao0aie0hv0qcminje.apps.googleusercontent.com",
+            "secret": "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",
+            "key": ""
+        }
+    }
+}
+
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"

@@ -23,9 +23,9 @@ class CategoryForm(forms.ModelForm):
         "name": forms.TextInput(attrs={
                 "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
                 "placeholder": "Enter name",
-                'autocomplete': 'off'
+                "autocomplete": "off"
             }),
-            "description": forms.TextInput(attrs={
+        "description": forms.TextInput(attrs={
                 "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
                 "placeholder": "Enter descr",
                 'autocomplete': 'off'
@@ -47,6 +47,21 @@ class ProductForm(forms.ModelForm):
         model=Products
         fields=["id","category","name","description","status"]
 
+        widgets = {
+            "name": forms.TextInput(attrs={
+                "class": "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+                "placeholder": "Enter product name",'autocomplete': 'off'
+            }),
+            "description": forms.Textarea(attrs={
+                "class": "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+                "placeholder": "Enter product description",
+                "rows": 3
+            }),
+            "category": forms.Select(attrs={
+                "class": "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            }),
+        }
+
     def clean_name(self):
         name=self.cleaned_data.get("name")
         if name and not re.match(r'^[a-zA-Z\s]+$', name):
@@ -61,10 +76,21 @@ class ProductVariantForm(forms.ModelForm):
         model=ProductVariant
         fields=["id","weight","unit","quantity_stock","price"]
         widgets={
-            "unit":forms.Select(),
-            "weight":forms.NumberInput(),
-            "price":forms.NumberInput(),
-            "quantity_stock":forms.NumberInput()
+            "weight": forms.NumberInput(attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+                "placeholder": "Weight"
+            }),
+            "unit": forms.Select(attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            }),
+            "quantity_stock": forms.NumberInput(attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+                "placeholder": "Quantity in stock"
+            }),
+            "price": forms.NumberInput(attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+                "placeholder": "Price"
+            })
         }
 
 class ProductImageForm(forms.ModelForm):
