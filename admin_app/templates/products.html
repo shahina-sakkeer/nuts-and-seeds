@@ -2,20 +2,29 @@
 
 {% block content %}
 
-<h1>list products</h1>
-
-
-<div>
-    <form action="">
-    <input type="text" name="q" autocomplete="off" hx-get="{% url 'searching' %}" hx-trigger="keyup changed delay:300ms" hx-target="#product-list" hx-swap="innerHTML">
-    <button type="reset" hx-get="{% url 'searching' %}" hx-target="#product-list" hx-swap="innerHTML">cancel</button>
-    </form>
-    
+<div class="flex justify-between items-center mb-4">
+<!-- Search Box -->
+  <form class="flex items-center" action="">
+      <input type="text" name="search" placeholder="Search..."
+          class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
+          hx-get="{% url 'searching' %}" hx-trigger="keyup changed delay:300ms" hx-target="#product-list"
+          hx-swap="innerHTML">
+  </form>
 </div>
 
+<!-- <div>
+    <form action="">
+        <input type="text" name="q" autocomplete="off" hx-get="{% url 'searching' %}"
+            hx-trigger="keyup changed delay:300ms" hx-target="#product-list" hx-swap="innerHTML">
+        <button type="reset" hx-get="{% url 'searching' %}" hx-target="#product-list"
+            hx-swap="innerHTML">cancel</button>
+    </form>
+
+</div> -->
 
 
-<div id="product-list">
+
+<div id="product-list" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
     {% include 'partial_product.html' %}
 </div>
 

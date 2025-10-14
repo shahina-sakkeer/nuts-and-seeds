@@ -1,0 +1,14 @@
+<div class="flex items-center space-x-3 sm:space-x-4" id="block-button-{{user.id}}">
+    <span class="text-sm sm:text-base font-medium text-gray-800">
+        <form>
+            {% csrf_token %}
+            <button type="button" hx-get="{% url 'blockCustomer' user.id %}" hx-target="#modal-container"
+                hx-swap="innerHTML"
+                class="px-3 py-1.5 rounded-md text-white 
+               {% if user.is_blocked %}bg-green-500 hover:bg-green-600{% else %}bg-red-500 hover:bg-red-600{% endif %}">
+                {% if user.is_blocked %} Unblock {% else %} Block {% endif %}
+            </button>
+        </form>
+    </span>
+</div>
+

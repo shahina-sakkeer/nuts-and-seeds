@@ -1,6 +1,101 @@
+<!-- Main Content -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div class="flex justify-end mb-6">
+        <a href="{% url 'addProduct' %}">
+            <button
+                class="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                + Add Product
+            </button>
+        </a>
+    </div>
+
+    <!-- Product Table -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-100 border-b">
+                    <tr>
+                        <th
+                            class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            Image</th>
+                        <th
+                            class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            Name</th>
+                        <th
+                            class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            Category</th>
+                        <th
+                            class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            Stock</th>
+                        <th
+                            class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            Status</th>
+                        <th
+                            class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            Actions</th>
+
+                    </tr>
+                </thead>
+                {% for p in products %}
+                <tbody class="divide-y divide-gray-200">
+                    <!-- Product Row 1 -->
+                    <tr class="hover:bg-gray-50 transition duration-150">
+                        <td class="px-4 sm:px-6 py-4">
+                            <div class="flex items-center space-x-3 sm:space-x-4">
+                                {% if p.images.all %}
+                                <img src="{{ p.images.all.0.image.url }}" alt="Product"
+                                    class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover shadow-sm">
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="px-4 sm:px-6 py-4">
+                            <div class="flex items-center space-x-3 sm:space-x-4">
+                                <span class="text-sm sm:text-base font-medium text-gray-800">{{p.name}}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 sm:px-6 py-4">
+                            <div class="flex items-center space-x-3 sm:space-x-4">
+                                <span class="text-sm sm:text-base font-medium text-gray-800">{{p.category}}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 sm:px-6 py-4">
+                            <div class="flex items-center space-x-3 sm:space-x-4">
+                                <span class="text-sm sm:text-base font-medium text-gray-800">{{p.category}}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 sm:px-6 py-4">
+                            <div class="flex items-center space-x-3 sm:space-x-4">
+                                <span class="text-sm sm:text-base font-medium text-gray-800">{{p.status}}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 sm:px-6 py-4 text-right">
+                            <div class="flex justify-end space-x-2 sm:space-x-3">
+                                <a href="{% url 'editProduct' p.id %}">
+                                    <button
+                                    class="bg-green-500 hover:bg-green-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition duration-200">
+                                    Edit
+                                </button>
+                                </a>
+                                <a href="{% url 'deleteProduct' p.id %}">
+                                    <button
+                                    class="bg-red-500 hover:bg-red-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition duration-200">
+                                    Delete
+                                </button>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- listing all products -->
-{% if products %}
+<!-- {% if products %}
 {% for p in products %}
 
 <div>
@@ -46,5 +141,4 @@
 
 {% endif %}
 
-<a href="{% url 'addProduct' %}">add product</a>
-
+<a href="{% url 'addProduct' %}">add product</a> -->

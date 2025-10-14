@@ -17,15 +17,21 @@ from django.core.files.base import ContentFile
 #DASHOBOARD OF ADMIN#
 @staff_required
 def admin_dashboard(request):
-    user=CustomUser.objects.filter(is_staff=False,is_superuser=False)
-    return render(request,"dashboard.html",{"user":user})
-
-
-def editUser(request,id):
-    user=get_object_or_404(CustomUser,id=id)
-    user.is_blocked=True
-    user.save()
     return render(request,"dashboard.html")
+    
+
+def customer(request):
+    user=CustomUser.objects.filter(is_staff=False,is_superuser=False)
+    return render(request,"customers.html",{"users":user})
+
+def blockUser(request,id):
+    user=get_object_or_404(CustomUser,id=id)
+    if request.method=="POST":
+        user.is_blocked=not user.is_blocked
+        user.save()
+        return render(request,"block_button.html",{"user":user})
+    
+    return render(request,"modal_user.html",{"user":user})
 
 
 #ADMIN LOGIN#
@@ -124,20 +130,22 @@ def add_products(request):
     if request.method=="POST":
         form=ProductForm(request.POST)
         variant_formset=ProductVariantFormSet(request.POST)
+     
 
         if form.is_valid() and variant_formset.is_valid():
             try:
                 with transaction.atomic():
                     product=form.save()
 
-                    for variant_form in variant_formset:
-                        if variant_form.cleaned_data:
+                    variant=variant_formset.save(commit=False)
+                    for v in variant:
+                        v.product=product  
+                        print(v.price)
+                        v.save()
+                        
 
-                            variant=variant_form.save(commit=False)
-                            variant.product=product  
-                            variant.save()
 
-                    for i in range(1, 5):   # assuming 4 image boxes
+                    for i in range(1, 5):  
                         cropped_data = request.POST.get(f"cropped_image_{i}")
                         if cropped_data:
                             format, imgstr = cropped_data.split(';base64,')

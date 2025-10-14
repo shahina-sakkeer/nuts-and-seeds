@@ -14,5 +14,7 @@ urlpatterns=[
     path("product/delete/<int:id>",views.soft_delete_product,name="deleteProduct"),
     path("product/restore/<int:id>",views.restore_product,name="restoreProduct"),
     path("search/",views.search,name="searching"),
-    path("search/category",views.search,name="category_search")
+    path("search/category",views.search,name="category_search"),
+    path('customers/',views.customer,name="users"),
+    path("block-button/<int:id>",views.blockUser,name="blockCustomer")
 ]

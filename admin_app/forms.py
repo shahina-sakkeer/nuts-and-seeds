@@ -19,7 +19,7 @@ class CategoryForm(forms.ModelForm):
         model=Category
         fields=["id","name","description","image"]
 
-    widgets={
+        widgets={
         "name": forms.TextInput(attrs={
                 "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
                 "placeholder": "Enter name",
@@ -58,6 +58,9 @@ class ProductForm(forms.ModelForm):
                 "rows": 3
             }),
             "category": forms.Select(attrs={
+                "class": "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            }),
+            "status": forms.Select(attrs={
                 "class": "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             }),
         }

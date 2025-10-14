@@ -2,18 +2,22 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
     <!-- Add Category Button -->
     <div class="flex justify-end mb-6">
-        <button
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition duration-200 text-sm sm:text-base shadow-md hover:shadow-lg">
-            + Add Category
+        <a href="{% url 'addCategory' %}">
+            <button
+                class="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                + Add Category
         </button>
+        </a>
     </div>
 
     <!-- Product Table -->
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="overflow-x-auto">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden max-w-3xl mx-auto">
             <table class="w-full">
                 <thead class="bg-gray-100 border-b">
                     <tr>
+                        <th
+                            class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            Image</th>
                         <th
                             class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
                             Name</th>
@@ -30,18 +34,26 @@
                             <div class="flex items-center space-x-3 sm:space-x-4">
                                 <img src="{{cat.image.url}}" alt="Product"
                                     class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover shadow-sm">
+                            </div>
+                        </td>
+                        <td class="px-4 sm:px-6 py-4">
+                            <div class="flex items-center space-x-3 sm:space-x-4">
                                 <span class="text-sm sm:text-base font-medium text-gray-800">{{cat.name}}</span>
                             </div>
                         </td>
                         <td class="px-4 sm:px-6 py-4 text-right">
                             <div class="flex justify-end space-x-2 sm:space-x-3">
-                                <a href="{% url 'editCategory' cat.id %}"
-                                    class="px-4 py-2 bg-green-600 text-white rounded hover:bg-blue-700 transition">
+                                <a href="{% url 'editCategory' cat.id %}">
+                                    <button
+                                    class="bg-green-500 hover:bg-green-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition duration-200">
                                     Edit
+                                </button>
                                 </a>
-                                <a href="{% url 'deleteCategory' cat.id %}"
-                                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-blue-700 transition">
+                                <a href="{% url 'deleteCategory' cat.id %}">
+                                    <button
+                                    class="bg-red-500 hover:bg-red-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition duration-200">
                                     Delete
+                                </button>
                                 </a>
                             </div>
                         </td>
@@ -49,7 +61,6 @@
                 </tbody>
                 {% endfor %}
             </table>
-        </div>
     </div>
 </div>
 

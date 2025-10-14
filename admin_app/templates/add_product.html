@@ -30,7 +30,7 @@
     <!-- Form Container -->
     <form class="space-y-6" method="post" enctype="multipart/form-data">
 
-        {% csrf_token%}
+        {% csrf_token %}
 
         <!-- General Information Section -->
         <div class="bg-white rounded-lg shadow-sm p-6">
@@ -52,6 +52,18 @@
                     </label>
                     {{form.description}}
                 </div>
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                        Category
+                    </label>
+                    {{form.category}}
+                </div>
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                        Status
+                    </label>
+                    {{form.status}}
+                </div>
             </div>
         </div>
 
@@ -66,30 +78,27 @@
 
                 <!-- Image Upload Grid -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-                    <!-- Image Upload Box 1 -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {% for i in "1234" %}
-                        <div>
-                            <label
-                                class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition block">
-                                <div class="flex flex-col items-center">
-                                    <p class="text-xs text-gray-600 mb-1">Drag & drop</p>
-                                    <span class="text-xs text-blue-600 font-medium hover:text-blue-700">Add Image {{i}}</span>
-                                </div>
-                                <input type="file" class="hidden image-input" data-index="{{ i }}" accept="image/*">
-                            </label>
-
-                            <!-- Preview -->
-                            <div style="margin-top: 10px;">
-                                <img id="preview-{{ i }}" style="max-width:100%; display:none">
+                    {% for i in "1234" %}
+                    <div class="flex flex-col items-center">
+                        <!-- Clickable label -->
+                        <label
+                            class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition w-full">
+                            <div class="flex flex-col items-center">
+                                <span class="text-xs text-blue-600 font-medium hover:text-blue-700">Add Image {{i}}</span>
                             </div>
+                            <input type="file" class="hidden image-input" data-index="{{ i }}" accept="image/*">
+                        </label>
 
-                            <!-- Hidden input for cropped image -->
-                            <input type="hidden" id="cropped-{{ i }}" name="cropped_image_{{ i }}">
+                        <!-- Preview -->
+                        <div class="mt-2 w-full">
+                            <img id="preview-{{ i }}"
+                                style="max-width:100%; display:none; border-radius: 0.5rem; border:1px solid #ccc;">
                         </div>
-                        {% endfor %}
+
+                        <!-- Hidden input for cropped image -->
+                        <input type="hidden" id="cropped-{{ i }}" name="cropped_image_{{ i }}">
                     </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -131,17 +140,8 @@
                     </div>
 
 
-                    <!-- Rating, Category, Quantity Row -->
+                  
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-                        <!-- Category -->
-                        <div>
-                            <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
-                                Category
-                            </label>
-                            {{form.category}}
-
-                        </div>
 
                         <!-- Quantity -->
                         <div>
@@ -155,73 +155,28 @@
                 {% endfor %}
             </div>
 
+
+            <button type="submit"
+                class="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                Submit
+            </button>
             <!-- Form Actions (Mobile) -->
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 md:hidden">
+            <!-- <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 md:hidden">
                 <a href="#cancel"
                     class="w-full sm:w-auto px-6 py-3 text-center border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
                     Cancel
                 </a>
                 <input class="btn btn-primary" type="submit" value="Add Category">
-            </div>
+            </div> -->
 
     </form>
 </div>
 
 
-<!-- Cropper.js -->
-<script src="https://unpkg.com/cropperjs"></script>
-<script>
-const croppers = {};
 
-document.querySelectorAll(".image-input").forEach(input => {
-    input.addEventListener("change", function(e) {
-        const index = e.target.dataset.index;
-        const preview = document.getElementById("preview-" + index);
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            preview.src = event.target.result;
-            preview.style.display = "block";
-
-            if (croppers[index]) croppers[index].destroy();
-            croppers[index] = new Cropper(preview, {
-                aspectRatio: 1,
-                viewMode: 1,
-                autoCropArea: 1
-            });
-        };
-        reader.readAsDataURL(file);
-    });
-});
-
-document.querySelector("form").addEventListener("submit", function(e) {
-    e.preventDefault();
-    const form = e.target;
-    const indices = Object.keys(croppers);
-    let pending = indices.length;
-
-    if (pending === 0) {
-        form.submit();
-        return;
-    }
-
-    indices.forEach(index => {
-        croppers[index].getCroppedCanvas().toBlob(blob => {
-            const reader = new FileReader();
-            reader.onloadend = function() {
-                document.getElementById("cropped-" + index).value = reader.result;
-                pending--;
-                if (pending === 0) form.submit();
-            };
-            reader.readAsDataURL(blob);
-        });
-    });
-});
-</script>
 
 {% endblock %}
+
 
 
 
