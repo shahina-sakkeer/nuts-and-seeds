@@ -2,37 +2,195 @@
 
 {% block content %}
 
-<form action="" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
 
-    {{form.as_p}}
-    
-    <h1>PRODUCT VARIANT</h1>
-    {{variant.management_form}}
-    {% for v in variant %}
-            <div>
-                <h3>Variant {{ forloop.counter }}</h3>
-                {{ v.as_p }}
-            </div>
-        {% endfor %}
+<!-- Main Content Area -->
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <h1>existing images</h1> 
-    {% for img in exist_img %}
-     
-    <div>
-        <img src="{{img.image.url}}" alt="">
-        <label>
-                    <input type="checkbox" name="delete_images" value="{{ img.id }}">
-                    Delete
-                </label>
+    <!-- Header Section -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <nav class="flex mb-4" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="{% url 'listProduct' %}" class="text-sm font-medium text-gray-700 hover:text-blue-600">
+                            Products
+                        </a>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <svg class="w-3 h-3 text-gray-400 mx-1" fill="none" stroke="currentColor"
+                                viewBox="0 0 6 10">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M1 9L5 5 1 1" />
+                            </svg>
+                            <span class="ml-1 text-sm font-medium text-gray-500">Edit Product</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+            <h1 class="text-2xl font-bold text-gray-900">Edit Product</h1>
+        </div>
     </div>
-    {% endfor %}
 
-    <h3>Add New Images</h3>
-    <input type="file" name="images" multiple>
+    <!-- Form Container -->
+    <form class="space-y-6" method="post" enctype="multipart/form-data">
 
-    <br><br>
-    <button type="submit">submit</button>
-</form>
+        {% csrf_token %}
+
+        <!-- General Information Section -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-6">General Information</h2>
+
+            <div class="space-y-5">
+                <!-- Product Name -->
+                <div>
+                    <label for="product-name" class="block text-sm font-medium text-gray-700 mb-2">
+                        Product Name
+                    </label>
+                    {{form.name}}
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                        Description
+                    </label>
+                    {{form.description}}
+                </div>
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                        Category
+                    </label>
+                    {{form.category}}
+                </div>
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                        Status
+                    </label>
+                    {{form.status}}
+                </div>
+            </div>
+        </div>
+
+        <!-- media section -->
+
+
+        <h3 class="text-lg font-semibold mt-6 mb-2">Product Images (Max 4)</h3>
+        <div class="grid grid-cols-4 gap-4" id="image-grid">
+            {% for img in images %}
+            <div class="relative w-24 h-24 border rounded overflow-hidden image-slot"
+                data-index="{{ forloop.counter0|add:1 }}">
+                <img src="{{ img.image.url }}" class="object-cover w-full h-full"
+                    id="preview-{{ forloop.counter0|add:1 }}">
+                <input type="checkbox" name="remove_images" value="{{ img.id }}" class="hidden remove-checkbox">
+                <input type="hidden" name="cropped_image_{{ forloop.counter0|add:1 }}"
+                    id="cropped-{{ forloop.counter0|add:1 }}">
+                <button type="button"
+                    class="remove-btn absolute top-1 right-1 bg-red-600 text-white w-5 h-5 rounded-full text-xs">
+                    ✕
+                </button>
+            </div>
+            {% endfor %}
+
+            {% for i in "1234"|make_list %}
+            {% if forloop.counter > images|length %}
+            <div class="relative w-24 h-24 border-2 border-dashed border-gray-300 rounded bg-gray-50 image-slot"
+                data-index="{{ forloop.counter }}">
+                <span class="absolute inset-0 flex items-center justify-center text-gray-400 cursor-pointer add-image"
+                    data-index="{{ forloop.counter }}">+ Add</span>
+                <input type="file" accept="image/*" class="hidden file-input" data-index="{{ forloop.counter }}"
+                    onchange="previewAndCrop(this, '{{ forloop.counter }}')">
+                <img id="preview-{{ forloop.counter }}" class="object-cover w-full h-full hidden">
+                <input type="hidden" name="cropped_image_{{ forloop.counter }}" id="cropped-{{ forloop.counter }}">
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+
+        <!-- end of media section -->
+
+
+        <!-- Pricing Section -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            {{variant.management_form}}
+
+            {% for v in variant %}
+
+            {% for hidden in v.hidden_fields %}
+            {{hidden}}
+            {% endfor %}
+
+            <h2 class="text-lg font-semibold text-gray-900 mb-6">Pricing</h2>
+
+            <div class="space-y-5">
+                <!-- Base Price -->
+                <div>
+                    <label for="base-price" class="block text-sm font-medium text-gray-700 mb-2">
+                        Base Price
+                    </label>
+                    <div class="relative">
+                        {{v.price}}
+                        {% for error in v.price.errors %}
+
+                        <p class="text-red-500 text-sm mt-1">{{ error}}</p>
+
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Weight and Unit Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Weight -->
+                    <div>
+                        <label for="weight" class="block text-sm font-medium text-gray-700 mb-2">
+                            Weight
+                        </label>
+                        {{v.weight}}
+                        {% for error in v.weight.errors %}
+
+                        <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+                        {% endfor %}
+                    </div>
+
+                    <!-- Unit -->
+                    <div>
+                        <label for="unit" class="block text-sm font-medium text-gray-700 mb-2">
+                            Unit
+                        </label>
+                        {{v.unit}}
+                    </div>
+
+
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                        <!-- Quantity -->
+                        <div>
+                            <label for="quantity" class="block text-sm font-medium text-gray-700 mb-2">
+                                Quantity
+                            </label>
+                            {{v.quantity_stock}}
+                            {% for error in v.quantity_stock.errors %}
+
+                            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+
+            <button type="submit"
+                class="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                Submit
+            </button>
+
+    </form>
+</div>
+
 
 {% endblock %}

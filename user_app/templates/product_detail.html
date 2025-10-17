@@ -9,7 +9,8 @@
         <!-- Left Side - Image Gallery -->
         <div class="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4">
             {% for img in prod.images.all %}
-            <input type="radio" name="product-image" id="img{{ forloop.counter }}" class="image-radio" {% if forloop.first %}checked{% endif %}>
+            <input type="radio" name="product-image" id="img{{ forloop.counter }}" class="image-radio" 
+            {% if forloop.first %}checked{% endif %}>
 
             {% endfor %}
 
@@ -35,6 +36,35 @@
 
         <!-- Right Side - Product Info -->
         <div class="flex flex-col">
+            <nav class="flex mb-4" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="{% url 'all_products' %}" class="text-sm font-medium text-gray-700 hover:text-blue-600">
+                            Products
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <svg class="w-3 h-3 text-gray-400 mx-1" fill="none" stroke="currentColor"
+                                viewBox="0 0 6 10">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M1 9L5 5 1 1" />
+                            </svg>
+                            <a href="#" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600">{{prod.category.name}}</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <svg class="w-3 h-3 text-gray-400 mx-1" fill="none" stroke="currentColor"
+                                viewBox="0 0 6 10">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M1 9L5 5 1 1" />
+                            </svg>
+                            <span class="ml-1 text-sm font-medium text-gray-500">{{prod.name}}</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
             <!-- Product Title & Rating -->
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3">{{prod.name}}</h1>
             {% for v in variants %}
@@ -45,7 +75,8 @@
             <!-- Weight Options -->
             <div class="flex flex-wrap gap-2 mb-6">
                 {% for v in variants %}
-                <input type="radio" name="weight" id="{{v.id}}" class="peer/{{v.id}} hidden" {% if forloop.first %}checked{% endif %}>
+                <input type="radio" name="weight" id="{{v.id}}" class="peer/{{v.id}} hidden" 
+                {% if forloop.first %}checked{% endif %}>
                 <label for="{{v.id}}"
                     class="cursor-pointer px-3 sm:px-4 py-2 border-2 border-gray-300 peer-checked/{{v.id}}:border-orange-600 peer-checked/250:bg-orange-50 peer-checked/{{v.id}}:text-orange-600 text-gray-600 rounded-lg font-semibold text-sm hover:border-orange-600 hover:text-orange-600 transition"
                     hx-get="{% url 'weight_price' v.id %}" hx-target="#weight-measurment"
@@ -140,8 +171,6 @@
         <!-- Single Review -->
         <div class="border-b border-gray-200 pb-4 sm:pb-6 mb-4 sm:mb-6">
             <div class="flex items-start gap-3 sm:gap-4">
-                <img src=""
-                    alt="Reviewer" class="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover flex-shrink-0">
                 <div class="flex-1 min-w-0">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-1 sm:gap-0">
                         <h3 class="font-semibold text-gray-800 text-sm sm:text-base">John</h3>
@@ -154,8 +183,7 @@
                         </div>
                     </div>
                     <p class="text-gray-600 text-xs sm:text-sm mb-3">Good packing</p>
-                    <img src=""
-                        alt="Review Image" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover">
+                    <img src="" alt="Review Image" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover">
                 </div>
             </div>
         </div>

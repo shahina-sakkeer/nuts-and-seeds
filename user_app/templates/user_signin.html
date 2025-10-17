@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'navbar_landing.html' %}
 {% load socialaccount %}
 {% block content %}
 
@@ -40,8 +40,8 @@
 
 
                 <!-- Password -->
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                <div class="relative mb-4">
+                    <label for="id_password" class="block text-sm font-medium text-gray-700 mb-2">
                         Password
                     </label>
                     {{form.password}}
@@ -50,6 +50,11 @@
                     <p class="text-red-500 text-sm mt-1">{{ form.password.errors.0 }}</p>
 
                     {% endif %}
+
+                     <span onclick="togglePassword('id_password', 'eyeIcon1')"
+                        class="absolute right-3 top-10 cursor-pointer">
+                        <i id="eyeIcon1" class="fa fa-eye"></i>
+                    </span>
                 </div>
 
                 <!-- Submit Button -->
@@ -76,10 +81,10 @@
 
         <!-- login.html -->
 
-<div class="flex flex-col items-center space-y-4">
+<div class="flex flex-col items-center space-y-4 mt-7">
     <!-- Other login form fields -->
 
-    <a href="{% provider_login_url 'google' %}" 
+    <a href="{% provider_login_url 'google' process='login' %}" 
        class="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg w-64">
         <svg class="w-5 h-5 mr-2" viewBox="0 0 488 512">
             <!-- Google "G" icon path -->

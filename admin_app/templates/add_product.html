@@ -9,22 +9,28 @@
     <!-- Header Section -->
     <div class="flex items-center justify-between mb-8">
         <div>
-            <div class="flex items-center text-sm text-gray-500 mb-2">
-                <a href="#products" class="hover:text-gray-700">Products</a>
-                <span class="mx-2">/</span>
-                <span class="text-gray-900">Add Product</span>
-            </div>
+            <nav class="flex mb-4" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="{% url 'listProduct' %}" class="text-sm font-medium text-gray-700 hover:text-blue-600">
+                            Products
+                        </a>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <svg class="w-3 h-3 text-gray-400 mx-1" fill="none" stroke="currentColor"
+                                viewBox="0 0 6 10">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M1 9L5 5 1 1" />
+                            </svg>
+                            <span class="ml-1 text-sm font-medium text-gray-500">Add Product</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
             <h1 class="text-2xl font-bold text-gray-900">Add Product</h1>
         </div>
-        <div class="flex items-center space-x-3">
-            <a href="#cancel" class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
-                ✕ Cancel
-            </a>
-            <button
-                class="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
-                + Add Product
-            </button>
-        </div>
+        
     </div>
 
     <!-- Form Container -->
@@ -43,6 +49,11 @@
                         Product Name
                     </label>
                     {{form.name}}
+                    {% for error in form.name.errors %}
+
+                    <p class="text-red-500 text-sm mt-1">{{ error}}</p>
+
+                    {% endfor %}
                 </div>
 
                 <!-- Description -->
@@ -118,6 +129,11 @@
                     </label>
                     <div class="relative">
                         {{v.price}}
+                        {% for error in v.price.errors %}
+
+                            <p class="text-red-500 text-sm mt-1">{{ error}}</p>
+
+                        {% endfor %}
                     </div>
                 </div>
 
@@ -129,6 +145,11 @@
                             Weight
                         </label>
                         {{v.weight}}
+                        {% for error in v.weight.errors %}
+
+                            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+                        {% endfor %}
                     </div>
 
                     <!-- Unit -->
@@ -149,6 +170,11 @@
                                 Quantity
                             </label>
                             {{v.quantity_stock}}
+                            {% for error in  v.quantity_stock.errors %}
+
+                            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+                        {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -160,16 +186,31 @@
                 class="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
                 Submit
             </button>
-            <!-- Form Actions (Mobile) -->
-            <!-- <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 md:hidden">
-                <a href="#cancel"
-                    class="w-full sm:w-auto px-6 py-3 text-center border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
-                    Cancel
-                </a>
-                <input class="btn btn-primary" type="submit" value="Add Category">
-            </div> -->
 
     </form>
+</div>
+
+
+<!-- Fullscreen Modal -->
+<div id="cropperModal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
+    <div class="bg-white p-4 rounded shadow-lg max-w-4xl w-full h-[90vh] flex flex-col">
+        
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-2">
+            <h2 class="text-lg font-bold">Crop Image</h2>
+            <button id="closeModal" class="text-red-500 font-bold text-xl">✕</button>
+        </div>
+
+       
+        <div class="flex-1 flex justify-center items-center overflow-auto">
+            <img id="modalImage" class="max-w-full max-h-[70vh] object-contain">
+        </div>
+
+       
+        <div class="mt-4 flex justify-end gap-2">
+            <button id="cropSave" class="bg-blue-500 text-white px-4 py-2 rounded">Crop & Save</button>
+        </div>
+    </div>
 </div>
 
 
@@ -178,23 +219,3 @@
 {% endblock %}
 
 
-
-
-<!-- <form action="" method="post" enctype="multipart/form-data">
-    {% csrf_token%}
-    {{form.as_p}}
-    
-    <h1>PRODUCT VARIANT</h1>
-    {{variant.management_form}}
-    {% for v in variant %}
-            <div>
-                <h3>Variant {{ forloop.counter }}</h3>
-                {{ v.as_p }}
-            </div>
-        {% endfor %}
-
-
-    <input type="file" name="images" multiple>
-
-    <button type="submit">add</button>
-</form> -->

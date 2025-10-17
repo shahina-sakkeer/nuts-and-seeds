@@ -4,20 +4,56 @@
 {% block content %}
 
 
-
-<div>
-    <form action="">
-        <input type="text" name="q" autocomplete="off" hx-get="{% url 'category_search' %}"
+<div class="flex items-center justify-center mb-4 mt-6 gap-4">
+    <form action="" class="flex items-center">
+        <input type="text" name="search" placeholder="Search..." autocomplete="off" 
+        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
+        hx-get="{% url 'category_search' %}"
             hx-trigger="keyup changed delay:300ms" hx-target="#category-list" hx-swap="innerHTML">
-        <button type="reset" hx-get="{% url 'category_search' %}" hx-target="#category-list"
-            hx-swap="innerHTML">cancel</button>
     </form>
 
-</div>
+    <!-- Add Category Button -->
+
+        <a href="{% url 'addCategory' %}">
+            <button
+                class="ml-2 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                + Add Category
+        </button>
+        </a>
+    </div>
+
 
 <div id="category-list" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-    {% include 'partial_category.html' %}
+    {% include 'partial_category.html' with category=page_obj %}
 </div>
 
+
+<!-- pagination  -->
+<nav aria-label="Page navigation" class="mt-6 flex justify-center">
+  <ul class="pagination flex space-x-2">
+      {% if page_obj.has_previous %}
+      <li>
+          <a class="px-3 py-1 border rounded" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      </li>
+      {% else %}
+      <li class="opacity-50 px-3 py-1 border rounded">Previous</li>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+      <li>
+          <a class="px-3 py-1 border rounded {% if page_obj.number == num %}bg-blue-500 text-white{% endif %}" 
+             href="?page={{ num }}">{{ num }}</a>
+      </li>
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+      <li>
+          <a class="px-3 py-1 border rounded" href="?page={{ page_obj.next_page_number }}">Next</a>
+      </li>
+      {% else %}
+      <li class="opacity-50 px-3 py-1 border rounded">Next</li>
+      {% endif %}
+  </ul>
+</nav>
 
 {% endblock %}

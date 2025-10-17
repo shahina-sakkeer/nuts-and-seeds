@@ -9,11 +9,25 @@
     <!-- Header Section -->
     <div class="flex items-center justify-between mb-8">
         <div>
-            <div class="flex items-center text-sm text-gray-500 mb-2">
-                <a href="#products" class="hover:text-gray-700">Category</a>
-                <span class="mx-2">/</span>
-                <span class="text-gray-900">Edit Category</span>
-            </div>
+           <nav class="flex mb-4" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="{% url 'listCategory' %}" class="text-sm font-medium text-gray-700 hover:text-blue-600">
+                            Category
+                        </a>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <svg class="w-3 h-3 text-gray-400 mx-1" fill="none" stroke="currentColor"
+                                viewBox="0 0 6 10">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M1 9L5 5 1 1" />
+                            </svg>
+                            <span class="ml-1 text-sm font-medium text-gray-500">Edit Category</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
             <h1 class="text-2xl font-bold text-gray-900">Edit Category</h1>
         </div>
     </div>
@@ -34,6 +48,9 @@
                         Category Name
                     </label>
                     {{form.name}}
+                    {% for error in form.name.errors %}
+                     <p class="text-red-500 text-sm mt-1">{{ error}}</p>
+                    {% endfor %}
                 </div>
 
                 <!-- Description -->
@@ -56,26 +73,6 @@
     </form>
 </div>
 
-
-
-<!-- {% if messages %}
-
-{% for m in messages %}
-
-{{m}}
-
-{% endfor %}
-{% endif %}
-<form action="" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{form.as_p}}
-    {{variant.as_p}}
-
-    <button type="submit">submit</button>
-
-    <a href="{% url 'listCategory' %}">cancel</a>
-</form>
- -->
 
 
 {% endblock %}

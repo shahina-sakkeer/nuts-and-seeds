@@ -9,6 +9,7 @@ from .models import CustomUser
 from django.contrib.auth import authenticate,login,logout
 from admin_app.models import Products,Category,ProductVariant
 from django.db.models import Q,Min,Max
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -23,18 +24,18 @@ def register(request):
     if request.method=="POST":
         form=UserRegistrationForm(request.POST)
         if form.is_valid():
-            user=form.save(commit=False)
-            user.set_password(form.cleaned_data["password"])
-            user.is_active=False
-            user.save()
+            user_data=form.cleaned_data
+            user_data["password"]=form.cleaned_data["password"]
+          
 
             otp=random.randint(100000,999999)
             print(f'otp:{otp}')
-            cache.set(f"otp:{user.email}", otp, timeout=60)
+            cache.set(f"otp:{user_data['email']}", otp, timeout=60)
+            cache.set(f"user_data:{user_data['email']}",user_data,timeout=60)
 
-            send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[user.email])
+            send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[user_data['email']])
             messages.success(request,"otp send to the email")
-            request.session["pending_email"] = user.email
+            request.session["pending_email"] = user_data['email']
             return redirect("verify_otp")
 
     else:
@@ -54,18 +55,29 @@ def verify_otp(request):
     if request.method=="POST":
         entered_otp=request.POST.get('otp')
         cached_otp = cache.get(f"otp:{email}")
+        user_data=cache.get(f"user_data:{email}")
 
         if cached_otp and str(cached_otp) == entered_otp:
             try:
-                user=CustomUser.objects.get(email=email)
+
+                if not user_data:
+                    raise CustomUser.DoesNotExist
+                
+                user=CustomUser.objects.create(email=user_data['email'],phone_number=user_data['phone_number'],
+                firstname=user_data['firstname'],lastname=user_data['lastname'],password=user_data['password'],is_active=True)
+
+                user.set_password(user_data['password'])
+                user.save()
+             
             except CustomUser.DoesNotExist:
                 messages.error(request,"No account found for this email.")
                 return redirect("signup")
             
-            user.is_active=True
-            user.save()
+            
             cache.delete(f"otp:{email}")
+            cache.delete(f"user_data:{email}")
             request.session.pop("pending_email", None)
+
             messages.success(request,"Your account has been verified. Please log in.")
             return redirect("signin")
         else:
@@ -192,9 +204,10 @@ def reset_password(request):
 
 #HOME PAGE#
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@login_required
 def home_page(request):
-    category=Category.objects.all()
-    products=Products.objects.all()
+    category=Category.objects.all().order_by("-id")
+    products=Products.objects.all().order_by("-id")
     return render(request,"home.html",{"products":products,"category":category})
 
 
@@ -205,8 +218,8 @@ def signout(request):
     return redirect("signin")
 
 def landing(request):
-    categories=Category.objects.all()
-    products=Products.objects.all()
+    categories=Category.objects.all().order_by("-id")
+    products=Products.objects.all().order_by("-id")
     return render(request,"landing.html",{"products":products,"category":categories})
 
 
@@ -218,8 +231,8 @@ def products_by_category(request,id):
 
 #LISTING ALL PRODUCTS
 def list_products(request):
-    categories=Category.objects.all()
-    products=Products.objects.all()
+    categories=Category.objects.all().order_by("-id")
+    products=Products.objects.all().order_by("-id")
     return render(request,"list_by_products.html",{"products":products,"categories":categories})
 
 #FILETRING AND SORTING

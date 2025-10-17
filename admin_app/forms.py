@@ -68,7 +68,7 @@ class ProductForm(forms.ModelForm):
     def clean_name(self):
         name=self.cleaned_data.get("name")
         if name and not re.match(r'^[a-zA-Z\s]+$', name):
-            raise ValidationError("Category name must contain only letters and spaces (no numbers or special characters)")
+            raise ValidationError("Product name must contain only letters and spaces (no numbers or special characters)")
         
         
         return name
@@ -96,12 +96,30 @@ class ProductVariantForm(forms.ModelForm):
             })
         }
 
+
+    def clean(self):
+        cleaned_data=super().clean()
+        price=cleaned_data.get("price")
+        weight=cleaned_data.get("weight")
+        quantity_stock=cleaned_data.get("quantity_stock")
+
+        if price is not None and price<0:
+            self.add_error("price","Price cannot be negative number")
+
+        if weight is not None and weight<0:
+            self.add_error("weight","Weight cannot be negative number")
+
+        if quantity_stock is not None and quantity_stock<0:
+            self.add_error("quantity_stock","Stock value cannot be negative number")
+
+        return cleaned_data
+
 class ProductImageForm(forms.ModelForm):
     class Meta:
         model=ProductImage
-        fields=["image"]
+        fields=["id","image"]
 
 
 ProductVariantFormSet=formset_factory(ProductVariantForm,extra=3)
 
-ProductVariantInlineFormSet=inlineformset_factory(Products,ProductVariant,form=ProductVariantForm,extra=0)
+ProductVariantInlineFormSet=inlineformset_factory(Products,ProductVariant,form=ProductVariantForm,extra=0,can_delete=True)

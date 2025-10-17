@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from user_app.models import CustomUser
 import base64
-from django.core.files.base import ContentFile
+from cloudinary.uploader import upload
 
 
 # Create your views here.
@@ -21,7 +21,7 @@ def admin_dashboard(request):
     
 
 def customer(request):
-    user=CustomUser.objects.filter(is_staff=False,is_superuser=False)
+    user=CustomUser.objects.filter(is_staff=False,is_superuser=False).order_by("-id")
     return render(request,"customers.html",{"users":user})
 
 def blockUser(request,id):
@@ -29,9 +29,8 @@ def blockUser(request,id):
     if request.method=="POST":
         user.is_blocked=not user.is_blocked
         user.save()
-        return render(request,"block_button.html",{"user":user})
     
-    return render(request,"modal_user.html",{"user":user})
+    return render(request,"status_column.html",{"user":user})
 
 
 #ADMIN LOGIN#
@@ -57,7 +56,12 @@ def admin_login(request):
 #LIST CATEGORY#
 def list_category(request):
     categories=Category.objects.all().order_by("-id")
-    return render(request,"list_category.html",{"category":categories})
+
+    paginator=Paginator(categories,5)
+    page_number=request.GET.get("page")
+    page_obj=paginator.get_page(page_number)
+
+    return render(request,"list_category.html",{"page_obj":page_obj})
 
 
 #ADD CATEGORY#
@@ -65,10 +69,7 @@ def add_category(request):
     if request.method=="POST":
         form=CategoryForm(request.POST, request.FILES)
         if form.is_valid():
-            new_name=form.cleaned_data["name"]
-            if Category.all_category.filter(name__iexact=new_name).exists():
-                messages.error(request,"category already there")
-                return redirect("addCategory")
+            
             try:
                 form.save()
                 messages.success(request,"category is successfully added")
@@ -87,11 +88,6 @@ def edit_category(request,id):
     if request.method=="POST":
         form=CategoryForm(request.POST,request.FILES,instance=category)
         if form.is_valid():
-            new_name=form.cleaned_data["name"]
-            if Category.objects.filter(name__iexact=new_name).exclude(id=category.id).exists():
-                messages.error(request,"name already exists")
-                return redirect("editCategory",id=id)
-
             form.save()
             return redirect("listCategory")
     else:
@@ -102,27 +98,20 @@ def edit_category(request,id):
 
 #DELETE CATEGORY#
 def delete_category(request,id):
-    category=get_object_or_404(Category,id=id)
-    category.is_deleted=True
+    category=get_object_or_404(Category.all_category,id=id)
+    category.is_deleted=not category.is_deleted
     category.save()
-    messages.success(request,"deletion succesfull")
-    return redirect("listCategory")
-
-
-#RESTORE CATEGORY
-def restore_category(request,id):
-    category=get_object_or_404(Category,id=id)
-    category.is_deleted=False
-    category.save()
-    messages.success(request,"category restored")
-    return redirect("listCategory")
-
+    return render(request,"restdel_button.html",{"category":category})
 
 
 #LIST PRODUCTS#
 def products(request):
     products=Products.objects.prefetch_related("variants","images").all().order_by("-id")
-    return render(request,"products.html",{"products":products})
+
+    paginator=Paginator(products,5)
+    page_number=request.GET.get("page")
+    page_obj=paginator.get_page(page_number)
+    return render(request,"products.html",{"page_obj":page_obj})
 
 
 #ADD PRODUCTS#
@@ -130,34 +119,39 @@ def add_products(request):
     if request.method=="POST":
         form=ProductForm(request.POST)
         variant_formset=ProductVariantFormSet(request.POST)
-     
 
         if form.is_valid() and variant_formset.is_valid():
             try:
-                with transaction.atomic():
-                    product=form.save()
+                product = form.save()
+            
+                for variant_form in variant_formset:
+                    if variant_form.cleaned_data:
+                        variant = variant_form.save(commit=False)
+                        variant.product = product
+                        variant.save()
 
-                    variant=variant_formset.save(commit=False)
-                    for v in variant:
-                        v.product=product  
-                        print(v.price)
-                        v.save()
-                        
+                 
+                for i in range(1, 5):
+                    cropped_data = request.POST.get(f"cropped_image_{i}")
+                    print(f"Image {i} data:", cropped_data[:50] if cropped_data else "No data")
+                    if cropped_data:
+                        format, imgstr = cropped_data.split(';base64,')
+                        ext = format.split('/')[-1]
+        
+                        img_bytes = base64.b64decode(imgstr)
 
+                 
+                        result = upload(img_bytes, folder="products")
+                        ProductImage.objects.create(product=product, image=result['secure_url'])
+                        print(f"Image {i} uploaded successfully")
 
-                    for i in range(1, 5):  
-                        cropped_data = request.POST.get(f"cropped_image_{i}")
-                        if cropped_data:
-                            format, imgstr = cropped_data.split(';base64,')
-                            ext = format.split('/')[-1]
-                            file = ContentFile(base64.b64decode(imgstr), name=f"product_{product.id}_{i}.{ext}")
-                            ProductImage.objects.create(product=product,image=file)
-                    
-                    messages.success(request,"product is successfully added")
-                    return redirect("listProduct")
-                
+                messages.success(request, "Product successfully added")
+                print(messages)
+                return redirect("listProduct")
+
             except Exception as e:
-                messages.error(request,f"error is {e}")
+                messages.error(request, f"Error: {e}")
+        
     else:
         form=ProductForm()
         variant_formset=ProductVariantFormSet()
@@ -169,74 +163,71 @@ def add_products(request):
 
 def edit_product(request,id):
     product=get_object_or_404(Products,id=id)
-    existing_images=product.images.all()
+    images=product.images.all()
 
     if request.method=="POST":
-        form=ProductForm(request.POST,instance=product)
-        variant_formset=ProductVariantInlineFormSet(request.POST,instance=product)
-        image_form=ProductImageForm()
-        images=request.FILES.getlist("images")
-        delete_img_id=request.POST.getlist("delete_images")
+        form=ProductForm(request.POST,request.FILES,instance=product)
+        variant_formset=ProductVariantInlineFormSet(request.POST,request.FILES,instance=product)
+        print(variant_formset.errors)
 
         if form.is_valid() and variant_formset.is_valid():
-            
+          
             try:
-                with transaction.atomic():
-                    product=form.save()
+                product=form.save()
                     
-                    for variant_form in variant_formset:
-                        if variant_form.cleaned_data:
+                for variant_form in variant_formset:
+                    if variant_form.cleaned_data:
 
-                            variant=variant_form.save(commit=False)
-                            variant.product=product  
-                            variant.save()
+                        variant=variant_form.save(commit=False)
+                        variant.product=product  
+                        variant.save()
+                    
+             
+                remove_ids=request.POST.getlist("remove_images")
+                print(remove_ids)
+                if remove_ids:
+                    ProductImage.objects.filter(id__in=remove_ids).delete()
 
-                    if delete_img_id:
+                
+                for i in range(1, 5):
+                    cropped_data = request.POST.get(f"cropped_image_{i}")
+                    if cropped_data and cropped_data.startswith('data:image'):
+                        format, imgstr = cropped_data.split(';base64,')
+                        ext = format.split('/')[-1]
+                        img_bytes = base64.b64decode(imgstr)
                         
-                        ProductImage.objects.filter(id__in=delete_img_id,product=product).delete()
-                        print("delete")
+                        result = upload(img_bytes, folder="products")
+                        ProductImage.objects.create(product=product, image=result['secure_url'])
+                        print(f"Image {i} uploaded successfully")
 
-                        for img in images:
-                            ProductImage.objects.create(product=product,image=img)
-                            
-
-                        # messages.success(request,"product updates successfully")
-                        return redirect("listProduct")
+                return redirect("listProduct")
                 
             except Exception as e:
                 print("failed loading",e)
-                return redirect("editProduct")
+                return redirect("editProduct",id=product.id)
+
+        
     else:
         form=ProductForm(instance=product)
         variant_formset=ProductVariantInlineFormSet(instance=product)
-        image_form=ProductImageForm()
 
-    return render(request,"edit_product.html",{"form":form,"variant":variant_formset,"exist_img":existing_images,"image":image_form})
+    return render(request,"edit_product.html",{"form":form,"variant":variant_formset,"product":product,"images":images})
 
 
 #DELETE PRODUCT
 def soft_delete_product(request,id):
-    product=get_object_or_404(Products,id=id)
-    product.is_deleted=True
+    product=get_object_or_404(Products.all_products,id=id)
+    product.is_deleted= not product.is_deleted
     product.save()
-    messages.success(request,"deletion succesfull")
-    return redirect("listProduct")
+    return render(request,"delrest_button.html",{"product":product})
 
-
-#RESTORE PRODUCT
-def restore_product(request,id):
-    product=get_object_or_404(Products,id=id)
-    product.is_deleted=False
-    product.save()
-    messages.success(request,"product restored")
-    return redirect("listProduct")
 
 
 #SEARCH PRODUCT
 def search(request):
-    q=request.GET.get("q")
-    if q:
-        products=Products.objects.filter(Q(name__icontains=q) | Q(category__name__icontains=q)).order_by("-id")
+    search=request.GET.get("search")
+    if search:
+        products=Products.objects.filter(Q(name__icontains=search) | Q(category__name__icontains=search)).order_by("-id")
     else:
         products=Products.objects.prefetch_related("variants", "images").all().order_by("-id")
 
@@ -245,9 +236,9 @@ def search(request):
 
 #SEARCH CATEGORY
 def searchCategory(request):
-    q=request.GET.get("q")
-    if q:
-        categories=Category.objects.filter(name__icontains=q).order_by("-id")
+    search=request.GET.get("search")
+    if search:
+        categories=Category.objects.filter(name__icontains=search).order_by("-id")
     else:
         categories=Category.objects.all().order_by("-id")
 

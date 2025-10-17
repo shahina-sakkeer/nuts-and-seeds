@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuts & Seeds</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+</head>
+
+<body class="bg-gray-50">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Image zoom effect on hover */
+        .image-zoom-container {
+            overflow: hidden;
+        }
+
+        .image-zoom-container img {
+            transition: transform 0.5s ease;
+        }
+
+        .image-zoom-container:hover img {
+            transform: scale(1.5);
+        }
+
+        /* Image switcher using CSS radio buttons */
+        .image-radio {
+            display: none;
+        }
+
+        .main-image {
+            display: none;
+        }
+
+        #img1:checked~.image-display #main-img1,
+        #img2:checked~.image-display #main-img2,
+        #img3:checked~.image-display #main-img3 {
+            display: block;
+        }
+
+        #img1:checked~.thumbnails label[for="img1"],
+        #img2:checked~.thumbnails label[for="img2"],
+        #img3:checked~.thumbnails label[for="img3"] {
+            border-color: #ea580c;
+            box-shadow: 0 0 0 2px #ea580c;
+        }
+
+
+        .qty-input::-webkit-outer-spin-button,
+        .qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href=""><span class="text-2xl font-bold text-gray-900">Nuts & Seeds</span></a>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="" class="text-gray-900 font-medium hover:text-gray-600 transition">Home</a>
+                    <a href="" class="text-gray-600 hover:text-gray-900 transition">Products</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 transition">About Us</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 transition">Contact</a>
+                </div>
+
+                <!-- Right Side Icons -->
+                <div class="flex items-center space-x-4">
+                    <!-- Search Bar -->
+                    <form action="">
+                        <div class="hidden sm:block">
+                            <input type="hidden" id="category-id" name="category_id" value="{{ cat.id|default:'' }}">
+                            <input type="text" name="search" placeholder="Search..."
+                                class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
+                                hx-get="{% url 'filtering' %}" hx-trigger="keyup changed delay:300ms"
+                                hx-target="#category-product" hx-swap="innerHTML" hx-include="#category-id">
+                        </div>
+                    </form>
+
+                    <a href="{% url 'signin' %}" class="text-gray-600 hover:text-gray-900 transition">Login</a>
+                    <a href="{% url 'signup' %}" class="text-gray-600 hover:text-gray-900 transition">Signup</a>
+
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- navbar ends -->
+
+    {% block content %}
+
+
+
+    {% endblock %}
+
+    <!-- footer section -->
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex flex-wrap justify-center gap-8 mb-8">
+                <a href="#" class="text-gray-600 hover:text-gray-900 transition">About Us</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900 transition">Contact</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900 transition">Privacy Policy</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900 transition">Terms of Service</a>
+            </div>
+            <div class="text-center text-gray-500 text-sm">
+                <p>&copy; 2025 ShopSmart. All rights reserved.</p>
+            </div>
+        </div>
+        <div>
+
+        </div>
+    </footer>
+
+
+<!-- Eye button script -->
+<script>
+function togglePassword(fieldId, iconId) {
+    const passwordField = document.getElementById(fieldId);
+    const eyeIcon = document.getElementById(iconId);
+
+    if (passwordField.type === "password") {
+        passwordField.type = "text";
+        eyeIcon.classList.remove("fa-eye");
+        eyeIcon.classList.add("fa-eye-slash");
+    } else {
+        passwordField.type = "password";
+        eyeIcon.classList.remove("fa-eye-slash");
+        eyeIcon.classList.add("fa-eye");
+    }
+}
+</script>
+
+
+<!-- Timer reset script for orp verification -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let timeLeft = 60;
+    const minutes = document.getElementById("minutes");
+    const seconds = document.getElementById("seconds");
+    const resendBtn = document.getElementById("resendBtn");
+    let countdown;
+
+    function updateTimer() {
+        let m = Math.floor(timeLeft / 60);
+        let s = timeLeft % 60;
+        minutes.innerHTML = m.toString().padStart(2,"0");
+        seconds.innerHTML = s.toString().padStart(2,"0");
+    }
+
+    function startTimer() {
+        timeLeft = 60;
+        updateTimer();
+        resendBtn.classList.add("bg-gray-400", "cursor-not-allowed", "pointer-events-none");
+        resendBtn.classList.remove("bg-red-600");
+
+        countdown = setInterval(() => {
+            timeLeft--;
+            updateTimer();
+            if(timeLeft <= 0) {
+                clearInterval(countdown);
+                resendBtn.classList.remove("bg-gray-400", "cursor-not-allowed");
+                resendBtn.classList.add("bg-red-600");
+            }
+        }, 1000);
+    }
+
+    startTimer();
+
+    resendBtn.addEventListener("click", function(event) {
+        if (resendBtn.classList.contains("cursor-not-allowed")) {
+            event.preventDefault();
+            return;
+        }
+
+        // Call resend_otp view via fetch
+        fetch("{% url 'resend_otp' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+        }).then(response => {
+            if(response.ok) {
+                startTimer(); // restart timer
+                alert("OTP resent successfully");
+            } else {
+                alert("Failed to resend OTP");
+            }
+        }).catch(error => {
+            console.error(error);
+            alert("Error sending OTP");
+        });
+    });
+});
+</script>
+    
+</body>
+
+</html>

@@ -6,77 +6,63 @@
 
     <!-- Product Table -->
     <div class="bg-white rounded-lg shadow-md overflow-hidden ">
-            <table class="w-full">
-                <thead class="bg-gray-100 border-b">
-                    <tr>
-                        <th
-                            class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                            Email</th>
-                        <th
-                            class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                            Mobile</th>
-                         <th
-                            class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                            Date of join</th>
-                        <th
-                            class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                            Status</th>
-                        <th
-                            class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                            Actions</th>
-                    </tr>
-                </thead>
-                {% for user in users %}
-                <tbody class="divide-y divide-gray-200">
-                    <!-- Product Row 1 -->
-                    <tr class="hover:bg-gray-50 transition duration-150">
-                        <td class="px-4 sm:px-6 py-4">
-                            <div class="flex items-center space-x-3 sm:space-x-4">
-                                <span class="text-sm sm:text-base font-medium text-gray-800">{{user.email}}</span>
-                            </div>
-                        </td>
-                        <td class="px-4 sm:px-6 py-4">
-                            <div class="flex items-center space-x-3 sm:space-x-4">
-                                <span class="text-sm sm:text-base font-medium text-gray-800">{{user.phone_number}}</span>
-                            </div>
-                        </td>
-                        <td class="px-4 sm:px-6 py-4">
-                            <div class="flex items-center space-x-3 sm:space-x-4">
-                                <span class="text-sm sm:text-base font-medium text-gray-800">{{user.date_joined|date:"Y-m-d"}}</span>
-                            </div>
-                        </td>
-                        <td class="px-4 sm:px-6 py-4">
-                            <div class="flex items-center space-x-3 sm:space-x-4">
-                                {% if user.is_active %}
-                                <span class="text-sm sm:text-base font-medium text-gray-800">
-                                    <button
-                                    class="bg-green-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition duration-200">
-                                    Active
-                                </button>
-                                </span>
-                                {% else %}
-                                <span class="text-sm sm:text-base font-medium text-gray-800">
-                                    <button
-                                    class="bg-orange-500  text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition duration-200">
-                                    Inactive
-                                </button>
-                                </span>
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td class="px-4 sm:px-6 py-4" id="modal-container">
-                            {% include 'block_button.html' with users=users %}
-                        </td>
-                        
-                    </tr>
-                </tbody>
-                {% endfor %}
-            </table>
+        <table class="w-full">
+            <thead class="bg-gray-100 border-b">
+                <tr>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        Email</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        Mobile</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        Date of join</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        Status</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        Actions</th>
+                </tr>
+            </thead>
+            {% for user in users %}
+            <tbody class="divide-y divide-gray-200">
+                <!-- Product Row 1 -->
+                <tr class="hover:bg-gray-50 transition duration-150">
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{user.email}}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{user.phone_number}}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span
+                                class="text-sm sm:text-base font-medium text-gray-800">{{user.date_joined|date:"Y-m-d"}}</span>
+                        </div>
+                    </td>
+                    
+                    <!-- status column -->
+                    <td class="px-4 sm:px-6 py-4" id="status-{{user.id}}">
+                        {% include 'status_column.html' with user=user %}
+                    </td>
+
+                    <!-- action column -->
+                    <td class="px-4 sm:px-6 py-4" id="action-button-{{user.id}}">
+                        {% include 'block_button.html' with user=user %}
+                    </td>
+
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
     </div>
 </div>
 
-<div id="modal-container">
-
-</div>
 
 {% endblock %}

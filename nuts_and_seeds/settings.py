@@ -112,12 +112,13 @@ CACHES = {
 }
 
 #EMAIL OTP GENERATE
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "shahinabinthsakKeer@gmail.com"
-EMAIL_HOST_PASSWORD = "rnzu cmua chug arge"
+EMAIL_BACKEND = config("EMAIL_BACKEND")
+EMAIL_HOST = config("EMAIL_HOST")
+EMAIL_PORT = config("EMAIL_PORT", cast=int)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -183,12 +184,14 @@ AUTHENTICATION_BACKENDS = [
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
-            "client_id": "31413795335-0ucl4rffnuvvph9ao0aie0hv0qcminje.apps.googleusercontent.com",
-            "secret": "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",
+            "client_id": config("GOOGLE_CLIENT_ID"),
+            "secret": config("GOOGLE_CLIENT_SECRET"),
             "key": ""
-        }
+        },
+    
     }
 }
+
 
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None

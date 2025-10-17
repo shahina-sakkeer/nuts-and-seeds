@@ -6,13 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuts & Seeds Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
-    <!-- <link  href="https://unpkg.com/cropperjs/dist/cropper.css" rel="stylesheet"/> -->
     <!-- Cropper CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
-
     <!-- Cropper JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
 </head>
 
@@ -50,8 +48,10 @@
 
     {% block content %}
 
-    {% endblock %}
 
+
+
+    {% endblock %}
 
     <!-- csrf for htmx -->
     <script>
@@ -65,49 +65,153 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const imageInputs = document.querySelectorAll(".image-input");
+            const modal = document.getElementById("cropperModal");
+            const modalImage = document.getElementById("modalImage");
+            const closeModal = document.getElementById("closeModal");
+            const cropSave = document.getElementById("cropSave");
+            let cropper, currentPreview, currentHidden;
 
             imageInputs.forEach(input => {
                 const index = input.dataset.index;
                 const preview = document.getElementById(`preview-${index}`);
                 const hiddenInput = document.getElementById(`cropped-${index}`);
-                let cropper;
 
-                // File selection
                 input.addEventListener("change", function (e) {
                     if (e.target.files && e.target.files[0]) {
                         const reader = new FileReader();
                         reader.onload = function (event) {
-                            preview.src = event.target.result;
-                            preview.style.display = "block";
+                            modalImage.src = event.target.result;
+                            modal.classList.remove("hidden");
 
-                            // Destroy previous cropper if exists
+                            // Destroy old cropper
                             if (cropper) cropper.destroy();
 
-                            // Initialize Cropper
-                            cropper = new Cropper(preview, {
-                                aspectRatio: 1,       // Square crop
+                            // New cropper
+                            cropper = new Cropper(modalImage, {
+                                aspectRatio: 1,
                                 viewMode: 1,
                                 autoCropArea: 1,
                                 responsive: true,
                             });
-                        }
+
+                            currentPreview = preview;
+                            currentHidden = hiddenInput;
+                        };
                         reader.readAsDataURL(e.target.files[0]);
                     }
                 });
+            });
 
-                const form = input.closest("form");
-                form.addEventListener("submit", function () {
-                    if (cropper) {
-                        const canvas = cropper.getCroppedCanvas({
-                            width: 500,
-                            height: 500
-                        });
-                        hiddenInput.value = canvas.toDataURL("image/png");
-                    }
-                });
+            // Close modal
+            closeModal.addEventListener("click", function () {
+                modal.classList.add("hidden");
+                if (cropper) cropper.destroy();
+            });
+
+            // Save crop
+            cropSave.addEventListener("click", function (e) {
+                e.preventDefault(); // <-- prevent form auto-submit here
+
+                if (cropper && currentHidden && currentPreview) {
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 500,
+                        height: 500
+                    });
+                    currentHidden.value = canvas.toDataURL("image/png");
+                    currentPreview.src = currentHidden.value;
+                    currentPreview.style.display = "block";
+
+                    modal.classList.add("hidden");
+                    cropper.destroy();
+                }
             });
         });
     </script>
+
+
+    <!-- Remove image from edit product -->
+    <script>
+        let croppers = {};
+
+        function previewAndCrop(input, index) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = document.getElementById('preview-' + index);
+                img.src = e.target.result;
+                img.classList.remove('hidden');
+                const slot = img.closest('.image-slot');
+                const addSpan = slot.querySelector('.add-image');
+                if (addSpan) addSpan.style.display = 'none';
+
+                if (croppers[index]) croppers[index].destroy();
+                croppers[index] = new Cropper(img, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    autoCropArea: 1,
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        /* ---------- DOM ready ---------- */
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('form');
+            if (!form) return console.error('Form not found');
+
+            /* ---- click + Add ---- */
+            document.addEventListener('click', e => {
+                if (e.target.classList.contains('add-image')) {
+                    const idx = e.target.dataset.index;
+                    const fileInput = document.querySelector(`.file-input[data-index="${idx}"]`);
+                    if (fileInput) fileInput.click();
+                }
+            });
+
+            /* ---- click ✕ (remove) ---- */
+            document.addEventListener('click', e => {
+                if (!e.target.classList.contains('remove-btn')) return;
+
+                const slot = e.target.closest('.image-slot');
+                const checkbox = slot.querySelector('.remove-checkbox');
+                const img = slot.querySelector('img');
+
+                // ✅ mark for backend deletion
+                if (checkbox) {
+                    checkbox.checked = true;
+                    console.log("Marked for deletion:", checkbox.value);
+                }
+
+                // ✅ hide preview image + remove button
+                if (img) img.style.display = "none";
+                e.target.style.display = "none";
+
+                // ✅ show "+ Add" again
+                let addSpan = slot.querySelector('.add-image');
+                if (addSpan) {
+                    addSpan.style.display = 'flex';
+                }
+            });
+
+            /* ---- submit ---- */
+            form.addEventListener('submit', e => {
+                console.log('SUBMITTING...');
+                for (let i = 1; i <= 4; i++) {
+                    if (croppers[i]) {
+                        const canvas = croppers[i].getCroppedCanvas({ width: 500, height: 500 });
+                        const hidden = document.getElementById('cropped-' + i);
+                        if (hidden) hidden.value = canvas.toDataURL('image/png');
+                        console.log('Image', i, 'CROPPED');
+                    }
+                }
+            });
+        });
+    </script>
+
+
+
 
 </body>
 

@@ -4,17 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuts & Seeds</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
 </head>
 <body class="bg-gray-50">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Image zoom effect on hover */
+        .image-zoom-container {
+            overflow: hidden;
+        }
+        
+        .image-zoom-container img {
+            transition: transform 0.5s ease;
+        }
+        
+        .image-zoom-container:hover img {
+            transform: scale(1.5);
+        }
+        
+        /* Image switcher using CSS radio buttons */
+        .image-radio {
+            display: none;
+        }
+        
+        .main-image {
+            display: none;
+        }
+        
+        #img1:checked ~ .image-display #main-img1,
+        #img2:checked ~ .image-display #main-img2,
+        #img3:checked ~ .image-display #main-img3 {
+            display: block;
+        }
+        
+        #img1:checked ~ .thumbnails label[for="img1"],
+        #img2:checked ~ .thumbnails label[for="img2"],
+        #img3:checked ~ .thumbnails label[for="img3"] {
+            border-color: #ea580c;
+            box-shadow: 0 0 0 2px #ea580c;
+        }
+        
+        
+        .qty-input::-webkit-outer-spin-button,
+        .qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
     <!-- Navbar -->
     <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
                 <div class="flex-shrink-0">
-                    <span class="text-2xl font-bold text-gray-900">Nuts & Seeds</span>
+                    <a href="{% url 'home' %}"><span class="text-2xl font-bold text-gray-900">Nuts & Seeds</span></a>
                 </div>
                 
                 <!-- Navigation Links -->
@@ -49,8 +100,9 @@
                         <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
-                        <span class="absolute -top-1 -right-1 bg-gray-900 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                        
                     </button>
+                    <a href="{% url 'signout' %}" class="text-gray-600 hover:text-gray-900 transition">logout</a>
                 </div>
             </div>
         </div>
@@ -76,31 +128,10 @@
             </div>
         </div>
         <div>
-        <a href="{% url 'signout' %}">logout</a>
+        
     </div>
     </footer>
 </body>
 </html>
 
 
-
-
-
-
-
-
-
-<!-- 
-<form action="{% url 'filtering' %}">
-
-                            <input type="text" name="search" placeholder="Search..." autocomplete="off"
-                                class="pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 w-48"
-                                hx-get="{% url 'filtering' %}" hx-trigger="keyup changed delay:300ms"
-                                hx-target="#category-product" hx-swap="innerHTML"> 
-                       
-
-                            <button type="reset" hx-get="{% url 'filtering' %}" hx-target="#category-product"
-                                hx-swap="innerHTML"
-                                class="px-3 py-1 bg-red-100 text-blue-800 rounded hover:bg-blue-200 transition">Cancel</button>
-                        </form>
-                  -->

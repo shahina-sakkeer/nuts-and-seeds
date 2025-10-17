@@ -1,123 +1,132 @@
-{% extends 'base.html' %}
+{% extends 'navbar_landing.html' %}
 {% block content %}
 
-    <!-- Main Content -->
-    <main class="flex-1 py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md mx-auto">
-            <!-- Form Container -->
-            <div class="bg-white py-8 px-6 shadow-sm rounded-lg">
-                <div class="mb-8 text-center">
-                    <h2 class="text-2xl font-medium text-gray-900">Create an account</h2>
+<!-- Main Content -->
+<main class="flex-1 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto">
+        <!-- Form Container -->
+        <div class="bg-white py-8 px-6 shadow-sm rounded-lg">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-medium text-gray-900">Create an account</h2>
+            </div>
+
+
+            {% for m in messages %}
+            {{m}}
+            {% endfor %}
+
+
+            <form class="space-y-6" action="" method="POST">
+                {% csrf_token %}
+                <!-- First Name -->
+                <div>
+                    <label for="firstname" class="block text-sm font-medium text-gray-700 mb-2">
+                        First Name
+                    </label>
+                    {{form.firstname}}
+                    {% if form.firstname.errors %}
+
+                    <p class="text-red-500 text-sm mt-1">{{ form.firstname.errors.0 }}</p>
+
+                    {% endif %}
                 </div>
 
-             
-                {% for m in messages %}
-                {{m}}
-                {% endfor %}
-              
+                <!-- Last Name -->
+                <div>
+                    <label for="lastname" class="block text-sm font-medium text-gray-700 mb-2">
+                        Last Name
+                    </label>
+                    {{form.lastname}}
+                    {% if form.lastname.errors %}
 
-                <form class="space-y-6" action="" method="POST">
-                    {% csrf_token %}
-                    <!-- First Name -->
-                    <div>
-                        <label for="firstname" class="block text-sm font-medium text-gray-700 mb-2">
-                            First Name
-                        </label>
-                        {{form.firstname}}
-                        {% if form.firstname.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.lastname.errors.0 }}</p>
 
-                            <p class="text-red-500 text-sm mt-1">{{ form.firstname.errors.0 }}</p>
+                    {% endif %}
+                </div>
 
-                        {% endif %}
-                    </div>
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                    </label>
+                    {{form.email}}
+                    {% if form.email.errors %}
 
-                    <!-- Last Name -->
-                    <div>
-                        <label for="lastname" class="block text-sm font-medium text-gray-700 mb-2">
-                            Last Name
-                        </label>
-                        {{form.lastname}}
-                        {% if form.lastname.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
 
-                            <p class="text-red-500 text-sm mt-1">{{ form.lastname.errors.0 }}</p>
+                    {% endif %}
+                </div>
 
-                        {% endif %}
-                    </div>
+                <!-- Phone Number -->
+                <div>
+                    <label for="phone-number" class="block text-sm font-medium text-gray-700 mb-2">
+                        Phone Number
+                    </label>
+                    {{form.phone_number}}
+                    {% if form.phone_number.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.phone_number.errors.0 }}</p>
 
-                    <!-- Email -->
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                            Email
-                        </label>
-                        {{form.email}}
-                        {% if form.email.errors %}
-                               
-                            <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
 
-                        {% endif %}
-                    </div>
+                <!-- Password -->
+                <div class="relative mb-4">
+                    <label for="id_password" class="block text-sm font-medium text-gray-700 mb-2">
+                        Password
+                    </label>
+                    {{form.password}}
+                    {% if form.password.errors %}
 
-                    <!-- Phone Number -->
-                    <div>
-                        <label for="phone-number" class="block text-sm font-medium text-gray-700 mb-2">
-                            Phone Number
-                        </label>
-                        {{form.phone_number}}
-                        {% if form.phone_number.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.phone_number.errors.0 }}</p>
-                            
-                        {% endif %}
-                    </div>
+                    <p class="text-red-500 text-sm mt-1">{{ form.password.errors.0 }}</p>
+                     {% endif %}
 
-                    <!-- Password -->
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                            Password
-                        </label>
-                        {{form.password}}
-                        {% if form.password.errors %}
-                               
-                            <p class="text-red-500 text-sm mt-1">{{ form.password.errors.0 }}</p>
+                    <span onclick="togglePassword('id_password', 'eyeIcon1')"
+                        class="absolute right-3 top-10 cursor-pointer">
+                        <i id="eyeIcon1" class="fa fa-eye"></i>
+                    </span>
+                   
 
-                        {% endif %}
-                    </div>
+                </div>
 
-                    <!-- Confirm Password -->
-                    <div>
-                        <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-2">
-                            Confirm Password
-                        </label>
-                        {{form.confirm_password}}
-                        {% if form.confirm_password.errors %}
-                               
-                            <p class="text-red-500 text-sm mt-1">{{ form.confirm_password.errors.0 }}</p>
+                <!-- Confirm Password -->
+                <div class="relative mb-4">
+                    <label for="id_confirm_password" class="block text-sm font-medium text-gray-700 mb-2">
+                        Confirm Password
+                    </label>
+                    {{form.confirm_password}}
+                    {% if form.confirm_password.errors %}
 
-                        {% endif %}
-                    </div>
+                    <p class="text-red-500 text-sm mt-1">{{ form.confirm_password.errors.0 }}</p>
 
-                    <!-- Submit Button -->
-                    <div class="pt-4">
-                        <button 
-                            type="submit" 
-                            class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">
-                            Create
-                        </button>
-                    </div>
+                    {% endif %}
 
-                    <!-- Sign In Link -->
-                    <div class="text-center pt-4">
-                        <span class="text-sm text-gray-600">
-                            Already have an account? 
-                            <a href="{% url 'signin' %}" class="font-medium text-red-600 hover:text-red-500">
-                                Sign in
-                            </a>
-                        </span>
-                    </div>
-                </form>
-            </div>
+                    <span onclick="togglePassword('id_confirm_password', 'eyeIcon2')"
+                        class="absolute right-3 top-10 cursor-pointer">
+                        <i id="eyeIcon2" class="fa fa-eye"></i>
+                    </span>
+                   
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4">
+                    <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">
+                        Create
+                    </button>
+                </div>
+
+                <!-- Sign In Link -->
+                <div class="text-center pt-4">
+                    <span class="text-sm text-gray-600">
+                        Already have an account?
+                        <a href="{% url 'signin' %}" class="font-medium text-red-600 hover:text-red-500">
+                            Sign in
+                        </a>
+                    </span>
+                </div>
+            </form>
         </div>
-    </main>
+    </div>
+</main>
 
-    {% endblock %}
-
-    
+{% endblock %}
