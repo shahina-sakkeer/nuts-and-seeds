@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate,login,logout
 from admin_app.models import Products,Category,ProductVariant
 from django.db.models import Q,Min,Max
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -89,12 +90,19 @@ def verify_otp(request):
 #RESEND OTP#
 def resend_otp(request):
     email = request.session.get("pending_email")
-    otp=random.randint(100000,999999)
-    cache.set(f"otp:{email}", otp, timeout=60)
-    send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[email])
-    messages.info(request, "A new OTP has been sent to your email.")
-    return redirect("verify_otp")
+    
+    if not email:
+        return JsonResponse({"success": False, "message": "No pending email"}, status=400)
+    
+    if request.method=="POST":
+
+        otp=random.randint(100000,999999)
+        cache.set(f"otp:{email}", otp, timeout=60)
+        send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[email])
+        messages.info(request, "A new OTP has been sent to your email.")
+        return JsonResponse({"success": True, "message": "OTP resent successfully"})
       
+
 #USER LOGIN#
 
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
@@ -131,8 +139,8 @@ def signin(request):
 
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def forgot_password(request):
-    if request.session.get("reset_email"):
-        return redirect("forgot_password_otp")
+    # if request.session.get("reset_email"):
+    #     return redirect("forgot_password_otp")
     
     if request.method=="POST":
         email=request.POST.get("email")
@@ -212,6 +220,8 @@ def home_page(request):
 
 
 #logout#
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@login_required
 def signout(request):
     logout(request)
     cache.clear()
@@ -224,18 +234,21 @@ def landing(request):
 
 
 #LIST CATEGORY PRODUCTS
+@login_required
 def products_by_category(request,id):
     category=get_object_or_404(Category,id=id)
     products=Products.objects.filter(category=category).prefetch_related("variants").all()
     return render(request,"products_by_catg.html",{"products":products})
 
 #LISTING ALL PRODUCTS
+@login_required
 def list_products(request):
     categories=Category.objects.all().order_by("-id")
     products=Products.objects.all().order_by("-id")
     return render(request,"list_by_products.html",{"products":products,"categories":categories})
 
 #FILETRING AND SORTING
+@login_required
 def filterProducts(request,id=None):
     search=request.GET.get("search")
     id=request.GET.get("category_id")
@@ -280,6 +293,7 @@ def filterProducts(request,id=None):
 
 
 #PRODUCT DETAILS PAGE
+@login_required
 def productDetail(request,id=id):
     product=get_object_or_404(Products,id=id)
     variants=product.variants.all()

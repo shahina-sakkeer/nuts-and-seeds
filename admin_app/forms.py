@@ -122,4 +122,5 @@ class ProductImageForm(forms.ModelForm):
 
 ProductVariantFormSet=formset_factory(ProductVariantForm,extra=3)
 
-ProductVariantInlineFormSet=inlineformset_factory(Products,ProductVariant,form=ProductVariantForm,extra=0,can_delete=True)
+ProductVariantInlineFormSet=inlineformset_factory(Products,ProductVariant,form=ProductVariantForm,extra=2,
+                                                  max_num=3,can_delete=True)

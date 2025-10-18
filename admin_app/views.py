@@ -1,9 +1,11 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from admin_app.forms import AdminLoginForm,CategoryForm,ProductForm,ProductImageForm,ProductVariantFormSet,ProductVariantInlineFormSet
 from admin_app.decorators import staff_required
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login,logout
+from django.core.cache import cache
+from django.views.decorators.cache import cache_control
 from django.contrib import messages
-from admin_app.models import Category,Products,ProductImage
+from admin_app.models import Category,Products,ProductImage,ProductVariant
 from django.db import transaction,IntegrityError
 from django.db.models import Q
 from django.core.paginator import Paginator
@@ -16,14 +18,26 @@ from cloudinary.uploader import upload
 
 #DASHOBOARD OF ADMIN#
 @staff_required
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def admin_dashboard(request):
     return render(request,"dashboard.html")
-    
 
+
+#CUSTOMER MANAGEMENT    
+@staff_required
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def customer(request):
     user=CustomUser.objects.filter(is_staff=False,is_superuser=False).order_by("-id")
-    return render(request,"customers.html",{"users":user})
 
+    paginator=Paginator(user,6)
+    page_number=request.GET.get("page")
+    page_obj=paginator.get_page(page_number)
+    return render(request,"customers.html",{"users":page_obj})
+
+
+#BLOCK USER MANAGEMENT
+@staff_required
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def blockUser(request,id):
     user=get_object_or_404(CustomUser,id=id)
     if request.method=="POST":
@@ -35,6 +49,9 @@ def blockUser(request,id):
 
 #ADMIN LOGIN#
 def admin_login(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard_home")
+    
     if request.method=="POST":
         form=AdminLoginForm(request.POST)
         if form.is_valid():
@@ -44,6 +61,7 @@ def admin_login(request):
 
             if user is not None and user.is_staff:
                 login(request,user)
+                messages.success(request,"Admin login successfully")
                 return redirect("dashboard_home")
             else:
                 messages.error(request,"Invalid Credentials or not and Admin!!")
@@ -53,7 +71,18 @@ def admin_login(request):
     return render(request,"admin_login.html",{"form":form})
 
 
+#ADMIN LOGOUT
+@staff_required
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+def signout(request):
+    logout(request)
+    cache.clear()
+    return redirect("admin_signin")
+
+
 #LIST CATEGORY#
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def list_category(request):
     categories=Category.objects.all().order_by("-id")
 
@@ -65,6 +94,8 @@ def list_category(request):
 
 
 #ADD CATEGORY#
+@staff_required
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def add_category(request):
     if request.method=="POST":
         form=CategoryForm(request.POST, request.FILES)
@@ -82,6 +113,8 @@ def add_category(request):
 
 
 #EDIT CATEGORY#
+@staff_required
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def edit_category(request,id):
     category=get_object_or_404(Category,id=id)
 
@@ -89,6 +122,7 @@ def edit_category(request,id):
         form=CategoryForm(request.POST,request.FILES,instance=category)
         if form.is_valid():
             form.save()
+            messages.success(request,"Category updated!!")
             return redirect("listCategory")
     else:
         form=CategoryForm(instance=category)
@@ -97,6 +131,8 @@ def edit_category(request,id):
 
 
 #DELETE CATEGORY#
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def delete_category(request,id):
     category=get_object_or_404(Category.all_category,id=id)
     category.is_deleted=not category.is_deleted
@@ -105,6 +141,7 @@ def delete_category(request,id):
 
 
 #LIST PRODUCTS#
+@staff_required
 def products(request):
     products=Products.objects.prefetch_related("variants","images").all().order_by("-id")
 
@@ -115,6 +152,8 @@ def products(request):
 
 
 #ADD PRODUCTS#
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def add_products(request):
     if request.method=="POST":
         form=ProductForm(request.POST)
@@ -150,7 +189,7 @@ def add_products(request):
                 return redirect("listProduct")
 
             except Exception as e:
-                messages.error(request, f"Error: {e}")
+                messages.error(request,"Failed to add product")
         
     else:
         form=ProductForm()
@@ -160,7 +199,8 @@ def add_products(request):
 
 
 #EDIT PRODUCTS#
-
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def edit_product(request,id):
     product=get_object_or_404(Products,id=id)
     images=product.images.all()
@@ -168,7 +208,6 @@ def edit_product(request,id):
     if request.method=="POST":
         form=ProductForm(request.POST,request.FILES,instance=product)
         variant_formset=ProductVariantInlineFormSet(request.POST,request.FILES,instance=product)
-        print(variant_formset.errors)
 
         if form.is_valid() and variant_formset.is_valid():
           
@@ -184,9 +223,13 @@ def edit_product(request,id):
                     
              
                 remove_ids=request.POST.getlist("remove_images")
-                print(remove_ids)
                 if remove_ids:
                     ProductImage.objects.filter(id__in=remove_ids).delete()
+
+                remove_variant_id=request.POST.getlist("remove_variant")
+                print(remove_variant_id)
+                if remove_variant_id:
+                    ProductVariant.objects.filter(id__in=remove_variant_id).delete()
 
                 
                 for i in range(1, 5):
@@ -200,10 +243,11 @@ def edit_product(request,id):
                         ProductImage.objects.create(product=product, image=result['secure_url'])
                         print(f"Image {i} uploaded successfully")
 
+                messages.success(request,"Product updated!!!")
                 return redirect("listProduct")
                 
             except Exception as e:
-                print("failed loading",e)
+                messages.error(request,"Failed to update!. Try again.")
                 return redirect("editProduct",id=product.id)
 
         
@@ -215,6 +259,8 @@ def edit_product(request,id):
 
 
 #DELETE PRODUCT
+@staff_required
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def soft_delete_product(request,id):
     product=get_object_or_404(Products.all_products,id=id)
     product.is_deleted= not product.is_deleted
@@ -224,6 +270,8 @@ def soft_delete_product(request,id):
 
 
 #SEARCH PRODUCT
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def search(request):
     search=request.GET.get("search")
     if search:
@@ -235,6 +283,8 @@ def search(request):
 
 
 #SEARCH CATEGORY
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def searchCategory(request):
     search=request.GET.get("search")
     if search:

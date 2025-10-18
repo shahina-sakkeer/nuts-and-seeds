@@ -10,7 +10,7 @@
                 <h2 class="text-2xl font-medium text-gray-900">Login</h2>
             </div>
 
-            {% if messages %}
+            <!-- {% if messages %}
 
             {% for msg in messages %}
 
@@ -20,7 +20,7 @@
 
             {% endfor %}
 
-            {% endif %}
+            {% endif %} -->
 
             <form class="space-y-6" action="{% url 'signin' %}" method="POST">
                 {% csrf_token %}

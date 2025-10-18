@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuts & Seeds</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toastify -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
 </head>
@@ -101,6 +104,7 @@
     </nav>
     <!-- navbar ends -->
 
+    {% include 'messages.html' %}
     {% block content %}
 
 
@@ -145,7 +149,7 @@ function togglePassword(fieldId, iconId) {
 </script>
 
 
-<!-- Timer reset script for orp verification -->
+<!-- Timer reset script for otp verification -->
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -169,12 +173,13 @@ document.addEventListener("DOMContentLoaded", function() {
         resendBtn.classList.remove("bg-red-600");
 
         countdown = setInterval(() => {
-            timeLeft--;
-            updateTimer();
             if(timeLeft <= 0) {
                 clearInterval(countdown);
-                resendBtn.classList.remove("bg-gray-400", "cursor-not-allowed");
+                resendBtn.classList.remove("bg-gray-400", "cursor-not-allowed", "pointer-events-none");
                 resendBtn.classList.add("bg-red-600");
+            }else{
+                timeLeft--;
+                updateTimer();
             }
         }, 1000);
     }
@@ -182,8 +187,9 @@ document.addEventListener("DOMContentLoaded", function() {
     startTimer();
 
     resendBtn.addEventListener("click", function(event) {
+        event.preventDefault();
+
         if (resendBtn.classList.contains("cursor-not-allowed")) {
-            event.preventDefault();
             return;
         }
 
