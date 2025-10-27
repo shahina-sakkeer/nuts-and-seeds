@@ -168,30 +168,35 @@
         });
     </script>
 
-<!-- script for wishlist heart toggle -->
+<!-- Wishlist JS -->
 <script>
-function toggleWishlist(element) {
-    const productId = element.getAttribute('data-product-id'); // should get a valid number
-    const url = `/user/toggle-wishlist/${productId}/`;  // ✅ include the id in URL
+document.querySelectorAll('.wishlist-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const variantId = this.dataset.variantId;
+        const icon = this.querySelector('i');
+        const isAdded = icon.classList.contains('fa-solid');
+        const url = isAdded 
+            ? `/wishlist/remove/${variantId}/` 
+            : `/wishlist/add/${variantId}/`;
 
-    fetch(url, {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === "added") {
-            element.classList.remove('fa-regular', 'text-gray-400');
-            element.classList.add('fa-solid', 'text-red-500');
-        } else if (data.status === "removed") {
-            element.classList.remove('fa-solid', 'text-red-500');
-            element.classList.add('fa-regular', 'text-gray-400');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
+        fetch(url, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                if (isAdded) {
+                    icon.classList.remove('fa-solid', 'text-red-500');
+                    icon.classList.add('fa-regular', 'text-gray-400');
+                } else {
+                    icon.classList.remove('fa-regular', 'text-gray-400');
+                    icon.classList.add('fa-solid', 'text-red-500');
+                }
+            }
+        });
+    });
+});
 </script>
 
 

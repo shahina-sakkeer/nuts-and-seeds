@@ -141,6 +141,7 @@ def delete_category(request,id):
 
 
 #LIST PRODUCTS#
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
 @staff_required
 def products(request):
     products=Products.objects.prefetch_related("variants","images").all().order_by("-id")
@@ -296,12 +297,16 @@ def searchCategory(request):
 
 
 #ORDERS LIST
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def order_list(request):
     orders=Orders.objects.all().order_by("-id")
     return render(request,"orders/orders.html",{"orders":orders})
 
 
 #ORDER DETAILED PAGE
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def order_detail_page(request,id):
     order=get_object_or_404(Orders,id=id)
     ordered_item_details=order.orderitem.all()

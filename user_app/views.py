@@ -3,7 +3,7 @@ from .forms import UserRegistrationForm,UserLoginForm,UserAddressForm,UserProfil
 import random
 from django.core.mail import send_mail
 from django.core.cache import cache
-from django.views.decorators.cache import cache_control
+from django.views.decorators.cache import cache_control,never_cache
 from django.contrib import messages
 from .models import CustomUser,UserAddress,Cart,CartItem,Orders,OrderItem,Wishlist
 from django.contrib.auth import authenticate,login,logout
@@ -213,7 +213,7 @@ def reset_password(request):
 
 #HOME PAGE#
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
-@login_required
+@login_required(login_url='/user/login/')
 def home_page(request):
     category=Category.objects.all().order_by("-id")
     products=Products.objects.all().order_by("-id")
@@ -222,7 +222,7 @@ def home_page(request):
 
 #logout#
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
-@login_required
+@login_required(login_url='/user/login/')
 def signout(request):
     logout(request)
     cache.clear()
@@ -235,7 +235,8 @@ def landing(request):
 
 
 #LIST CATEGORY PRODUCTS
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def products_by_category(request,id):
     category=get_object_or_404(Category,id=id)
     products=Products.objects.filter(category=category).prefetch_related("variants").all()
@@ -243,15 +244,19 @@ def products_by_category(request,id):
     return render(request,"products_by_catg.html",{"products":products})
 
 #LISTING ALL PRODUCTS
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def list_products(request):
     categories=Category.objects.all().order_by("-id")
     products=Products.objects.all().order_by("-id")
-
-    return render(request,"list_by_products.html",{"products":products,"categories":categories})
+    wishlist_items=[]
+    if request.user.is_authenticated:
+        wishlist_items = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
+    return render(request,"list_by_products.html",{"products":products,"categories":categories,"wishlist_items":wishlist_items})
 
 #FILETRING AND SORTING
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def filterProducts(request,id=None):
     search=request.GET.get("search")
     id=request.GET.get("category_id")
@@ -291,7 +296,26 @@ def filterProducts(request,id=None):
         except ValueError:
             pass
 
-    return render(request,"partial_filter.html",{"products":products})
+    wishlist_items = []
+    if request.user.is_authenticated:
+        wishlist_items = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
+
+    return render(request,"partial_filter.html",{"products":products,"wishlist_items":wishlist_items})
+
+
+def toggle_wishlist(request):
+    if request.method == "POST":
+        product_id = request.POST.get("product_id")
+        product = get_object_or_404(ProductVariant, id=product_id)
+        wishlist_item, created = Wishlist.objects.get_or_create(user=request.user, product=product)
+
+        if not created:
+            wishlist_item.delete()
+            return JsonResponse({'success': True, 'added': False, 'message': 'Removed from wishlist'})
+        else:
+            return JsonResponse({'success': True, 'added': True, 'message': 'Added to wishlist'})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request'})
 
 
 # def add_to_wishlist(request):
@@ -316,7 +340,8 @@ def filterProducts(request,id=None):
 
 
 #PRODUCT DETAILS PAGE
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def productDetail(request,id=id):
     product=get_object_or_404(Products,id=id)
     variants=product.variants.all()
@@ -324,14 +349,16 @@ def productDetail(request,id=id):
     return render(request,"product_detail.html",{"prod":product,"variants":variants,"first":first_variant})
 
 #PARTAIL PRODUCT VARIANT
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def weightFilter(request,id):
     product_variant=get_object_or_404(ProductVariant,id=id)
     return render(request,"partial_detail.html",{"variant":product_variant})
 
 
 #ADD HOME ADDRESS
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def add_address(request):
     if request.method=="POST":
         form=UserAddressForm(request.POST)
@@ -347,7 +374,8 @@ def add_address(request):
 
 
 #SHOW HOME ADDRESS
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def show_address(request):
     user=request.user
     addresses=user.useraddress.all()
@@ -355,7 +383,8 @@ def show_address(request):
 
 
 #EDIT ADDRESS
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def edit_address(request,id):
     address=get_object_or_404(UserAddress,id=id,user=request.user)
     
@@ -372,7 +401,8 @@ def edit_address(request,id):
 
 
 #DELETE ADDRESS
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def delete_address(request,id):
     address=get_object_or_404(UserAddress,id=id,user=request.user)
     if request.method=="POST":
@@ -385,17 +415,21 @@ def delete_address(request,id):
     return redirect("showAddress")
 
 #SHOW PROFLE
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def show_profile(request):
     user=request.user
     return render(request,"profile/profile.html",{"user":user})
 
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def user_dashboard(request):
     return render(request,"profile/dashboard.html")
 
+
 #EDIT PROFILE
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def edit_profile(request):
     user=request.user
     if request.method=="POST":
@@ -420,7 +454,8 @@ def edit_profile(request):
 
 
 #OTP FOR EMAIL CHANGE
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def email_change_otp(request):
     email = request.session.get("pending_email")
 
@@ -458,7 +493,8 @@ def email_change_otp(request):
 
 
 #ADD PRODUCT TO CART
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def add_to_cart(request,id):
     product=get_object_or_404(ProductVariant,id=id)
 
@@ -484,7 +520,8 @@ def add_to_cart(request,id):
 
 
 #SHOW CART
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def show_cart(request):
     cart,created=Cart.objects.get_or_create(user=request.user)
 
@@ -497,7 +534,8 @@ def show_cart(request):
 
 
 #UPDATING QUANTITY IN CART
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def update_quantity(request,id=id):
     item=get_object_or_404(CartItem,id=id,cart__user=request.user)
     action=request.POST.get("action")
@@ -521,7 +559,8 @@ def update_quantity(request,id=id):
 
 
 # REMOVE PRODUCT FROM CART
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def remove_from_cart(request,id):
     item=get_object_or_404(CartItem,id=id,cart__user=request.user)
     if request.method=="POST":
@@ -531,7 +570,8 @@ def remove_from_cart(request,id):
 
 
 #CHECKOUT PAGE
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def checkout(request):
     try:
         cart=Cart.objects.get(user=request.user)
@@ -594,7 +634,8 @@ def checkout(request):
 
 
 #ADD PRICE INCREMENT IF COD
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def update_total_price(request):
     payment_method=request.GET.get("payment_method") 
     cart=Cart.objects.get(user=request.user)
@@ -613,7 +654,8 @@ def update_total_price(request):
 
 
 #LIST ADDRESS
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def list_address(request):
     addresses=UserAddress.objects.filter(user=request.user)
     selected_address=addresses.filter(is_primary=True).first()
@@ -628,7 +670,8 @@ def list_address(request):
     return render(request,"order/address_list.html",{"address":addresses,"default_address": selected_address })
 
 #PARTIAL ADD NEW ADDRESS
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def add_new_address(request):
     if request.method=="POST":
         form=UserAddressForm(request.POST)
@@ -645,7 +688,7 @@ def add_new_address(request):
 
 #ORDER PLACES
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
-@login_required
+@login_required(login_url='/user/login/')
 def order_placed(request,id=id):
     order=get_object_or_404(Orders,id=id,user=request.user)
     latest_order=Orders.objects.filter(user=request.user).order_by("-created_at").first()
@@ -654,14 +697,16 @@ def order_placed(request,id=id):
 
 
 #LIST OF ALL ORDERS
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def orders_list(request):
     orders=Orders.objects.filter(user=request.user).order_by("-id")
     return render(request,"order/orders_lists.html",{"orders":orders})
 
 
 #ORDER DETAILED PAGE
-@login_required
+@never_cache
+@login_required(login_url='/user/login/')
 def order_detail(request,id=id):
     order=get_object_or_404(Orders,id=id,user=request.user)
     ordered_item_details=order.orderitem.all()

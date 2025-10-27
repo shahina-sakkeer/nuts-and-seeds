@@ -149,7 +149,7 @@
             <div class="px-6 py-4 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900">Order Items</h3>
             </div>
-            {% for item in items %}
+         
             <!-- Desktop Table View -->
             <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -166,6 +166,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
+                        {% for item in items %}
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{item.product.product.name}}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{item.product.weight}}g</td>
@@ -179,11 +180,11 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">N/A</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">-</td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
 
-             {% endfor %}
 
         </div>
 

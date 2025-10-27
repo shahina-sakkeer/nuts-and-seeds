@@ -5,11 +5,24 @@
 
     <div class="bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition">
 
-        <a href="{% url 'product_details' p.id %}" class="block">
+         <a href="{% url 'product_details' p.id %}" class="block">
             {% if p.images.all %}
             <img src="{{ p.images.all.0.image.url }}" alt="{{p.name}}" class="w-full h-64 object-cover">
             {% endif %}
         </a>
+
+        <!-- Wishlist Icons for Variants -->
+        <!-- {% for variant in p.variants.all %}
+            <button class="absolute top-3 right-3 wishlist-btn z-10 bg-white bg-opacity-80 p-2 rounded-full shadow" data-variant-id="{{ variant.id }}">
+                <i class="fa-heart 
+                    {% if variant.id in wishlist_items %}
+                        fa-solid text-red-500
+                    {% else %}
+                        fa-regular text-gray-400
+                    {% endif %}">
+                </i>
+            </button>
+        {% endfor %} -->
 
         <div class="p-4">
             <a href="#" class="block">

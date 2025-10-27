@@ -21,6 +21,7 @@
           <!-- Cart Items -->
           <div class="space-y-6">
 
+
             {% for item in cart_items %}
             <!-- Item -->
             <div class="flex gap-4 pb-6 border-b">
@@ -85,6 +86,8 @@
             {% endfor %}
           </div>
 
+      {% if cart_items %}
+
           <!-- Place Order Button (Sticky on Mobile) -->
           <div class="sticky bottom-0 bg-white pt-4">
             <a href="{% url 'checkOut' %}"><button
@@ -93,6 +96,12 @@
             </button></a>
           </div>
         </div>
+      {% else %}
+
+      <p>no product in cart</p>
+
+      {% endif %}
+
 
         <!-- Right Section: Price Details -->
         <div class="lg:sticky lg:top-6 h-fit">
@@ -144,48 +153,3 @@
   {% endblock %}
 
 
-
-  <!-- <h1>products in cart</h1>
-
-{% for item in cart_items %}
-<div>
-  {{item.product}}
-    
-</div>
-
-<div id="update-quantity-{{item.id}}">
-    {% include 'cart/partial_quantity.html' with product=item %}
-</div> -->
-
-  <!-- delete -->
-  <!-- <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ item.id }}">
-        Remove
-</button> -->
-
-  <!-- Modal for this address -->
-  <!-- <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ item.id }}" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header bg-danger text-white">
-          <h5 class="modal-title" id="deleteModalLabel{{ item.id }}">Confirm Delete</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          Are you sure you want to remove this item?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <form method="POST" action="{% url 'removeItem' item.id %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Yes, Delete</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-{% endfor %}
-
-<div id="cart-total" >
-<h1 >total: {{total}}</h1>
-</div> -->
