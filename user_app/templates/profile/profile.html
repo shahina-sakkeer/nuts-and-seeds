@@ -1,0 +1,62 @@
+<div class="bg-white rounded-lg shadow-sm p-6">
+
+    <!-- Personal Information Section -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">Personal Information</h2>
+
+            <a href="" hx-get="{% url 'editProfile' %}" hx-swap="innerHTML" hx-target="#user-right-content"
+            class="text-blue-600 hover:text-blue-700 font-medium text-sm">Edit</a>
+
+        </div>
+
+        <!-- Name Fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+                <input type="text" value="{{user.firstname}}" readonly
+                    class="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Email Address Section -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+            <label class="block text-sm font-medium text-gray-900">Email Address</label>
+        </div>
+        <input type="email" value="{{user.email}}" readonly
+            class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+    </div>
+
+    <!-- Mobile Number Section -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+            <label class="block text-sm font-medium text-gray-900">Mobile Number</label>
+        </div>
+        <input type="tel" value="{{user.phone_number}}" readonly
+            class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+<!-- <h1>profile</h1>
+
+{{user.email}}
+{{user.firstname}}
+{{user.phone_number}}
+
+<div>
+    <a href="{% url 'editProfile' %}"><h1>edit profile</h1></a>
+</div>
+
+<div>
+    <a href="{% url 'showAddress' %}"><h2>manage address</h2></a>
+</div> -->

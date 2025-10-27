@@ -47,11 +47,17 @@ class ProductVariant(models.Model):
         ("g","gram"),
         ("kg","kilogram")
     ]
+    STATUS=[
+        ("Published","published"),
+        ("Out of stock","outofstock"),
+        ("Low stock","lowstock")
+    ]
     product=models.ForeignKey(Products,related_name="variants",on_delete=models.CASCADE)
     weight=models.IntegerField()
     unit=models.CharField(choices=UNIT)
     quantity_stock=models.IntegerField(default=0)
     price=models.DecimalField(max_digits=10,decimal_places=2) 
+    status=models.CharField(choices=STATUS,default=0)
     created_at=models.DateField(auto_now_add=True)
     updated_at=models.DateField(auto_now=True)
     is_deleted=models.BooleanField(default=False)

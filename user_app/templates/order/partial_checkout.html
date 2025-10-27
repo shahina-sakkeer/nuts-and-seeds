@@ -1,0 +1,7 @@
+
+<form  hx-post="{% url 'addNewAddress' %}" hx-target="#newly-added-address" hx-swap="beforeend"
+hx-on="htmx:afterRequest: this.closest('form').remove" >
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Save</button>
+</form>

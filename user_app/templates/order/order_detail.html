@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Main Container -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- Page Title -->
+
+
+    <div class="bg-white rounded-2xl sm:p-8">
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+
+            <!-- Left Section - Product Details-->
+            <div class="lg:col-span-2 space-y-6">
+                {% for item in orders %}
+                <!-- Product Info -->
+                <div class="flex flex-col sm:flex-row gap-6">
+                    <!-- Product Image -->
+                    <div class="flex-shrink-0">
+                        {% with item.product.product.images.all as image %}
+
+                        {% if image %}
+                        <img src="{{image.0.image.url}}" alt="Gaming Laptop"
+                            class="w-full sm:w-32 h-auto object-cover rounded-lg">
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="flex-1">
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                            {{item.product.product.name}}
+                        </h2>
+                        <p class="text-sm text-gray-600 mb-1">Weight : {{item.product.weight}}g</p>
+
+                        <p class="text-2xl font-bold text-gray-900">Rs. {{item.price}}</p>
+                    </div>
+                </div>
+
+                <!-- Order Timeline -->
+                <div class="relative pl-8 py-4">
+
+                    <!-- Order Confirmed -->
+                    <div class="relative mb-8">
+                        <div
+                            class="absolute -left-7 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <p class="text-sm font-medium text-gray-900">{{order.created_at}}</p><br>
+
+                        <p class="text-sm text-gray-600 mb-1">{{item.status}}</p>
+                    </div>
+
+                    <!-- Cancel button (opens modal) -->
+                    {% if item.status == "pending" %}
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#cancelModal{{item.id}}">
+                        Cancel Order
+                    </button>
+                    {% endif %}
+
+                    <!-- Cancel Confirmation Modal -->
+                    <div class="modal fade" id="cancelModal{{ item.id }}" tabindex="-1"
+                        aria-labelledby="cancelModalLabel{{ item.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="cancelModalLabel{{ item.id }}">Cancel Item</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to cancel <strong>{{ item.product.name }}</strong>?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <form method="POST" style="display:inline;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="item_id" value="{{ item.id }}">
+                                        <button type="submit" class="btn btn-danger">Yes, Cancel</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delivered -->
+                    <!-- <div class="relative">
+                            <div class="absolute -left-7 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <p class="text-sm font-medium text-gray-900">Delivered, Jul 31</p>
+                        </div> -->
+
+                </div>
+
+
+                {% endfor %}
+            </div>
+
+
+
+            <!-- Right Section - Delivery & Price Details -->
+            <div class="lg:col-span-1 space-y-6">
+
+                <!-- Delivery Details -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Delivery details</h3>
+
+                    <!-- Address -->
+                    <div class="flex items-start space-x-3 mb-4">
+                        <svg class="w-5 h-5 text-gray-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                            </path>
+                        </svg>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 mb-1">Other</p>
+                            <p class="text-sm text-gray-600">
+                                {{order.address.house_name}},{{order.address.city}},{{order.address.state}}</p>
+                        </div>
+                    </div>
+
+                    <!-- Person Details -->
+                    <div class="flex items-start space-x-3">
+                        <svg class="w-5 h-5 text-gray-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">{{user.firstname}}</p>
+                            <p class="text-sm text-gray-600">{{user.phone_number}}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price Details -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Price details</h3>
+
+                    <div class="space-y-3">
+                        <!-- Listing Price -->
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Total price</span>
+                            <span class="text-gray-900">Rs. {{order.total_price}}</span>
+                        </div>
+
+
+                        <!-- Extra Discount -->
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Total discount</span>
+                            <span class="text-green-600">Rs. 0</span>
+                        </div>
+
+
+                        <!-- Total Amount -->
+                        <div class="flex justify-between pt-2">
+                            <span class="text-base font-semibold text-gray-900">Total amount</span>
+                            <span class="text-base font-bold text-gray-900">Rs. {{order.total_price}}</span>
+                        </div>
+
+                        <!-- Paid By -->
+                        <div class="flex items-center justify-between pt-3 border-t border-gray-300">
+                            <span class="text-sm text-gray-600">Paid by</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-6 h-6 bg-green-100 rounded flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                {% if payment_method == cod %}
+                                <span class="text-sm font-medium text-gray-900">Cash On Delivery</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Invoice Button -->
+                <!-- <button class="w-full px-6 py-3 border-2 border-blue-600 text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Download Invoice</span>
+                    </button> -->
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

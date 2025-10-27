@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="min-h-screen bg-gray-100 py-8">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="bg-white rounded-xl shadow-lg p-6">
+      <!-- Grid Layout: Cart Items + Price Details -->
+      <div class="grid grid-cols-1 lg:grid-cols-[65%,35%] gap-6">
+
+        <!-- Left Section: Cart Items -->
+        <div class="space-y-6">
+          <!-- Header -->
+          <div class="flex justify-between items-center border-b pb-4">
+            <h2 class="text-xl font-semibold">MY CART</h2>
+          </div>
+
+
+
+          <!-- Cart Items -->
+          <div class="space-y-6">
+
+            {% for item in cart_items %}
+            <!-- Item -->
+            <div class="flex gap-4 pb-6 border-b">
+              <!-- Product Image -->
+              <div class="flex-shrink-0">
+                {% with item.product.product.images.all as image %}
+
+                {% if image %}
+                <img src="{{image.0.image.url}}" alt="Jade Plant" class="w-24 h-24 object-cover rounded-lg">
+                {% endif %}
+
+                {% endwith %}
+              </div>
+
+              <!-- Product Details -->
+              <div class="flex-1">
+                <div class="flex justify-between">
+                  <div>
+                    <h3 class="font-semibold text-gray-800 mb-1">{{item.product.product.name}}</h3>
+
+                  </div>
+
+                </div>
+
+                <!-- Quantity and Actions -->
+                <div id="update-quantity-{{item.id}}" class="flex items-center gap-4 mt-3">
+
+                  <!-- Price -->
+                  <span id="item-total-{{item.id}}" class="text-lg font-bold text-gray-900">Rs. {{item.row_total}}</span>
+                  {% include 'cart/partial_quantity.html' with product=item %}
+
+                </div>
+                <button class="text-sm font-semibold text-red-700 hover:text-red-900" data-bs-toggle="modal"
+                  data-bs-target="#deleteModal{{ item.id }}">REMOVE</button>
+              </div>
+            </div>
+
+
+            <!-- Modal for removing the product -->
+            <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1"
+              aria-labelledby="deleteModalLabel{{ item.id }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel{{ item.id }}">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to remove this item?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="POST" action="{% url 'removeItem' item.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {% endfor %}
+          </div>
+
+          <!-- Place Order Button (Sticky on Mobile) -->
+          <div class="sticky bottom-0 bg-white pt-4">
+            <a href="{% url 'checkOut' %}"><button
+              class="w-full lg:w-auto lg:float-right bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-12 rounded-lg transition shadow-md">
+              CHECKOUT
+            </button></a>
+          </div>
+        </div>
+
+        <!-- Right Section: Price Details -->
+        <div class="lg:sticky lg:top-6 h-fit">
+          <div class="border border-gray-200 rounded-lg p-5 space-y-4">
+            <!-- Title -->
+            <h3 class="text-gray-500 font-semibold uppercase text-sm border-b pb-3">Price Details</h3>
+
+            <!-- Price Breakdown -->
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-700">Price</span>
+                <span id="cart-total" class="font-bold text-gray-900 text-base">{{total}}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-700">Discount</span>
+                <span class="text-green-600 font-semibold">Rs. 0</span>
+              </div>
+
+
+              <!-- Total Amount -->
+              <div class="border-t pt-3">
+                <div class="flex justify-between items-center">
+                  <span class="font-bold text-gray-900 text-base">Total Amount</span>
+                  <span id="cart-total" class="font-bold text-gray-900 text-base">{{total}}</span>
+                </div>
+              </div>
+
+
+
+              <!-- Footer Message -->
+              <div class="flex items-start gap-2 pt-3 border-t">
+                <svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"></path>
+                </svg>
+                <p class="text-xs text-gray-500 leading-relaxed">Safe and Secure Payments. Easy returns. 100% Authentic
+                  products.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  {% endblock %}
+
+
+
+  <!-- <h1>products in cart</h1>
+
+{% for item in cart_items %}
+<div>
+  {{item.product}}
+    
+</div>
+
+<div id="update-quantity-{{item.id}}">
+    {% include 'cart/partial_quantity.html' with product=item %}
+</div> -->
+
+  <!-- delete -->
+  <!-- <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ item.id }}">
+        Remove
+</button> -->
+
+  <!-- Modal for this address -->
+  <!-- <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ item.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="deleteModalLabel{{ item.id }}">Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to remove this item?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <form method="POST" action="{% url 'removeItem' item.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endfor %}
+
+<div id="cart-total" >
+<h1 >total: {{total}}</h1>
+</div> -->

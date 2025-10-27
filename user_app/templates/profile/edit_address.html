@@ -1,0 +1,60 @@
+<div class="bg-white rounded-lg shadow-sm p-6">
+
+    <!-- Personal Information Section -->
+    <form action="" hx-post="{% url 'editAddress' address.id %}" hx-target="#user-right-content" hx-swap="innerHTML">
+        {% csrf_token %}
+
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <label class="block text-sm font-medium text-gray-900">House Name</label>
+            </div>
+            {{form.house_name}}
+        </div>
+
+
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <label class="block text-sm font-medium text-gray-900">Street</label>
+            </div>
+            {{form.street}}
+        </div>
+
+
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <label class="block text-sm font-medium text-gray-900">Landmark</label>
+            </div>
+            {{form.landmark}}
+        </div>
+
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <label class="block text-sm font-medium text-gray-900">City</label>
+            </div>
+            {{form.city}}
+        </div>
+
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <label class="block text-sm font-medium text-gray-900">State</label>
+            </div>
+            {{form.state}}
+        </div>
+
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <label class="block text-sm font-medium text-gray-900">Pincode</label>
+            </div>
+            {{form.pincode}}
+
+        </div>
+
+        <button type="submit"
+            class="w-full lg:w-auto lg:float-right bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-12 rounded-lg transition shadow-md mt-5">
+            Save
+        </button>
+
+
+    </form>
+
+</div>

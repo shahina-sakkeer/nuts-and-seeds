@@ -30,7 +30,7 @@
             </nav>
             <h1 class="text-2xl font-bold text-gray-900">Add Product</h1>
         </div>
-        
+
     </div>
 
     <!-- Form Container -->
@@ -69,12 +69,12 @@
                     </label>
                     {{form.category}}
                 </div>
-                <div>
+                <!-- <div>
                     <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
                         Status
                     </label>
                     {{form.status}}
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -95,9 +95,11 @@
                         <label
                             class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition w-full">
                             <div class="flex flex-col items-center">
-                                <span class="text-xs text-blue-600 font-medium hover:text-blue-700">Add Image {{i}}</span>
+                                <span class="text-xs text-blue-600 font-medium hover:text-blue-700">Add Image
+                                    {{i}}</span>
                             </div>
-                            <input type="file" class="hidden image-input" data-index="{{ i }}" accept="image/*">
+                            <input type="file" class="hidden image-input" data-index="{{ i }}" accept="image/*"
+                                required>
                         </label>
 
                         <!-- Preview -->
@@ -107,7 +109,7 @@
                         </div>
 
                         <!-- Hidden input for cropped image -->
-                        <input type="hidden" id="cropped-{{ i }}" name="cropped_image_{{ i }}">
+                        <input type="hidden" id="cropped-{{ i }}" name="cropped_image_{{ i }}" required>
                     </div>
                     {% endfor %}
                 </div>
@@ -131,7 +133,7 @@
                         {{v.price}}
                         {% for error in v.price.errors %}
 
-                            <p class="text-red-500 text-sm mt-1">{{ error}}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ error}}</p>
 
                         {% endfor %}
                     </div>
@@ -147,7 +149,7 @@
                         {{v.weight}}
                         {% for error in v.weight.errors %}
 
-                            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ error }}</p>
 
                         {% endfor %}
                     </div>
@@ -159,9 +161,15 @@
                         </label>
                         {{v.unit}}
                     </div>
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
+                            Status
+                        </label>
+                        {{form.status}}
+                    </div>
 
 
-                  
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
                         <!-- Quantity -->
@@ -170,18 +178,18 @@
                                 Quantity
                             </label>
                             {{v.quantity_stock}}
-                            {% for error in  v.quantity_stock.errors %}
+                            {% for error in v.quantity_stock.errors %}
 
                             <p class="text-red-500 text-sm mt-1">{{ error }}</p>
 
-                        {% endfor %}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
 
-            
+
 
             <button type="submit"
                 class="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
@@ -195,19 +203,19 @@
 <!-- Fullscreen Modal -->
 <div id="cropperModal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
     <div class="bg-white p-4 rounded shadow-lg max-w-4xl w-full h-[90vh] flex flex-col">
-        
+
         <!-- Header -->
         <div class="flex justify-between items-center mb-2">
             <h2 class="text-lg font-bold">Crop Image</h2>
             <button id="closeModal" class="text-red-500 font-bold text-xl">✕</button>
         </div>
 
-       
+
         <div class="flex-1 flex justify-center items-center overflow-auto">
             <img id="modalImage" class="max-w-full max-h-[70vh] object-contain">
         </div>
 
-       
+
         <div class="mt-4 flex justify-end gap-2">
             <button id="cropSave" class="bg-blue-500 text-white px-4 py-2 rounded">Crop & Save</button>
         </div>
@@ -218,5 +226,3 @@
 
 
 {% endblock %}
-
-

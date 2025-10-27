@@ -1,24 +1,26 @@
 <!-- Product Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <!-- Product Card 1 -->
-         {% for p in products %}
-        <div class="bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition">
-            
-            <a href="{% url 'product_details' p.id %}" class="block">
-                {% if p.images.all %}
-                <img src="{{ p.images.all.0.image.url }}" alt="{{p.name}}"
-                    class="w-full h-64 object-cover">
-                {% endif %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <!-- Product Card 1 -->
+    {% for p in products %}
+
+    <div class="bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition">
+
+        <a href="{% url 'product_details' p.id %}" class="block">
+            {% if p.images.all %}
+            <img src="{{ p.images.all.0.image.url }}" alt="{{p.name}}" class="w-full h-64 object-cover">
+            {% endif %}
+        </a>
+
+        <div class="p-4">
+            <a href="#" class="block">
+                <h3 class="text-base font-medium text-gray-900 hover:text-gray-600 transition">{{ p.name }}</h3>
             </a>
-            <div class="p-4">
-                <a href="#" class="block">
-                    <h3 class="text-base font-medium text-gray-900 hover:text-gray-600 transition">{{ p.name }}</h3>
-                </a>
-                {% if p.variants.all %}
-                <p class="text-lg font-semibold text-gray-900 mt-2">Rs. {{ p.variants.all.0.price }}</p>
-                {% endif %}
-            </div>
-            
+            {% if p.variants.all %}
+
+            <p class="text-lg font-semibold text-gray-900 mt-2">Rs. {{ p.variants.all.0.price }}</p>
+            {% endif %}
         </div>
-        {% endfor %}
+
     </div>
+    {% endfor %}
+</div>

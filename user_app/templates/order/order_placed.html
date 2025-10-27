@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <!-- Main Container -->
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- Success Card -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mb-6">
+            
+            <!-- Success Icon -->
+            <div class="flex justify-center mb-6">
+                <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Thank You Message -->
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-900 mb-3">Thank you for your order!</h1>
+                <p class="text-sm text-gray-600 max-w-xl mx-auto">
+                    Your order has been successfully placed and confirmed. We'll send you a shipping confirmation email once your order ships.
+                </p>
+            </div>
+
+            <!-- Order Information -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-semibold text-gray-900 text-center mb-6">Order Information</h2>
+              
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Order Number -->
+                    <div class="text-center">
+                        <p class="text-xs text-gray-600 mb-1">Order Number</p>
+                        <p class="text-sm font-semibold text-gray-900">{{order.orderID}}</p>
+                    </div>
+                    
+                    <!-- Order Date -->
+                    <div class="text-center">
+                        <p class="text-xs text-gray-600 mb-1">Order Date</p>
+                        <p class="text-sm font-semibold text-gray-900">{{order.created_at}}</p>
+                    </div>
+                    
+                    <!-- Payment Method -->
+                    <div class="text-center">
+                        <p class="text-xs text-gray-600 mb-1">Payment Method</p>
+                        <p class="text-sm font-semibold text-gray-900">{{order.payment_method}}</p>
+                    </div>
+                    
+                    <!-- Payment Status -->
+                     {% if payment_method == cod %}
+                    <div class="text-center">
+                        <p class="text-xs text-gray-600 mb-1">Payment Status</p>
+                        <p class="text-sm font-semibold text-gray-900">Pending</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            {% for item in items %}
+            <div class="mb-6">
+                <h2 class="text-lg font-semibold text-gray-900 text-center mb-6">Order Items</h2>
+                
+                <div class="flex flex-col items-center">
+                    <!-- Product Image -->
+                {% with item.product.product.images.all as image %}
+
+                {% if image %}
+                    <img 
+                        src="{{image.0.image.url}}" 
+                        alt="PANIHARI COLLECTION" 
+                        class="w-48 h-48 object-cover rounded-lg mb-4"
+                    >
+                {% endif %}
+                {% endwith %}
+                    
+                    <!-- Product Details -->
+                    <h3 class="text-base font-semibold text-gray-900 mb-1">{{item.product.product.name}}</h3>
+                    <p class="text-sm text-gray-600 mb-2">Weight : {{item.product.weight}}g</p>
+                    <p class="text-lg font-bold text-gray-900">{{item.price}}</p>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Delivery Address -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-semibold text-gray-900 text-center mb-3">Delivery Address</h2>
+                <p class="text-sm text-gray-700 text-center">{{order.address.house_name}},{{order.address.city}},{{order.address.state}}</p>
+            </div>
+
+            <!-- Price Details -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-semibold text-gray-900 text-center mb-6">Price Details</h2>
+                
+                <div class="space-y-3 max-w-md mx-auto">
+                    <!-- Total Price -->
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-700">Total Price:</span>
+                        <span class="text-sm font-semibold text-gray-900">Rs. {{order.total_price}}</span>
+                    </div>
+                    
+                    <!-- Total Discount -->
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-700">Total Discount:</span>
+                        <span class="text-sm font-semibold text-gray-900">Rs. 0</span>
+                    </div>
+                    
+                    <!-- Divider -->
+                    <div class="border-t border-gray-300 my-3"></div>
+                    
+                    <!-- Final Amount -->
+                    <div class="flex justify-between items-center">
+                        <span class="text-base font-semibold text-gray-900">Final Amount:</span>
+                        <span class="text-base font-bold text-gray-900">Rs. {{order.total_price}}</span>
+                    </div>
+                </div>
+            </div>
+            
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'order-list' %}" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition text-center">
+                    View Order Details
+                </a>
+                <a href="{% url 'all_products' %}" class="px-6 py-3 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-800 transition text-center">
+                    Continue Shopping
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+<!-- 
+<h1>order success page</h1>
+
+<div>
+    {% for item in items %}
+
+    {{item.product.product.name}}
+
+    {{order.item_count}}
+
+    {{item.price}}
+    
+    {% endfor %}
+</div> -->

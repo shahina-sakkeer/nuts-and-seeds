@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+                MY ORDERS
+            </h1>
+        </div>
+
+        <!-- Orders List -->
+        <div class="space-y-6">
+            {% for order in orders %}
+            <!-- Order 1 -->
+            <div class="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <!-- Left Section - Order Info -->
+                    <div class="flex-1">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-3">
+                            Order Number : {{order.orderID}}
+                        </h2>
+
+                        {% if payment_method == cod %}
+                        <p class="text-sm text-gray-700 mb-2">
+                            Payment Status : <span class="font-medium">PENDING</span>
+                        </p>
+                        {% endif %}
+
+                        <p class="text-sm text-gray-500">
+                            Order Date: <span class="text-gray-400">{{order.created_at}}</span>
+                        </p>
+                    </div>
+                    
+                    <!-- Right Section - Status & Button -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            {% if payment_method == cod %}
+                            <span class="text-base font-semibold text-gray-900">PENDING</span>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'orderDetail' order.id %}" class="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded hover:bg-gray-50 transition text-center whitespace-nowrap">
+                            Details
+                        </a>
+                    </div>
+                </div>
+            </div>  
+            {% endfor %}          
+        </div>
+
+    </div>
+
+{% endblock %}

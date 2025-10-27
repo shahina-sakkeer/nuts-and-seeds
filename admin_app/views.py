@@ -9,7 +9,7 @@ from admin_app.models import Category,Products,ProductImage,ProductVariant
 from django.db import transaction,IntegrityError
 from django.db.models import Q
 from django.core.paginator import Paginator
-from user_app.models import CustomUser
+from user_app.models import CustomUser,Orders,OrderItem
 import base64
 from cloudinary.uploader import upload
 
@@ -293,3 +293,18 @@ def searchCategory(request):
         categories=Category.objects.all().order_by("-id")
 
     return render(request,"partial_category.html",{"category":categories})
+
+
+#ORDERS LIST
+def order_list(request):
+    orders=Orders.objects.all().order_by("-id")
+    return render(request,"orders/orders.html",{"orders":orders})
+
+
+#ORDER DETAILED PAGE
+def order_detail_page(request,id):
+    order=get_object_or_404(Orders,id=id)
+    ordered_item_details=order.orderitem.all()
+    user=order.user
+    address=order.address
+    return render(request,"orders/order_detail.html",{"items":ordered_item_details,"order":order})

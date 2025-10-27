@@ -77,7 +77,7 @@ class ProductForm(forms.ModelForm):
 class ProductVariantForm(forms.ModelForm):
     class Meta:
         model=ProductVariant
-        fields=["id","weight","unit","quantity_stock","price"]
+        fields=["id","weight","unit","quantity_stock","price","status"]
         widgets={
             "weight": forms.NumberInput(attrs={
                 "class": "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
@@ -93,7 +93,10 @@ class ProductVariantForm(forms.ModelForm):
             "price": forms.NumberInput(attrs={
                 "class": "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
                 "placeholder": "Price"
-            })
+            }),
+            "status": forms.Select(attrs={
+                "class": "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            }),
         }
 
 

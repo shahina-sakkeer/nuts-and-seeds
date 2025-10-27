@@ -1,16 +1,17 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from .forms import UserRegistrationForm,UserLoginForm
+from .forms import UserRegistrationForm,UserLoginForm,UserAddressForm,UserProfileForm
 import random
 from django.core.mail import send_mail
 from django.core.cache import cache
 from django.views.decorators.cache import cache_control
 from django.contrib import messages
-from .models import CustomUser
+from .models import CustomUser,UserAddress,Cart,CartItem,Orders,OrderItem,Wishlist
 from django.contrib.auth import authenticate,login,logout
 from admin_app.models import Products,Category,ProductVariant
-from django.db.models import Q,Min,Max
+from django.db.models import Q,Min,Max,F,Sum
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
+
 
 # Create your views here.
 
@@ -90,7 +91,7 @@ def verify_otp(request):
 #RESEND OTP#
 def resend_otp(request):
     email = request.session.get("pending_email")
-    
+
     if not email:
         return JsonResponse({"success": False, "message": "No pending email"}, status=400)
     
@@ -238,6 +239,7 @@ def landing(request):
 def products_by_category(request,id):
     category=get_object_or_404(Category,id=id)
     products=Products.objects.filter(category=category).prefetch_related("variants").all()
+
     return render(request,"products_by_catg.html",{"products":products})
 
 #LISTING ALL PRODUCTS
@@ -245,6 +247,7 @@ def products_by_category(request,id):
 def list_products(request):
     categories=Category.objects.all().order_by("-id")
     products=Products.objects.all().order_by("-id")
+
     return render(request,"list_by_products.html",{"products":products,"categories":categories})
 
 #FILETRING AND SORTING
@@ -288,8 +291,28 @@ def filterProducts(request,id=None):
         except ValueError:
             pass
 
-
     return render(request,"partial_filter.html",{"products":products})
+
+
+# def add_to_wishlist(request):
+#     if request.method=="POST":
+#         user=request.user
+#         product_id=request.POST.get("product_id")
+
+#         try:
+#             product_variant=ProductVariant.objects.get(id=product_id)
+#         except ProductVariant.DoesNotExist:
+#             messages.error(request,"Product not found")
+#             return redirect("all_products")
+        
+#         wishlist_exist=Wishlist.objects.filter(user=user,product=product_variant).exists()
+#         if wishlist_exist:
+#             messages.warning(request, "Already in your wishlist.")
+#         else:
+#             Wishlist.objects.create(user=user,product=product_variant)
+#             messages.success(request,"Added to wishlist")
+#         return redirect("all_products")
+        
 
 
 #PRODUCT DETAILS PAGE
@@ -300,7 +323,373 @@ def productDetail(request,id=id):
     first_variant=variants.first()
     return render(request,"product_detail.html",{"prod":product,"variants":variants,"first":first_variant})
 
-
+#PARTAIL PRODUCT VARIANT
+@login_required
 def weightFilter(request,id):
     product_variant=get_object_or_404(ProductVariant,id=id)
     return render(request,"partial_detail.html",{"variant":product_variant})
+
+
+#ADD HOME ADDRESS
+@login_required
+def add_address(request):
+    if request.method=="POST":
+        form=UserAddressForm(request.POST)
+        if form.is_valid():
+            address=form.save(commit=False)
+            address.user=request.user
+            address.save()
+            return redirect("showAddress")
+
+    else:
+        form=UserAddressForm()
+    return render(request,"profile/add_address.html",{"form":form})
+
+
+#SHOW HOME ADDRESS
+@login_required
+def show_address(request):
+    user=request.user
+    addresses=user.useraddress.all()
+    return render(request,"profile/address.html",{"addresses":addresses})
+
+
+#EDIT ADDRESS
+@login_required
+def edit_address(request,id):
+    address=get_object_or_404(UserAddress,id=id,user=request.user)
+    
+    if request.method=="POST":
+        form=UserAddressForm(request.POST,instance=address)
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Address updated !!")
+            return redirect("showAddress")
+    else:
+        form=UserAddressForm(instance=address)
+
+    return render(request,"profile/edit_address.html",{"form":form,"address":address})
+
+
+#DELETE ADDRESS
+@login_required
+def delete_address(request,id):
+    address=get_object_or_404(UserAddress,id=id,user=request.user)
+    if request.method=="POST":
+        address.delete()
+        if request.headers.get("HX-Request"): 
+            return HttpResponse("")  
+        messages.success(request, "Address deleted !!")
+        return redirect("showAddress")
+    
+    return redirect("showAddress")
+
+#SHOW PROFLE
+@login_required
+def show_profile(request):
+    user=request.user
+    return render(request,"profile/profile.html",{"user":user})
+
+@login_required
+def user_dashboard(request):
+    return render(request,"profile/dashboard.html")
+
+#EDIT PROFILE
+@login_required
+def edit_profile(request):
+    user=request.user
+    if request.method=="POST":
+        form=UserProfileForm(request.POST,instance=user)
+        if form.is_valid():
+            user_data=form.cleaned_data
+
+            otp=random.randint(100000,999999)
+            print(f'otp:{otp}')
+            cache.set(f"otp:{user_data['email']}", otp, timeout=60)
+            cache.set(f"user_data:{user_data['email']}",user_data,timeout=60)
+
+            send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[user_data['email']])
+            messages.success(request,"otp send to the email")
+            request.session["pending_email"] = user_data['email']
+            return redirect("emailChangeOtp")
+
+    else:
+        form=UserProfileForm(instance=user)
+        
+    return render(request,"profile/edit_profile.html",{"form":form})
+
+
+#OTP FOR EMAIL CHANGE
+@login_required
+def email_change_otp(request):
+    email = request.session.get("pending_email")
+
+    if request.method=="POST":
+        entered_otp=request.POST.get('otp')
+        cached_otp = cache.get(f"otp:{email}")
+        user_data=cache.get(f"user_data:{email}")
+
+        if cached_otp and str(cached_otp) == entered_otp:
+            try:
+
+                if not user_data:
+                    raise CustomUser.DoesNotExist
+                
+                user=CustomUser.objects.filter(id=request.user.id).update(email=user_data['email'],phone_number=user_data['phone_number'],
+                firstname=user_data['firstname'])
+            
+             
+            except CustomUser.DoesNotExist:
+                messages.error(request,"No account found for this email.")
+                return redirect("editProfile")
+            
+            
+            cache.delete(f"otp:{email}")
+            cache.delete(f"user_data:{email}")
+            request.session.pop("pending_email", None)
+
+            messages.success(request,"Your account has been verified. Please log in.")
+            return redirect("signin")
+        else:
+            messages.error(request,"Invalid or expired OTP.")
+            return redirect("emailChangeOtp")
+        
+    return render(request,"profile/email_change_otp.html",{"email":email})
+
+
+#ADD PRODUCT TO CART
+@login_required
+def add_to_cart(request,id):
+    product=get_object_or_404(ProductVariant,id=id)
+
+    if not product.is_deleted:
+
+        try:
+            cart=Cart.objects.get(user=request.user)
+
+        except Cart.DoesNotExist:
+            cart=Cart.objects.create(user=request.user)
+
+    # this is a queyset of cartitem model
+    # this cartitem is taking only first object from queryset
+        cart_item=CartItem.objects.filter(cart=cart,product=product).first()
+        if cart_item:
+            cart_item.quantity=cart_item.quantity+1
+            cart_item.save()
+
+        else:
+            cart_item=CartItem.objects.create(cart=cart,product=product,quantity=1)
+
+        return redirect("showCart")
+
+
+#SHOW CART
+@login_required
+def show_cart(request):
+    cart,created=Cart.objects.get_or_create(user=request.user)
+
+    cart_items=(cart.cart_item.select_related('product__product')
+        .prefetch_related('product__product__images')
+        .annotate(row_total=F('quantity') * F('product__price')))
+    
+    cart_total=cart_items.aggregate(total=Sum('row_total'))['total'] or 0
+    return render(request,"cart/cart.html",{"cart_items":cart_items,"total":cart_total})
+
+
+#UPDATING QUANTITY IN CART
+@login_required
+def update_quantity(request,id=id):
+    item=get_object_or_404(CartItem,id=id,cart__user=request.user)
+    action=request.POST.get("action")
+
+    if action=="increase":
+        item.quantity=item.quantity+1
+        item.product.quantity_stock=item.product.quantity_stock-1
+    elif action=="decrease" and item.quantity > 1:
+        item.quantity=item.quantity-1
+        item.product.quantity_stock=item.product.quantity_stock
+
+    item.save()
+
+    row_total=item.quantity * item.product.price
+
+    cart_item=CartItem.objects.filter(cart=item.cart).annotate(row_total=F('quantity') * F('product__price'))
+
+    cart_total=cart_item.aggregate(total=Sum('row_total'))['total'] or 0
+
+    return render(request,"cart/partial_quantity.html",{"product":item,"price":row_total,"total":cart_total})
+
+
+# REMOVE PRODUCT FROM CART
+@login_required
+def remove_from_cart(request,id):
+    item=get_object_or_404(CartItem,id=id,cart__user=request.user)
+    if request.method=="POST":
+        item.delete()
+        messages.success(request,"Item deleted !!")
+        return redirect("showCart")
+
+
+#CHECKOUT PAGE
+@login_required
+def checkout(request):
+    try:
+        cart=Cart.objects.get(user=request.user)
+
+        addresses=UserAddress.objects.filter(user=request.user)
+        select_address=addresses.filter(is_primary=True).first()
+
+        cart_items=(cart.cart_item.select_related('product__product')
+            .prefetch_related('product__product__images')
+            .annotate(row_total=F('quantity') * F('product__price')))
+    
+        total_price=cart_items.aggregate(total=Sum('row_total'))['total'] or 0
+
+        if request.method=="POST":
+            selected_address_id=request.POST.get("selected_address")
+         
+            payment_method=request.POST.get("payment_method")
+            print(payment_method)
+
+            if selected_address_id:
+                select_address=UserAddress.objects.filter(id=selected_address_id,user=request.user).first()
+
+            if not select_address:
+                messages.error(request,"Select one address")
+                return redirect("checkOut")
+
+            if not payment_method:
+                messages.error(request,"Select a payment method")
+                return redirect("checkOut")
+            
+            order=Orders.objects.create(user=request.user,address=select_address,item_count=cart_items.count(),
+                                   payment_method=payment_method, total_price=total_price)
+ 
+            order_items = [OrderItem(order=order, product=item.product, quantity=item.quantity, price=item.row_total)
+                       for item in cart_items]
+        
+            OrderItem.objects.bulk_create(order_items)
+
+            cart_items.delete()
+
+            messages.success(request,"Order placed successfully")
+            return redirect("orderSuccess",id=order.id)
+        
+    except UserAddress.DoesNotExist:
+        messages.error(request, "Please select an address before placing the order.")
+        return redirect("checkOut")
+
+    except Cart.DoesNotExist:
+        messages.error(request, "Your cart is empty.")
+        return redirect("showCart")
+
+    except Exception as e:
+        
+        messages.error(request, "Something went wrong while placing your order.")
+        print(f"Unexpected error: {e}")
+        return redirect("showCart")
+    
+    return render(request,"order/checkout.html",{"address":addresses,"default_address":select_address,
+                                                "item":cart_items,"totalprice" : total_price})
+
+
+#ADD PRICE INCREMENT IF COD
+@login_required
+def update_total_price(request):
+    payment_method=request.GET.get("payment_method") 
+    cart=Cart.objects.get(user=request.user)
+
+    items=(cart.cart_item.select_related('product__product')
+        .prefetch_related('product__product__images')
+        .annotate(row_total=F('quantity') * F('product__price')))
+    
+    total_price=items.aggregate(total=Sum('row_total'))['total'] or 0
+
+    if payment_method=="cod":
+        amount=100
+        total_price=total_price+amount
+  
+    return render(request,"order/partial_cod.html",{"totalprice" : total_price})
+
+
+#LIST ADDRESS
+@login_required
+def list_address(request):
+    addresses=UserAddress.objects.filter(user=request.user)
+    selected_address=addresses.filter(is_primary=True).first()
+
+    if request.method=="POST":
+        selected_address_id=request.POST.get("selected_address")
+        print("selected address id",selected_address_id)
+
+        if selected_address_id:
+            selected_address=addresses.filter(id=selected_address_id).first()
+
+    return render(request,"order/address_list.html",{"address":addresses,"default_address": selected_address })
+
+#PARTIAL ADD NEW ADDRESS
+@login_required
+def add_new_address(request):
+    if request.method=="POST":
+        form=UserAddressForm(request.POST)
+        if form.is_valid():
+            address=form.save(commit=False)
+            address.user=request.user
+            address.save()
+            return render(request, "order/partial_address_show.html", {"address": address,"user":request.user,"default_address":address})
+
+    else:
+        form=UserAddressForm()
+    return render(request,"order/partial_checkout.html",{"form":form})
+
+
+#ORDER PLACES
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@login_required
+def order_placed(request,id=id):
+    order=get_object_or_404(Orders,id=id,user=request.user)
+    latest_order=Orders.objects.filter(user=request.user).order_by("-created_at").first()
+    order_item=OrderItem.objects.filter(order=latest_order).all()
+    return render(request,"order/order_placed.html",{"items":order_item,"order":latest_order})
+
+
+#LIST OF ALL ORDERS
+@login_required
+def orders_list(request):
+    orders=Orders.objects.filter(user=request.user).order_by("-id")
+    return render(request,"order/orders_lists.html",{"orders":orders})
+
+
+#ORDER DETAILED PAGE
+@login_required
+def order_detail(request,id=id):
+    order=get_object_or_404(Orders,id=id,user=request.user)
+    ordered_item_details=order.orderitem.all()
+
+    if request.method=="POST":
+        item_id = request.POST.get("item_id")
+
+        if item_id:
+            ordered_item = order.orderitem.get(id=item_id)
+            if ordered_item.status=="pending":
+                ordered_item.status="cancelled"
+                ordered_item.save()
+                messages.success(request,"Your order has been cancelled!!")
+        else:
+            messages.warning(request,"Order cannot be cancelled")
+
+        return redirect("orderDetail",id=order.id)
+
+    return render(request,"order/order_detail.html",{"orders":ordered_item_details,"order":order})
+
+
+
+
+
+
+
+
+
+
+
+

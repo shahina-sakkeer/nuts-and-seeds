@@ -17,7 +17,27 @@ urlpatterns=[
     path("products/filter/<int:id>/",views.filterProducts,name="filtering"),
     path("products/filter/",views.filterProducts,name="filtering"),
     path("products/<int:id>/",views.productDetail,name="product_details"),
-    path("variant/<int:id>/price/",views.weightFilter,name="weight_price")
-
+    path("variant/<int:id>/price/",views.weightFilter,name="weight_price"),
+    path("address/add/",views.add_address,name="addAddress"),
+    path("address/",views.show_address,name="showAddress"),
+    path("profile/",views.show_profile,name="profile"),
+    path("profile/edit/",views.edit_profile,name="editProfile"),
+    path("profile/verify/",views.email_change_otp,name="emailChangeOtp"),
+    path("address/edit/<int:id>/",views.edit_address,name="editAddress"),
+    path("address/delete/<int:id>/",views.delete_address,name="deleteAddress"),
+    path("cart/add/<int:id>",views.add_to_cart,name="addToCart"),
+    path("cart/",views.show_cart,name="showCart"),
+    path("cart/delete/<int:id>/",views.remove_from_cart,name="removeItem"),
+    path("cart/quantity/<int:id>/",views.update_quantity,name="changeQuantity"),
+    # path("wishlist/add/",views.add_to_wishlist,name="addToWishlist"),
+    # path("wishlist/",views.show_wishlist,name="showWishlist"),
+    path("checkout/",views.checkout,name="checkOut"),
+    path("checkout/address",views.add_new_address,name="addNewAddress"),
+    path('dashboard/',views.user_dashboard,name="userDasboard"),
+    path('update-price/',views.update_total_price,name="codExtra"),
+    path("order-success/<int:id>",views.order_placed,name="orderSuccess"),
+    path("address-list/",views.list_address,name="selectAddress"),
+    path("order-list/",views.orders_list,name="order-list"),
+    path("order-detail/<int:id>",views.order_detail,name="orderDetail")
 ]
 

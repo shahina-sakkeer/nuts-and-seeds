@@ -16,5 +16,7 @@ urlpatterns=[
     path("search/category",views.searchCategory,name="category_search"),
     path('customers/',views.customer,name="users"),
     path("block-button/<int:id>",views.blockUser,name="blockCustomer"),
-    path("logout/",views.signout,name="admin_signout")
+    path("logout/",views.signout,name="admin_signout"),
+    path("orders/",views.order_list,name="orderList"),
+    path("detail/<int:id>/",views.order_detail_page,name="orderDetailView")
 ]

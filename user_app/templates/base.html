@@ -1,58 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuts & Seeds</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toastify -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
 </head>
+
 <body class="bg-gray-50">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        
+
         body {
             font-family: 'Poppins', sans-serif;
         }
-        
+
         /* Image zoom effect on hover */
         .image-zoom-container {
             overflow: hidden;
         }
-        
+
         .image-zoom-container img {
             transition: transform 0.5s ease;
         }
-        
+
         .image-zoom-container:hover img {
             transform: scale(1.5);
         }
-        
+
         /* Image switcher using CSS radio buttons */
         .image-radio {
             display: none;
         }
-        
+
         .main-image {
             display: none;
         }
-        
-        #img1:checked ~ .image-display #main-img1,
-        #img2:checked ~ .image-display #main-img2,
-        #img3:checked ~ .image-display #main-img3 {
+
+        #img1:checked~.image-display #main-img1,
+        #img2:checked~.image-display #main-img2,
+        #img3:checked~.image-display #main-img3 {
             display: block;
         }
-        
-        #img1:checked ~ .thumbnails label[for="img1"],
-        #img2:checked ~ .thumbnails label[for="img2"],
-        #img3:checked ~ .thumbnails label[for="img3"] {
+
+        #img1:checked~.thumbnails label[for="img1"],
+        #img2:checked~.thumbnails label[for="img2"],
+        #img3:checked~.thumbnails label[for="img3"] {
             border-color: #ea580c;
             box-shadow: 0 0 0 2px #ea580c;
         }
-        
-        
+
+
         .qty-input::-webkit-outer-spin-button,
         .qty-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -67,7 +76,7 @@
                 <div class="flex-shrink-0">
                     <a href="{% url 'home' %}"><span class="text-2xl font-bold text-gray-900">Nuts & Seeds</span></a>
                 </div>
-                
+
                 <!-- Navigation Links -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="{% url 'home' %}" class="text-gray-900 font-medium hover:text-gray-600 transition">Home</a>
@@ -75,40 +84,46 @@
                     <a href="#" class="text-gray-600 hover:text-gray-900 transition">About Us</a>
                     <a href="#" class="text-gray-600 hover:text-gray-900 transition">Contact</a>
                 </div>
-                
+
                 <!-- Right Side Icons -->
                 <div class="flex items-center space-x-4">
                     <!-- Search Bar -->
                     <form action="">
-                    <div class="hidden sm:block">
-                        <input type="hidden" id="category-id" name="category_id" value="{{ cat.id|default:'' }}">
-                        <input type="text" name="search" placeholder="Search..." class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
-                        hx-get="{% url 'filtering' %}" hx-trigger="keyup changed delay:300ms"
-                        hx-target="#category-product" hx-swap="innerHTML" hx-include="#category-id">
-                    </div>
+                        <div class="hidden sm:block">
+                            <input type="hidden" id="category-id" name="category_id" value="{{ cat.id|default:'' }}">
+                            <input type="text" name="search" placeholder="Search..."
+                                class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
+                                hx-get="{% url 'filtering' %}" hx-trigger="keyup changed delay:300ms"
+                                hx-target="#category-product" hx-swap="innerHTML" hx-include="#category-id">
+                        </div>
                     </form>
-                    
+
                     <!-- Wishlist Icon -->
                     <button class="p-2 hover:bg-gray-100 rounded-lg transition">
                         <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                            </path>
                         </svg>
                     </button>
-                    
+
                     <!-- Cart Icon -->
-                    <button class="p-2 hover:bg-gray-100 rounded-lg transition relative">
-                        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                        
-                    </button>
-                    <a href="{% url 'signout' %}" class="text-gray-600 hover:text-gray-900 transition">logout</a>
+                    <a href="{% url 'showCart' %}"><button class="p-2 hover:bg-gray-100 rounded-lg transition relative">
+                            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                                </path>
+                            </svg>
+                        </button>
+                    </a>
+                    <a href="{% url 'userDasboard' %}"><i class="fa-regular fa-user fa-lg text-gray-700"></i></a>
+                    <!-- <a href="{% url 'signout' %}" class="text-gray-600 hover:text-gray-900 transition">logout</a> -->
                 </div>
             </div>
         </div>
     </nav>
-    
 
+    {% include 'messages.html' %}
     {% block content %}
 
 
@@ -128,10 +143,58 @@
             </div>
         </div>
         <div>
-        
-    </div>
+
+        </div>
     </footer>
+
+
+    <!-- csrf for htmx -->
+    <script>
+        document.body.addEventListener('htmx:configRequest', (event) => {
+            const token = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            event.detail.headers['X-CSRFToken'] = token;
+        });
+    </script>
+
+
+    <!-- modal for hidding after delete address confirmation -->
+    <script>
+        document.body.addEventListener('htmx:afterRequest', function (evt) {
+            const modalEl = document.querySelector('.modal.show');
+            if (modalEl) {
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                modal.hide();
+            }
+        });
+    </script>
+
+<!-- script for wishlist heart toggle -->
+<script>
+function toggleWishlist(element) {
+    const productId = element.getAttribute('data-product-id'); // should get a valid number
+    const url = `/user/toggle-wishlist/${productId}/`;  // ✅ include the id in URL
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "added") {
+            element.classList.remove('fa-regular', 'text-gray-400');
+            element.classList.add('fa-solid', 'text-red-500');
+        } else if (data.status === "removed") {
+            element.classList.remove('fa-solid', 'text-red-500');
+            element.classList.add('fa-regular', 'text-gray-400');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+
+
 </body>
+
 </html>
-
-

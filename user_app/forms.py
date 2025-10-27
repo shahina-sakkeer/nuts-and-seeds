@@ -1,5 +1,6 @@
 from django import forms
-from .models import CustomUser
+from .models import CustomUser,UserAddress
+from django.forms import ValidationError
 import re
 
 class UserRegistrationForm(forms.ModelForm):
@@ -67,3 +68,51 @@ class UserLoginForm(forms.Form):
         "placeholder": "Enter your password",
         'autocomplete': 'off'
     }))
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model=CustomUser
+        fields=["email","firstname","phone_number"]
+
+
+class UserAddressForm(forms.ModelForm):
+    class Meta:
+        model=UserAddress
+        fields=["house_name","street","landmark","city","pincode","state"]
+
+    def clean_house_name(self):
+        house_name=self.cleaned_data.get("house_name")
+        
+        if UserAddress.objects.filter(house_name__iexact=house_name).exclude(id=self.instance.id).exists():
+                raise ValidationError("This house name already exists")
+        return house_name
+    
+    def clean_pincode(self):
+        pincode=self.cleaned_data.get("pincode")
+        
+        if len(str(pincode)) < 6:
+            raise forms.ValidationError("Pincode must be at least 8 digits long.")
+        
+        if int(pincode) < 0:
+            raise forms.ValidationError("Pincode cannot be negative")
+        
+        return pincode
+    
+
+    def clean(self):
+        cleaned_data=super().clean()
+        city=cleaned_data.get("city")
+        state=cleaned_data.get("state")
+
+        if city and not city.isalpha():
+            self.add_error("city","City can only contains alphabets")
+
+        if state and not state.isalpha():
+            self.add_error("state","State can only contains alphabets")
+
+        return cleaned_data
+
+
+
+

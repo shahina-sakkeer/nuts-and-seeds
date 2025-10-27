@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Two Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- Left Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-sm">
+                    
+                    <!-- User Profile Section -->
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Hello,</p>
+                                <p class="text-sm font-semibold text-gray-900">{{user.firstname}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Menu -->
+                    <nav class="py-4">
+                        <!-- MY ORDERS -->
+                        <a href="{% url 'order-list' %}" class="flex items-center justify-between px-6 py-3 text-gray-700 hover:bg-gray-50 transition">
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                </svg>
+                                <span class="text-sm font-medium">MY ORDERS</span>
+                            </div>
+                           
+                        </a>
+
+                        <!-- ACCOUNT SETTINGS -->
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between px-6 py-3">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    <span class="text-sm font-medium text-gray-900">ACCOUNT SETTINGS</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Sub Menu -->
+                            <div class="ml-6 border-l-2 border-blue-600">
+
+                                <a href="" hx-get="{% url 'profile' %}" hx-target="#user-right-content" hx-trigger="load"
+                                hx-swap="innerHTML"
+                                class="block pl-6 py-2 text-sm text-blue-600 font-medium bg-blue-50">
+                                    Profile Information
+                                </a>
+
+                                <a href="" hx-get="{% url 'showAddress' %}" hx-target="#user-right-content"
+                                hx-swap="innerHTML"
+                                class="block pl-6 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50">
+                                    Manage Addresses
+                                </a>
+                                
+                                <a href="#password" class="block pl-6 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50">
+                                    Manage Password
+                                </a>
+                            </div>
+                        </div>
+
+
+                        <!-- LOGOUT -->
+                        <a href="{% url 'signout' %}" class="flex items-center justify-between px-6 py-3 mt-4 text-gray-700 hover:bg-gray-50 transition">
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                <span class="text-sm font-medium">LOGOUT</span>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+
+                    </nav>
+
+                </div>
+            </div>
+
+            <!-- End of left side bar -->
+
+
+            <!-- Right Content Area -->
+            <div class="lg:col-span-3" id="user-right-content">
+                
+            </div>
+            <!-- End of right content area -->
+
+        </div>
+
+    </div>
+
+    {% endblock %}
