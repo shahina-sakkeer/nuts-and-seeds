@@ -11,6 +11,11 @@ from admin_app.models import Products,Category,ProductVariant
 from django.db.models import Q,Min,Max,F,Sum
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse,HttpResponse
+from django.db import transaction
+import razorpay,json
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+import time
 
 
 # Create your views here.
@@ -602,14 +607,49 @@ def checkout(request):
                 messages.error(request,"Select a payment method")
                 return redirect("checkOut")
             
-            order=Orders.objects.create(user=request.user,address=select_address,item_count=cart_items.count(),
-                                   payment_method=payment_method, total_price=total_price)
- 
-            order_items = [OrderItem(order=order, product=item.product, quantity=item.quantity, price=item.row_total)
+            if payment_method=="cod":
+                if total_price < 1000:
+                    messages.error(request,"COD is only available for orders above 1000")
+                    return redirect("checkOut")
+                
+                with transaction.atomic():
+                    order=Orders.objects.create(user=request.user,address=select_address,item_count=cart_items.count(),
+                                   payment_method=payment_method, is_paid=False, total_price=total_price)
+                    
+                    order_items = [OrderItem(order=order, product=item.product, quantity=item.quantity, price=item.row_total)
                        for item in cart_items]
-        
-            OrderItem.objects.bulk_create(order_items)
+                    
+                    OrderItem.objects.bulk_create(order_items)
+ 
+            elif payment_method=="razorpay":
+                client = razorpay.Client(auth=(settings.RAZORPAY['KEY_ID'], settings.RAZORPAY['KEY_SECRET']))
+                try:
+                    razorpay_amount = int(float(total_price * 100))
+                   
+                    razorpay_order = client.order.create({
+                        "amount": razorpay_amount,
+                        "currency": "INR",
+                        "receipt": f"order_rcptid_{request.user.id}_{int(time.time())}",
+                        "payment_capture": 1
+                    })
+                   
+                    order=Orders.objects.create(user=request.user,address=select_address,item_count=cart_items.count(),
+                                   payment_method=payment_method,razorpay_order_id = razorpay_order["id"], 
+                                   is_paid=False, total_price=total_price)
+                    
+                    order_items = [OrderItem(order=order, product=item.product, quantity=item.quantity, price=item.row_total)
+                       for item in cart_items]
+                    
+                    OrderItem.objects.bulk_create(order_items)
 
+                    return JsonResponse({"status": "razorpay_created", "razorpay_key": settings.RAZORPAY['KEY_ID'],
+                        "razorpay_order_id": razorpay_order["id"],"amount": razorpay_amount,"order_id": order.id})
+
+                except Exception as e:
+                    messages.error(request, f"Error during checkout: {e}")
+                    return redirect("showCart")
+                
+            
             cart_items.delete()
 
             messages.success(request,"Order placed successfully")
@@ -633,24 +673,29 @@ def checkout(request):
                                                 "item":cart_items,"totalprice" : total_price})
 
 
-#ADD PRICE INCREMENT IF COD
-@never_cache
-@login_required(login_url='/user/login/')
-def update_total_price(request):
-    payment_method=request.GET.get("payment_method") 
-    cart=Cart.objects.get(user=request.user)
+@csrf_exempt
+def verify_payment(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        client = razorpay.Client(auth=(settings.RAZORPAY['KEY_ID'], settings.RAZORPAY['KEY_SECRET']))
 
-    items=(cart.cart_item.select_related('product__product')
-        .prefetch_related('product__product__images')
-        .annotate(row_total=F('quantity') * F('product__price')))
-    
-    total_price=items.aggregate(total=Sum('row_total'))['total'] or 0
+        try:
+            client.utility.verify_payment_signature({
+                'razorpay_order_id': data['razorpay_order_id'],
+                'razorpay_payment_id': data['razorpay_payment_id'],
+                'razorpay_signature': data['razorpay_signature']
+            })
 
-    if payment_method=="cod":
-        amount=100
-        total_price=total_price+amount
-  
-    return render(request,"order/partial_cod.html",{"totalprice" : total_price})
+            order = Orders.objects.get(razorpay_order_id=data['razorpay_order_id'])
+            order.is_paid = True
+            order.save()
+
+            return JsonResponse({"status": "success"})
+
+        except razorpay.errors.SignatureVerificationError:
+            messages.error(request,"Payment verification failed. Please try again.")
+            return redirect("checkOut")
+
 
 
 #LIST ADDRESS

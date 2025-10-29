@@ -126,6 +126,8 @@ class Orders(models.Model):
     payment_method=models.CharField(choices=PAYMENT_METHOD_CHOICES,default="cash_on_delivery")
     delivery_charge=models.DecimalField(max_digits=10,decimal_places=2,default=0.00)
     discount=models.DecimalField(max_digits=10,decimal_places=2,default=0.00)
+    razorpay_order_id=models.CharField(max_length=255,blank=True,null=True)
+    is_paid = models.BooleanField(default=False)
 
     def __str__(self):
         return f"order {self.orderID} by {self.user.firstname}"

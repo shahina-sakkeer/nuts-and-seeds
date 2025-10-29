@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-t1rdvg-^mz$@!%l*zfcltcw26###!1#73fbsy992_p-t#xa%4q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -198,3 +198,15 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
+
+
+RAZORPAY = {
+    'KEY_ID': config('RAZORPAY_KEY_ID'),
+    'KEY_SECRET': config('RAZORPAY_KEY_SECRET'),
+    'MODE': config('RAZORPAY_MODE', default='test')
+}
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
