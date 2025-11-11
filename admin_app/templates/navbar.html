@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuts & Seeds Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Toastify -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -17,6 +18,15 @@
     <!-- htmx -->
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
 </head>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+</style>
 
 <body class="bg-gray-50">
     <!-- Navbar -->
@@ -36,6 +46,8 @@
                     <a href="{% url 'listProduct' %}" class="text-gray-600 hover:text-gray-900 transition">Products</a>
                     <a href="{% url 'users' %}" class="text-gray-600 hover:text-gray-900 transition">Customers</a>
                     <a href="{% url 'orderList' %}" class="text-gray-600 hover:text-gray-900 transition">Orders</a>
+                    <a href="{% url 'couponList' %}" class="text-gray-600 hover:text-gray-900 transition">Coupons</a>
+                    <a href="{% url 'allOffers' %}" class="text-gray-600 hover:text-gray-900 transition">Offers</a>
                     <a href="{% url 'admin_signout' %}" class="text-gray-600 hover:text-gray-900 transition">Logout</a>
                 </div>
 

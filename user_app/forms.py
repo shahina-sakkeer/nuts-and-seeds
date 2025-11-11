@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser,UserAddress
+from .models import CustomUser,UserAddress,OrderReturn
 from django.forms import ValidationError
 import re
 
@@ -81,6 +81,39 @@ class UserAddressForm(forms.ModelForm):
         model=UserAddress
         fields=["house_name","street","landmark","city","pincode","state"]
 
+        widgets = {
+            "house_name": forms.TextInput(attrs={
+                "class": "w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none",
+                "placeholder": "Address",
+                'autocomplete': 'off'
+            }),
+            "street": forms.TextInput(attrs={
+                "class": "w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none",
+                "placeholder": "Street",
+                'autocomplete': 'off'
+            }),
+            "landmark": forms.TextInput(attrs={
+                "class": "w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none",
+                "placeholder": "Landmark",
+                'autocomplete': 'off'
+            }),
+            "city": forms.TextInput(attrs={
+                "class": "w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none",
+                "placeholder": "City",
+                'autocomplete': 'off'
+            }),
+            "pincode": forms.TextInput(attrs={
+                "class": "w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none",
+                "placeholder": "Pincode",
+                'autocomplete': 'off'
+            }),
+            "state": forms.TextInput(attrs={
+                "class": "w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none",
+                "placeholder": "State",
+                'autocomplete': 'off'
+            })
+        }
+
     def clean_house_name(self):
         house_name=self.cleaned_data.get("house_name")
         
@@ -115,4 +148,32 @@ class UserAddressForm(forms.ModelForm):
 
 
 
+class OrderReturnForm(forms.ModelForm):
+    class Meta:
+        model=OrderReturn
+        fields=['return_choice','image','return_reason']
 
+        widgets={
+        "return_choice": forms.RadioSelect(),
+        "return_reason": forms.TextInput(attrs={
+                "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
+                "placeholder": "Enter reason",
+                'autocomplete': 'off'
+            }),
+        "image": forms.ClearableFileInput(attrs={
+                "class": "block w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer "
+                         "bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            }),
+    }
+
+
+    def clean_return_reason(self):
+        return_reason=self.cleaned_data.get('return_reason')
+
+        if len(return_reason)<10:
+            raise ValidationError("Reason should contains atleast 10 characters long")
+        
+        if return_reason and not re.match(r'^[a-zA-Z\s]+$', return_reason):
+            raise ValidationError("Reason should contain only alphabets")
+        
+        return return_reason

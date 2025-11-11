@@ -1,39 +1,65 @@
 <!-- Product Grid -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-    <!-- Product Card 1 -->
+    <!-- Product Card  -->
     {% for p in products %}
 
-    <div class="bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition">
+    <div class="relative rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition">
 
-         <a href="{% url 'product_details' p.id %}" class="block">
+        
+        <form hx-post="{% url 'addWishlist' p.id %}" hx-target="#wishlist-icon-{{ p.id }}" 
+            hx-swap="outerHTML" class="absolute top-3 right-3 z-10">
+            {% csrf_token %}
+            
+            {% include "partial_wishlist.html" with product=p wishlist_product_ids=wishlist_product_ids %}
+            <!-- Hidden submit button -->
+            <button type="submit" id="wishlist-submit-{{ p.id }}" class="hidden"></button>
+  
+        </form>
+
+        <a href="{% url 'product_details' p.id %}" class="block">
             {% if p.images.all %}
             <img src="{{ p.images.all.0.image.url }}" alt="{{p.name}}" class="w-full h-64 object-cover">
             {% endif %}
         </a>
 
-        <!-- Wishlist Icons for Variants -->
-        <!-- {% for variant in p.variants.all %}
-            <button class="absolute top-3 right-3 wishlist-btn z-10 bg-white bg-opacity-80 p-2 rounded-full shadow" data-variant-id="{{ variant.id }}">
-                <i class="fa-heart 
-                    {% if variant.id in wishlist_items %}
-                        fa-solid text-red-500
-                    {% else %}
-                        fa-regular text-gray-400
-                    {% endif %}">
-                </i>
-            </button>
-        {% endfor %} -->
 
         <div class="p-4">
             <a href="#" class="block">
                 <h3 class="text-base font-medium text-gray-900 hover:text-gray-600 transition">{{ p.name }}</h3>
             </a>
+
             {% if p.variants.all %}
 
-            <p class="text-lg font-semibold text-gray-900 mt-2">Rs. {{ p.variants.all.0.price }}</p>
+            {% with v=p.variants.all.0 %}
+
+            {% if v.final_price < v.price %} 
+
+            <div class="flex flex-col mt-2">
+                <p class="text-sm text-gray-500 line-through opacity-70">
+                    Rs. {{ v.price }}
+                </p>
+
+                <p class="text-lg font-semibold text-gray-900 mt-1">
+                    Rs. {{ v.final_price|floatformat:2 }}
+                </p>
+
+            </div>
+
+            {% if v.discount_percent > 0 %}
+                <span class="text-xs font-semibold text-red-600 bg-red-100 px-2 py-1 rounded">
+                    {{ v.discount_percent|floatformat:0 }}% OFF
+                </span>
             {% endif %}
-        </div>
+            
+            {% else %}
+            <p class="text-lg font-semibold text-gray-900 mt-2">Rs. {{ v.price }}</p>
+
+        {% endif %}
+        {% endwith %}
+        {% endif %}
 
     </div>
-    {% endfor %}
+
+</div>
+{% endfor %}
 </div>

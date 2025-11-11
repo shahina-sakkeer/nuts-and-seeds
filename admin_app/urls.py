@@ -18,5 +18,14 @@ urlpatterns=[
     path("block-button/<int:id>",views.blockUser,name="blockCustomer"),
     path("logout/",views.signout,name="admin_signout"),
     path("orders/",views.order_list,name="orderList"),
-    path("detail/<int:id>/",views.order_detail_page,name="orderDetailView")
+    path("detail/<int:id>/",views.order_detail_page,name="orderDetailView"),
+    path("order/return/<int:id>/",views.order_return_request,name="orderAction"),
+    path("coupon/add/",views.add_coupon,name="couponAdd"),
+    path("coupons/",views.list_coupon,name="couponList"),
+    path("coupon/delete/<int:id>/",views.delete_coupon,name="couponDelete"),
+    path("offers/",views.all_offers,name="allOffers"),
+    path("offer/category/add/",views.add_category_offer,name="addOfferCategory"),
+    path("offer/product/add/",views.add_product_offer,name="addOfferProduct"),
+    path("offer/category/delete/<int:id>/",views.delete_category_offer,name="deleteOfferCatg"),
+    path("offer/product/delete/<int:id>/",views.delete_product_offer,name="deleteOfferPrdct")
 ]

@@ -1,36 +1,42 @@
 <div class="mb-6">
-    <p class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1">Rs. {{variant.price}}</p>
-    <span class="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">In Stock
-        {{variant.quantity_stock}}</span>
-    <p class="text-xs sm:text-sm text-gray-500">Inclusive of all taxes</p>
+    <!-- delete starts -->
+    {% if variant.final_price < variant.price %} <div class="flex flex-col mt-2">
+        <p class="text-lg text-red-500 line-through opacity-70">
+            Rs. {{ variant.price }}
+        </p>
+
+        <p class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1">
+            Rs. {{ variant.final_price|floatformat:2 }}
+        </p>
+
 </div>
 
-<!-- Quantity & Actions -->
-<!-- <div class="flex flex-wrap gap-3 mb-6">
-    <div class="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden">
-        <button class="px-3 sm:px-4 py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition">
-            <i class="fas fa-minus text-sm"></i>
-        </button>
-        <input type="number" value="2" min="1"
-            class="qty-input w-12 sm:w-16 text-center font-semibold outline-none text-sm sm:text-base">
-        <button class="px-3 sm:px-4 py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition">
-            <i class="fas fa-plus text-sm"></i>
-        </button>
-    </div>
+{% if variant.discount_percent > 0 %}
+<span class="text-xs font-semibold text-red-600 bg-red-100 px-2 py-1 rounded">
+    {{ variant.discount_percent|floatformat:0 }}% OFF
+</span>
+{% endif %}
 
-    <button
-        class="px-4 py-2 sm:py-3 border-2 border-gray-300 rounded-lg hover:border-orange-600 hover:text-orange-600 transition">
-        <i class="far fa-heart text-lg sm:text-xl"></i>
-    </button>
-</div> -->
+{% else %}
+<p class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1">Rs. {{ variant.price }}</p>
+
+{% endif %}
+<!-- delete end -->
+
+<!-- <p class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1">Rs. {{variant.price}}</p> -->
+<span class="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full gap-5">In Stock
+    {{variant.quantity_stock}}</span>
+<p class="text-xs sm:text-sm text-gray-500">Inclusive of all taxes</p>
+</div>
+
 
 <!-- Add to Cart & Buy Now -->
 <div class="flex flex-col sm:flex-row gap-3 mb-6 sm:mb-8">
     <a href="{% url 'addToCart' variant.id %}"
-       class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 sm:py-4 rounded-lg transition transform hover:scale-[1.02] shadow-lg text-center text-sm sm:text-base">
+        class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 sm:py-4 rounded-lg transition transform hover:scale-[1.02] shadow-lg text-center text-sm sm:text-base">
         <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
     </a>
-    
+
     <button
         class="flex-1 bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 sm:py-4 rounded-lg transition transform hover:scale-[1.02] shadow-lg text-sm sm:text-base">
         Wishlist

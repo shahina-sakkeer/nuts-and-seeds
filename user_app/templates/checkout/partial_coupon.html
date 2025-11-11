@@ -1,0 +1,23 @@
+<div id="coupon-discount-price" class="space-y-2 text-sm">
+
+  {% if discount and discount > 0 %}
+  <!-- Discount Row -->
+  <div class="flex justify-between items-center text-red-600 font-medium">
+    <span>Discount {% if applied_coupon %}({{ applied_coupon.code|upper }}){% endif %}</span>
+    <span>- Rs. {{ discount|floatformat:2 }}</span>
+  </div>
+  {% endif %}
+
+  <!-- Divider -->
+  <hr class="border-gray-300 my-1">
+
+  <!-- Grand Total Row -->
+  <div class="flex justify-between items-center text-base font-semibold text-gray-900">
+    <span>Grand Total</span>
+    <span>Rs. {{ new_total|floatformat:2 }}</span>
+  </div>
+
+    {% if error_message %}
+  <div class="text-red-600 font-medium">{{ error_message }}</div>
+  {% endif %}
+</div>

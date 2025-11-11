@@ -29,15 +29,22 @@ urlpatterns=[
     path("cart/",views.show_cart,name="showCart"),
     path("cart/delete/<int:id>/",views.remove_from_cart,name="removeItem"),
     path("cart/quantity/<int:id>/",views.update_quantity,name="changeQuantity"),
-    path('toggle-wishlist/',views.toggle_wishlist, name='toggleWishlist'),
     path("checkout/",views.checkout,name="checkOut"),
     path("checkout/address",views.add_new_address,name="addNewAddress"),
+    path("coupon-discount/",views.partial_coupon,name="couponDiscount"),
+    path("coupon-list/",views.partial_coupon_list,name="showCoupons"),
     path('dashboard/',views.user_dashboard,name="userDasboard"),
     path('verify-payment/',views.verify_payment,name="verifyPayment"),
-    # path('update-price/',views.update_total_price,name="codExtra"),
-    path("order-success/<int:id>",views.order_placed,name="orderSuccess"),
+    path("order-failure/<int:id>/",views.order_failure,name="paymentFailure"),
+    path("order-success/<int:id>/",views.order_placed,name="orderSuccess"),
     path("address-list/",views.list_address,name="selectAddress"),
     path("order-list/",views.orders_list,name="order-list"),
-    path("order-detail/<int:id>",views.order_detail,name="orderDetail")
+    path("order-detail/<int:id>/",views.order_detail,name="orderDetail"),
+    path("order-return/<int:id>/",views.return_order_item,name="orderReturn"),
+    path("wallet/",views.add_money_wallet,name="walletList"),
+    path("verify_wallet/",views.wallet_verify_payment,name="verifyWallet"),
+    path("wishlist/",views.wishlist_list,name="allWishlist"),
+    path("wishlist/add/<int:id>/",views.add_to_wishlist,name="addWishlist"),
+    path("wishlist/delete/<int:id>/",views.remove_from_wishlist,name="removeWishlist")
 ]
 

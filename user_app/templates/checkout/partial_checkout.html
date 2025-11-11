@@ -1,0 +1,73 @@
+<div class="address-form-container">
+<div class="min-h-screen flex items-center justify-center">
+<div class="bg-white shadow-md rounded-lg p-8 w-full max-w-2xl">
+
+    <form class="space-y-4" hx-post="{% url 'addNewAddress' %}" hx-target="#address-section" hx-swap="beforeend"
+    hx-on="htmx:afterRequest: this.remove">
+    
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">House Name</label>
+          {{form.house_name}}
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Street</label>
+          {{form.street}}
+        </div>
+      </div>
+
+  
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Landmark</label>
+          {{form.landmark}}
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">City</label>
+          {{form.city}}
+        </div>
+      </div>
+
+      <!-- City and State -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Pincode</label>
+          {{form.pincode}}
+        </div>
+      </div>
+
+      <!-- Landmark and Alternate Phone -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">State</label>
+          {{form.state}}
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-between items-center pt-4">
+        <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2 rounded-md shadow">
+          SAVE
+        </button>
+        <button type="button" class="text-blue-600 font-medium hover:underline"
+        hx-on="click: this.closest('.address-form-container').remove()">
+          CANCEL
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+
+
+
+
+
+
+
+<!-- <form  hx-post="{% url 'addNewAddress' %}" hx-target="#address-section" hx-swap="beforeend"
+hx-on="htmx:afterRequest: this.remove" >
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Save</button>
+</form> -->

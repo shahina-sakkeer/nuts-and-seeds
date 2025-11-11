@@ -1,17 +1,19 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from admin_app.forms import AdminLoginForm,CategoryForm,ProductForm,ProductImageForm,ProductVariantFormSet,ProductVariantInlineFormSet
+from admin_app.forms import AdminLoginForm,CategoryForm,ProductForm,ProductImageForm,ProductVariantFormSet,ProductVariantInlineFormSet,CouponForm,CategoryOfferForm,ProductOfferForm
 from admin_app.decorators import staff_required
 from django.contrib.auth import authenticate,login,logout
 from django.core.cache import cache
 from django.views.decorators.cache import cache_control
 from django.contrib import messages
-from admin_app.models import Category,Products,ProductImage,ProductVariant
+from admin_app.models import Category,Products,ProductImage,ProductVariant,Coupon,CategoryOffer,ProductOffer
 from django.db import transaction,IntegrityError
-from django.db.models import Q
+from django.db.models import Q,Sum
 from django.core.paginator import Paginator
-from user_app.models import CustomUser,Orders,OrderItem
+from user_app.models import CustomUser,Orders,OrderItem,OrderReturn,Wallet,WalletTransaction
 import base64
 from cloudinary.uploader import upload
+from datetime import date,timedelta
+from admin_app.helper import get_sales_data,get_most_ordered_product
 
 
 # Create your views here.
@@ -20,7 +22,43 @@ from cloudinary.uploader import upload
 @staff_required
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def admin_dashboard(request):
-    return render(request,"dashboard.html")
+    filter_type=request.GET.get("filter","today")
+
+    #filter option
+    today=date.today()
+    start_of_week=today - timedelta(days=today.weekday())
+    start_of_month=today.replace(day=1)
+    top_product=None
+
+    #overall total
+    order_count=Orders.objects.count()
+    total_sales=Orders.objects.aggregate(total=Sum('total_price'))['total'] or 0
+    total_discount=Orders.objects.aggregate(total=Sum('discount'))['total'] or 0
+    net_sales=total_sales-total_discount
+
+    if filter_type=="today":
+        filtered_data=get_sales_data(today,today)
+        top_product = get_most_ordered_product(today, today)
+    elif filter_type=="weekly":
+        filtered_data=get_sales_data(start_of_week,today)
+        top_product = get_most_ordered_product(start_of_week, today)
+    else:
+        filtered_data=get_sales_data(start_of_month,today)
+        filtered_data = get_sales_data(start_of_month, today)
+        
+
+    return render(request,"dashboard.html",{
+        "order_count":order_count,
+        "total_sales":total_sales,
+        "total_discount":total_discount,
+        "net_sales":net_sales,
+        "filter_type":filter_type,
+        "filtered_sales": filtered_data["sales"],
+        "filtered_discount": filtered_data["discount"],
+        "filtered_net_sales": filtered_data["net"],
+        "filtered_count": filtered_data["count"],
+        "top_product":top_product
+    })
 
 
 #CUSTOMER MANAGEMENT    
@@ -163,6 +201,7 @@ def add_products(request):
         if form.is_valid() and variant_formset.is_valid():
             try:
                 product = form.save()
+                print("product",product)
             
                 for variant_form in variant_formset:
                     if variant_form.cleaned_data:
@@ -312,4 +351,131 @@ def order_detail_page(request,id):
     ordered_item_details=order.orderitem.all()
     user=order.user
     address=order.address
+
+    if request.method=="POST":
+        item_id=request.POST.get("item_id")
+        new_status=request.POST.get("status")
+
+        if item_id and new_status:
+            item=get_object_or_404(order.orderitem,id=item_id)
+            item.status=new_status
+            item.save()
+            messages.success(request,f"Order status changed to {new_status}")
+            return redirect("orderList")
+
     return render(request,"orders/order_detail.html",{"items":ordered_item_details,"order":order})
+
+
+#ORDER RETURN REQUEST ACTION
+def order_return_request(request,id):
+    return_item=get_object_or_404(OrderReturn,id=id,approval_status="pending")
+    item=return_item.item
+    user=return_item.user
+    product=item.product
+    
+    action=request.POST.get("decision")
+    if action=="approve":
+        return_item.approval_status="refunded"
+        item.status="returned"
+
+        refund_amount = item.price * item.quantity
+
+        wallet,created=Wallet.objects.get_or_create(user=user)
+        wallet.balance+=refund_amount
+        wallet_txn=WalletTransaction.objects.create(wallet=wallet,amount=refund_amount,is_paid=False,
+                                transaction_type='credit')
+        wallet.save()
+        wallet_txn.save()
+        item.save()
+        return_item.save()
+
+        product.quantity_stock+=item.quantity
+        product.save()
+        messages.success(request,f"Return request for {item.product.product.name} is approved")
+        return redirect("orderDetailView",id=return_item.item.order.id)
+        
+
+    elif action=="reject":
+        return_item.approval_status="rejected"
+        item.status="rejected"
+        item.save()
+        return_item.save()
+        
+        messages.info(request,f"Return request for {item.product.product.name} is rejected")
+        return redirect("orderDetailView",id=return_item.item.order.id)
+
+
+#ADD COUPON
+def add_coupon(request):
+    if request.method=="POST":
+        form=CouponForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request,"New Coupon added")
+            except IntegrityError:
+                messages.error(request, "Coupon already exists")
+            return redirect("couponList")
+    else:
+        form=CouponForm()
+    
+    return render(request,"coupon/add_coupon.html",{"form":form})
+
+
+#ADD COUPON
+def list_coupon(request):
+    coupon=Coupon.objects.all().order_by("-id")
+    return render(request,"coupon/list_coupon.html",{"coupons":coupon})
+
+
+#DELETE COUPON
+def delete_coupon(request,id):
+    coupon=get_object_or_404(Coupon,id=id)
+    coupon.delete()
+    return redirect("couponList")
+
+
+#LIST ALL OFFERS
+def all_offers(request):
+    category=CategoryOffer.objects.all().order_by("-id")
+    products=ProductOffer.objects.all().order_by("-id")
+
+    return render(request,"offer/offers.html",{"category":category,"products":products})
+
+
+#ADD CATEGORY OFFER
+def add_category_offer(request):
+    if request.method=="POST":
+        form=CategoryOfferForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("allOffers")
+    else:
+        form=CategoryOfferForm()
+    return render(request,"offer/category_add_offer.html",{"form":form})
+
+
+#ADD PRODUCT OFFER
+def add_product_offer(request):
+    if request.method=="POST":
+        form=ProductOfferForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("allOffers")
+    else:
+        form=ProductOfferForm()
+    return render(request,"offer/product_add_offer.html",{"form":form})
+
+
+#DELETE CATEGORY OFFER
+def delete_category_offer(request,id):
+    category_offer=get_object_or_404(CategoryOffer,id=id)
+    category_offer.delete()
+    return redirect("allOffers")
+
+
+#DELETE PRODUCT OFFER
+def delete_product_offer(request,id):
+    product_offer=get_object_or_404(ProductOffer,id=id)
+    product_offer.delete()
+    return redirect("allOffers")

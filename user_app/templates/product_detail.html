@@ -67,13 +67,10 @@
             </nav>
             <!-- Product Title & Rating -->
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3">{{prod.name}}</h1>
-            {% for v in variants %}
-            <div class="flex flex-wrap items-center gap-3 sm:gap-4 mb-4">
-            </div>
-            {% endfor %}
 
             <!-- Weight Options -->
             <div class="flex flex-wrap gap-2 mb-6">
+
                 {% for v in variants %}
                 <input type="radio" name="weight" id="{{v.id}}" class="peer/{{v.id}} hidden" 
                 {% if forloop.first %}checked{% endif %}>
@@ -82,11 +79,12 @@
                     hx-get="{% url 'weight_price' v.id %}" hx-target="#weight-measurment"
                     hx-swap="innerHTML">{{v.weight}}{{v.unit}}</label>
                 {% endfor %}
+
             </div>
 
             <!-- Price -->
             <div id="weight-measurment">
-                {% include 'partial_detail.html' with variant=variants.first %}
+                {% include 'partial_detail.html' with variant=first %}
             </div>
 
             

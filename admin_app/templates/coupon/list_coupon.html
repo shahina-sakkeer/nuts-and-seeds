@@ -1,0 +1,115 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+
+<div class="flex items-center justify-center mb-4 mt-6 gap-4">
+    <!-- Search Box -->
+    <!-- <form class="flex items-center" action="">
+        <input type="text" name="search" placeholder="Search..." autocomplete="off"
+            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
+            hx-get="{% url 'searching' %}" hx-trigger="keyup changed delay:300ms" hx-target="#product-list"
+            hx-swap="innerHTML">
+    </form> -->
+    
+    <!-- <div class="flex justify-end mb-6"> -->
+        <a href="{% url 'couponAdd' %}">
+            <button
+                class="ml-2 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                + Add Coupon
+            </button>
+        </a>
+    <!-- </div> -->
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- Product Table -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden ">
+        <table class="w-full">
+            <thead class="bg-gray-100 border-b">
+                <tr>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        COUPON CODE</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        START DATE</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        END DATE</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        DISCOUNT TYPE</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        DISCOUNT VALUE</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        MINIMUM PURCHASE AMOUNT</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        USAGE LIMIT</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        ACTION</th>
+                </tr>
+            </thead>
+            
+            {% for coupon in coupons %}
+            <tbody class="divide-y divide-gray-200">
+                <!-- Product Row 1 -->
+                <tr class="hover:bg-gray-50 transition duration-150">
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.code}}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.start_date}}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.end_date}}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.discount_type}}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.discount_value}}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.minimum_purchase_amount}}</span>
+                        </div>
+                    </td>
+                     <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.usage_limit}}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <a href="{% url 'couponDelete' coupon.id %}">
+                                <button type="button"><i class="fa-solid fa-trash"></i></button>
+                            </a>
+                            <!-- <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.usage_limit}}</span> -->
+                        </div>
+                    </td>
+
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}
+

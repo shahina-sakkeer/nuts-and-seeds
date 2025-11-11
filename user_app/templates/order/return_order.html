@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="min-h-screen flex items-center justify-center">
+
+    <div class="w-full max-w-xl bg-white rounded-lg shadow-md p-8">
+
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-1">Return Order</h1>
+            <!-- <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Order #123456789</a> -->
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+  <div>
+    <h2 class="text-lg font-semibold text-gray-800 mb-4">Reason for Return</h2>
+    <div class="space-y-3">
+      {% for radio in form.return_choice %}
+        <label class="flex items-center justify-between border border-gray-300 rounded-md px-4 py-3 cursor-pointer hover:bg-gray-50">
+          <span class="text-gray-700">{{ radio.choice_label }}</span>
+          {{ radio.tag }}
+        </label>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-gray-700 font-medium mb-2">Additional Reason</label>
+    {{ form.return_reason }}
+  </div>
+
+  <div>
+    <label class="block text-gray-700 font-medium mb-2">Attach the image of the product</label>
+    {{ form.image }}
+  </div>
+
+  <div class="flex justify-end">
+    <button type="submit"
+      class="px-6 py-2 bg-red-600 text-white font-medium rounded-md hover:bg-red-700 transition">
+      Submit Return
+    </button>
+  </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+
+<!-- <h1>return request form</h1>
+
+<form action="" method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">submit</button>
+</form> -->

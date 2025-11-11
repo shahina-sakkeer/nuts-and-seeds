@@ -1,6 +1,7 @@
 from django.db import models
 from cloudinary.models import CloudinaryField
 
+
 # Create your models here.
 
 class ActiveCategoryManager(models.Manager):
@@ -34,7 +35,7 @@ class Products(models.Model):
     is_deleted=models.BooleanField(default=False)
     name=models.CharField(max_length=100)
     description=models.TextField(blank=True,null=True) 
-    status=models.CharField(choices=STATUS)
+    status=models.CharField(max_length=20,choices=STATUS)
     objects=ActiveProductManager()
     all_products=models.Manager()
 
@@ -57,7 +58,7 @@ class ProductVariant(models.Model):
     unit=models.CharField(choices=UNIT)
     quantity_stock=models.IntegerField(default=0)
     price=models.DecimalField(max_digits=10,decimal_places=2) 
-    status=models.CharField(choices=STATUS,default=0)
+    status=models.CharField(max_length=20, choices=STATUS,default="Published")
     created_at=models.DateField(auto_now_add=True)
     updated_at=models.DateField(auto_now=True)
     is_deleted=models.BooleanField(default=False)
@@ -71,3 +72,71 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"{self.product.name} image"
+
+
+class Coupon(models.Model):
+    DISCOUNT_CHOICES=[
+        ('percentage','Percentage'),
+        ('flat','flat')
+    ]
+    code=models.CharField(max_length=10,unique=True)
+    discount_value=models.DecimalField(max_digits=10,decimal_places=2,default=0.0)
+    minimum_purchase_amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    usage_limit=models.IntegerField(blank=True,null=True)
+    start_date=models.DateTimeField()
+    end_date=models.DateTimeField()
+    is_active=models.BooleanField(default=False)
+    discount_type=models.CharField(max_length=20,choices=DISCOUNT_CHOICES)
+    description=models.TextField(blank=True,null=True)
+
+    def __str__(self):
+        return self.code
+
+
+class CouponUsage(models.Model):
+    coupon=models.ForeignKey(Coupon,related_name="coupons",on_delete=models.CASCADE)
+    user=models.ForeignKey('user_app.CustomUser',related_name="user",on_delete=models.CASCADE)
+    used_count=models.IntegerField(default=0)
+
+
+class CategoryOffer(models.Model):
+    name=models.CharField(max_length=200,default="null")
+    category=models.ForeignKey(Category,related_name="categoryoffer",on_delete=models.CASCADE)
+    offer_percentage=models.DecimalField(max_digits=10,decimal_places=2,default=0.0)
+    start_date=models.DateTimeField()
+    end_date=models.DateTimeField()
+    is_active=models.BooleanField(default=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['is_active', 'end_date'])
+        ]
+
+    def __str__(self):
+        return f"{self.category.name} has {self.offer_percentage} %"
+
+
+class ProductOffer(models.Model):
+    name=models.CharField(max_length=200,default="null")
+    product=models.ForeignKey(Products,related_name="productoffer",on_delete=models.CASCADE)
+    offer_percentage=models.DecimalField(max_digits=10,decimal_places=2,default=0.0)
+    start_date=models.DateTimeField()
+    end_date=models.DateTimeField()
+    is_active=models.BooleanField(default=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['is_active', 'end_date'])
+        ]
+
+    def __str__(self):
+        return f"{self.product.name} has {self.offer_percentage} %"
+    
+
+
+
+
+
+
+
+

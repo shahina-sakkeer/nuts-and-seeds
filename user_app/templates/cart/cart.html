@@ -50,7 +50,7 @@
                 <div id="update-quantity-{{item.id}}" class="flex items-center gap-4 mt-3">
 
                   <!-- Price -->
-                  <span id="item-total-{{item.id}}" class="text-lg font-bold text-gray-900">Rs. {{item.row_total}}</span>
+                  <span id="item-total-{{item.id}}" class="text-lg font-bold text-gray-900">Rs. {{item.row_total | floatformat:2}}</span>
                   {% include 'cart/partial_quantity.html' with product=item %}
 
                 </div>
@@ -113,7 +113,7 @@
             <div class="space-y-3 text-sm">
               <div class="flex justify-between">
                 <span class="text-gray-700">Price</span>
-                <span id="cart-total" class="font-bold text-gray-900 text-base">{{total}}</span>
+                <span id="cart-total" class="font-bold text-gray-900 text-base">{{total | floatformat:2}}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-700">Discount</span>
@@ -125,7 +125,7 @@
               <div class="border-t pt-3">
                 <div class="flex justify-between items-center">
                   <span class="font-bold text-gray-900 text-base">Total Amount</span>
-                  <span id="cart-total" class="font-bold text-gray-900 text-base">{{total}}</span>
+                  <span id="cart-total" class="font-bold text-gray-900 text-base">{{total | floatformat:2}}</span>
                 </div>
               </div>
 

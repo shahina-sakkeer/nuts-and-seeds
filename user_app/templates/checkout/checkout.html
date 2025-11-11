@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Two Column Layout -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <form action="" method="post" id="checkout-form">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Left Section -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Delivery Address Card -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">Delivery Address</h2>
+                    <div id="address-section">
+                        <div class="space-y-4">
+
+                            <div class="space-y-3" id="address-section">
+                                {% for address in address %}
+                                <label class="flex items-start p-4 border-2 rounded-lg cursor-pointer transition
+        {% if default_address and default_address.id == address.id %}
+            border-green-500 bg-green-50 {% else %} border-gray-300 hover:border-green-400 hover:bg-green-50
+            {% endif %}">
+
+                                    <input type="radio" name="selected_address" value="{{ address.id }}" 
+                                    {% if default_address and default_address.id == address.id %} checked {% endif %}
+                                        class="mt-1 w-4 h-4 text-green-600 focus:ring-green-500">
+
+                                    <span class="ml-3 text-gray-900">
+                                        {{ user.firstname }}, {{ address.house_name }}, {{ address.street }},
+                                        {{ address.pincode }}, {{ address.state }}
+                                    </span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <a href="" hx-get="{% url 'addNewAddress' %}" hx-target="#address-section"
+                                hx-swap="beforeend"
+                                class="inline-block px-4 py-2 border-2 border-orange-500 text-orange-600 font-medium rounded-lg hover:bg-green-50 transition">
+                                Add a new address
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Add New Address Button -->
+
+                </div>
+
+                <!-- Order Summary Card -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+
+                    <div class="space-y-6">
+                        <!-- Product 1 -->
+                        {% for item in item %}
+                        <div class="flex items-center justify-between pb-6 border-b border-gray-200">
+                            <div class="flex items-center space-x-4 flex-1">
+                                <!-- Product Image -->
+
+                                <div class="flex-shrink-0">
+                                    {% with item.product.product.images.all as image %}
+
+                                    {% if image %}
+                                    <img src="{{image.0.image.url}}" alt="Jade Plant"
+                                        class="w-24 h-24 object-cover rounded-lg">
+                                    {% endif %}
+
+                                    {% endwith %}
+                                </div>
+
+                                <!-- Product Details -->
+
+                                <div class="flex-1">
+                                    <h3 class="text-base font-semibold text-gray-900">{{item.product.product.name}}</h3>
+                                    <p class="text-sm text-gray-500 mt-1">{{item.product.weight}} g </p>
+                                    <p class="text-sm text-gray-500 mt-1">Pack of {{item.quantity}}</p>
+                                </div>
+
+                            </div>
+
+                            <!-- Product Price -->
+                            <div class="text-lg font-semibold text-gray-900 ml-4">
+                                {{item.row_total | floatformat:2}}
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Section - Price Details (1/3 width) -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-sm p-6 sticky top-6">
+                    <h2 class="text-gray-600 font-semibold tracking-wide mb-4 border-b border-gray-300 pb-2">PRICE
+                        <span class="text-black">DETAILS</span>
+                    </h2>
+
+                    <div class="space-y-4">
+                        <!-- Subtotal -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Subtotal</span>
+                            <span class="text-gray-900 font-medium">Rs. {{totalprice | floatformat:2}}</span>
+                        </div>
+
+                        <!-- Shipping -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Shipping Charge</span>
+                            <span class="text-gray-900 font-medium">Rs.0.00</span>
+                        </div>
+
+                        <!-- Total -->
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-lg font-bold text-gray-900">Total</span>
+                            <span class="text-lg font-bold text-gray-900">Rs. {{totalprice | floatformat:2}}</span>
+                        </div>
+                    </div>
+
+                    <div id="coupon-discount-price"></div>
+                    <!-- Coupon Code Input -->
+                    <div class="flex items-center mt-5 space-x-2">
+                        <input type="text" name="coupon" id="coupon-code" placeholder="Enter coupon code"
+                            class="w-2/3 px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-0" />
+                        <button type="button" id="apply-coupon"
+                            class="w-1/3 bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded-lg"
+                            hx-post="{% url 'couponDiscount' %}" hx-target="#coupon-discount-price"
+                            hx-vals='{ "total_price":"{{totalprice}}" }' hx-include="#coupon-code" hx-swap="outerHTML">
+                            Apply
+                        </button>
+                    </div>
+                
+                    <div class="flex items-center mt-5 space-x-2">
+                        <button type="button" id="show-coupon"
+                            class="w-2/3 bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded-lg"
+                            hx-get="{% url 'showCoupons' %}" hx-target="#coupon-list" hx-swap="outerHTML">
+                            Show Coupons
+                        </button>
+                    </div>
+                    <div id="coupon-list"></div>
+
+                    <div class="w-full max-w-sm mx-auto mt-8">
+                        <h2 class="text-gray-600 font-semibold tracking-wide mb-4 border-b border-gray-300 pb-2">
+                            PAYMENT <span class="text-black">METHOD</span>
+                        </h2>
+
+
+                        <div class="flex flex-col space-y-3">
+                            <!-- Wallet -->
+                            <label
+                                class="flex items-center border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-green-500 transition">
+                                <input type="radio" name="payment_method" value="wallet" onclick="selectPayment('wallet')"
+                                    class="w-4 h-4 text-green-600 focus:ring-green-500" />
+                                <span class="ml-3 text-gray-700 font-medium">Wallet</span>
+                            </label>
+
+                            <!-- Razorpay -->
+                            <label
+                                class="flex items-center border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-green-500 transition">
+                                <input type="radio" name="payment_method" value="razorpay"
+                                    onclick="selectPayment('razorpay')"
+                                    class="w-4 h-4 text-green-600 focus:ring-green-500" />
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Razorpay_logo.svg"
+                                    alt="Razorpay" class="ml-3 h-5" />
+                            </label>
+
+                            <!-- Cash on Delivery -->
+                            <label
+                                class="flex items-center border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-green-500 transition">
+                                <input type="radio" name="payment_method" value="cod" onclick="selectPayment('cod')"
+                                    class="w-4 h-4 text-green-600 focus:ring-green-500" checked />
+                                <span class="ml-3 text-gray-700 font-medium">Cash on Delivery</span>
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <!-- Place Order Button -->
+                    <div class="mt-8">
+                        <input type="hidden" id="selected-payment" name="payment_method" value="">
+                        <input type="hidden" name="total_price" id="total_price" value="{{ totalprice }}">
+                        <button type="submit"
+                            class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition shadow-sm">
+                            Place Your Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </form>
+</div>
+
+
+<!-- Razorpay Confirmation Modal -->
+<div class="modal fade" id="razorpayModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p>Proceed with Razorpay payment?</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirm-razorpay" class="btn btn-success">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let selectedPayment = null;
+
+    function selectPayment(method) {
+        selectedPayment = method;
+        document.getElementById("selected-payment").value = method;
+    }
+
+    // Handle form submission
+    document.getElementById("checkout-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        if (!selectedPayment) {
+            alert("Please select a payment method.");
+            return;
+        }
+
+        if (selectedPayment === "cod") {
+            // Normal POST for COD
+            this.submit(); 
+        }
+        else if (selectedPayment === "razorpay") {
+            // Open confirmation modal
+            const modal = new bootstrap.Modal(document.getElementById('razorpayModal'));
+            modal.show();
+        }
+        else if (selectedPayment === "wallet") {
+            // Normal POST for Wallet
+            this.submit(); 
+        }
+    });
+
+    // Confirm Razorpay Payment
+    document.getElementById("confirm-razorpay").addEventListener("click", function () {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('razorpayModal'));
+        modal.hide();
+
+        // Create Razorpay order via backend
+        const formData = new FormData(document.getElementById("checkout-form"));
+        formData.append("create_razorpay_order", "true"); // Add flag
+
+        fetch("{% url 'checkOut' %}", {
+            method: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" },
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error creating Razorpay order.");
+                    return;
+                }
+
+
+                // Open Razorpay popup
+                const options = {
+                    key: data.key,
+                    amount: data.amount,
+                    currency: data.currency,
+                    name: "nuts and seeds",
+                    description: "Order Payment",
+                    order_id: data.order_id,
+                    local_order_id:data.local_order_id,
+
+                    handler: function (response) {
+
+                        const selectedAddressInput = document.querySelector('input[name="selected_address"]:checked');
+                        if (!selectedAddressInput) {
+                            alert("Please select a delivery address before proceeding with payment.");
+                            return;
+                        }
+
+                        const payload = {
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            selected_address: selectedAddressInput.value
+                        };
+
+                        fetch("{% url 'verifyPayment' %}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": "{{ csrf_token }}"
+                            },
+                            body: JSON.stringify(payload),
+                            credentials: "include"
+                        })
+                            .then(res => {
+                                if (!res.ok) throw new Error("Network error");
+                                return res.json();
+                            })
+                            .then(result => {
+                                if (result.status === "success") {
+                                    window.location.href = result.redirect_url;
+                                } else {
+                                    window.location.href = result.redirect_url;
+                                    // console.error("Verification failed:", result.error);
+                                    // alert("Payment verification failed. Try again.");
+                                }
+                            })
+                            .catch(err => {
+                                console.error("Verification request failed:", err);
+                                alert("Something went wrong. Please try again.");
+                            });
+                    },
+
+                    theme: { "color": "#3399cc" }
+                };
+
+                const rzp = new Razorpay(options);
+
+                rzp.on('payment.failed', function (response) {
+                    const localOrderId = data.local_order_id; // dynamically get order id
+                    console.error("Razorpay payment failed:", response.error);
+                    window.location.href = `/user/order-failure/${localOrderId}/`;
+                });
+
+                rzp.open();
+
+            })
+            .catch(err => console.error("Error:", err));
+    });
+
+
+</script>
+
+
+{% endblock %}

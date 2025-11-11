@@ -24,9 +24,21 @@
                             Order Number : {{order.orderID}}
                         </h2>
 
-                        {% if payment_method == cod %}
+                        {% if order.orderitem.payment_method == 'cod' %}
                         <p class="text-sm text-gray-700 mb-2">
                             Payment Status : <span class="font-medium">PENDING</span>
+                        </p>
+                        {% endif %}
+
+                        {% if order.orderitem.payment_method == 'razorpay' %}
+                        <p class="text-sm text-gray-700 mb-2">
+                            Payment Status : <span class="font-medium">PAID</span>
+                        </p>
+                        {% endif %}
+
+                        {% if order.orderitem.payment_status == 'failed' %}
+                        <p class="text-sm text-gray-700 mb-2">
+                            Payment Status : <span class="font-medium">FAILED</span>
                         </p>
                         {% endif %}
 
@@ -39,8 +51,16 @@
                     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                         <div class="flex items-center space-x-2">
                             <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                            {% if payment_method == cod %}
+                            {% if order.payment_method == 'cod' %}
                             <span class="text-base font-semibold text-gray-900">PENDING</span>
+
+                            {% elif order.is_failed_payment %}
+                            <span class="text-base font-semibold text-gray-900">PAYMENT FAILED</span>
+
+                            {% elif order.payment_method == 'razorpay' %}
+                            <span class="text-base font-semibold text-gray-900">PAID</span>
+
+
                             {% endif %}
                         </div>
                         <a href="{% url 'orderDetail' order.id %}" class="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded hover:bg-gray-50 transition text-center whitespace-nowrap">

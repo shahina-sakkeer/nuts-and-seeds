@@ -7,25 +7,53 @@
         <!-- Dashboard Heading -->
         <h2 class="text-3xl font-bold text-gray-900 mb-8">Dashboard</h2>
 
-        <!-- Summary Cards -->
+        <!-- Filter Dropdown -->
+        <form method="get" id="filter-form" class="flex items-center space-x-3 mb-7">
+    
+            <select
+                name="filter"
+                id="filter"
+                onchange="document.getElementById('filter-form').submit();"
+                class="border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:ring focus:ring-indigo-200">
+
+                <option value="today" {% if filter_type == 'today' %}selected{% endif %}>Today</option>
+                <option value="weekly" {% if filter_type == 'weekly' %}selected{% endif %}>This Week</option>
+                <option value="monthly" {% if filter_type == 'monthly' %}selected{% endif %}>This Month</option>
+            </select>
+        </form>
+
+        <!-- sales on daily/weekly/monthly-->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <!-- Total Sales Card -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 class="text-sm font-medium text-gray-600 mb-2">Total Sales</h3>
-                <p class="text-3xl font-bold text-gray-900">Rs. 2,50,000</p>
+                <p class="text-3xl font-bold text-gray-900">{{filtered_sales}}</p>
             </div>
 
             <!-- Total Orders Card -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 class="text-sm font-medium text-gray-600 mb-2">Total Orders</h3>
-                <p class="text-3xl font-bold text-gray-900">5500</p>
+                <p class="text-3xl font-bold text-gray-900">{{filtered_count}}</p>
             </div>
 
             <!-- Total Customers Card -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 class="text-sm font-medium text-gray-600 mb-2">Total Customers</h3>
-                <p class="text-3xl font-bold text-gray-900">1000</p>
+                <h3 class="text-sm font-medium text-gray-600 mb-2">Total discount</h3>
+                <p class="text-3xl font-bold text-gray-900">{{filtered_discount}}</p>
             </div>
+        </div>
+
+        <!-- Most Ordered Product -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Most Ordered Product ({{ filter_type|title }})</h3>
+        {% if top_product %}
+        <p class="text-gray-700">
+            <span class="font-semibold">{{ top_product.products|join:", " }}</span>
+                — ordered <span class="font-semibold">{{ top_product.quantity }}</span> times
+        </p>
+        {% else %}
+        <p class="text-gray-500">No orders found for this period.</p>
+        {% endif %}
         </div>
 
         <!-- Top Product Categories -->

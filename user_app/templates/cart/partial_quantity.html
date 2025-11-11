@@ -1,6 +1,6 @@
 <div id="update-quantity-{{price.id}}">
     {% if price %}
-    <span class="text-lg font-bold text-gray-900">Rs. {{price}}</span>
+    <span class="text-lg font-bold text-gray-900">Rs. {{price | floatformat:2}}</span>
     {% endif %}
 </div>
 
@@ -21,7 +21,7 @@
 
 {% if request.headers.hx_request %}
 <div id="cart-total" hx-swap-oob="true" class="font-bold text-gray-900 text-base">
-{{total}}
+{{total | floatformat:2}}
 </div>
 {% endif %}
 

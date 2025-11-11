@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Main Container -->
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12" id="order-section">
+
+    <!-- Success Card -->
+    <div class="bg-white rounded-lg shadow-sm p-8 mb-6">
+
+        <!-- Payment failed Message -->
+        <div class="text-center mb-6">
+            <div class="flex justify-center mb-4">
+                <div class="bg-red-100 text-red-600 rounded-full p-4 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+            </div>
+
+            <h1 class="text-2xl font-bold text-red-700 mb-3">
+                Payment was cancelled
+            </h1>
+            <p class="text-sm text-gray-700 max-w-xl mx-auto">
+                Your order has been placed but the payment is still pending. Please complete the payment to confirm your
+                order.
+            </p>
+        </div>
+
+
+        <!-- Order Information -->
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 text-center mb-6">Order Information</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Order Number -->
+                <div class="text-center">
+                    <p class="text-xs text-gray-600 mb-1">Order Number</p>
+                    <p class="text-sm font-semibold text-gray-900">{{order.orderID}}</p>
+                </div>
+
+                <!-- Order Date -->
+                <div class="text-center">
+                    <p class="text-xs text-gray-600 mb-1">Order Date</p>
+                    <p class="text-sm font-semibold text-gray-900">{{order.created_at}}</p>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="text-center">
+                    <p class="text-xs text-gray-600 mb-1">Payment Method</p>
+                    <p class="text-sm font-semibold text-gray-900">{{order.payment_method}}</p>
+                </div>
+
+                <!-- Payment Status -->
+                <div class="text-center">
+                    <p class="text-xs text-gray-600 mb-1">Payment Status</p>
+                    <p class="text-sm font-semibold text-red-500">Payment Pending</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        {% for item in items %}
+        <div class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 text-center mb-6">Order Items</h2>
+
+            <div class="flex flex-col items-center">
+                <!-- Product Image -->
+                {% with item.product.product.images.all as image %}
+
+                {% if image %}
+                <img src="{{image.0.image.url}}" alt=""
+                    class="w-48 h-48 object-cover rounded-lg mb-4">
+                {% endif %}
+                {% endwith %}
+
+                <!-- Product Details -->
+                <h3 class="text-base font-semibold text-gray-900 mb-1">{{item.product.product.name}}</h3>
+                <p class="text-sm text-gray-600 mb-2">Weight : {{item.product.weight}}g</p>
+                <p class="text-lg font-bold text-gray-900">{{item.price}}</p>
+            </div>
+        </div>
+
+
+        <!-- Delivery Address -->
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 text-center mb-3">Delivery Address</h2>
+            <p class="text-sm text-gray-700 text-center">
+                {{order.address.house_name}},{{order.address.city}},{{order.address.state}}</p>
+        </div>
+
+        <!-- Price Details -->
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 text-center mb-6">Price Details</h2>
+
+            <div class="space-y-3 max-w-md mx-auto">
+                <!-- Total Price -->
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-700">Total Price:</span>
+                    <span class="text-sm font-semibold text-gray-900">Rs. {{item.price}}</span>
+                </div>
+        {% endfor %}
+
+                <!-- Discount-->
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-700">Discount:</span>
+                    <span class="text-sm font-semibold text-gray-900">Rs. {{order.discount}}</span>
+                </div>
+
+                <!-- Grand total amount -->
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-700">Grand Total Price:</span>
+                    <span class="text-sm font-semibold text-gray-900">Rs. {{order.total_price}}</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'order-list' %}"
+                class="px-6 py-3 bg-orange-600 text-white font-medium rounded-lg hover:bg-blue-700 transition text-center">
+                View Order Details
+            </a>
+            <a href="{% url 'order-list' %}"
+                class="px-6 py-3 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-800 transition text-center">
+                Back to orders
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

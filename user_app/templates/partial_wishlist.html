@@ -1,0 +1,12 @@
+<div id="wishlist-icon-{{ product.id }}">
+  {% if in_wishlist or product.id in wishlist_product_ids %}
+
+  <i class="fas fa-heart text-red-500 text-2xl transition-transform duration-150 transform hover:scale-125 cursor-pointer"
+      onclick="document.getElementById('wishlist-submit-{{ product.id }}').click();">
+    </i>
+  {% else %}
+    <i class="far fa-heart text-gray-400 text-2xl hover:text-red-400 transition-transform duration-150 transform hover:scale-125 cursor-pointer"
+      onclick="document.getElementById('wishlist-submit-{{ product.id }}').click();">
+    </i>
+  {% endif %}
+</div>
