@@ -1,12 +1,24 @@
-<div id="wishlist-icon-{{ product.id }}">
-  {% if in_wishlist or product.id in wishlist_product_ids %}
-
-  <i class="fas fa-heart text-red-500 text-2xl transition-transform duration-150 transform hover:scale-125 cursor-pointer"
-      onclick="document.getElementById('wishlist-submit-{{ product.id }}').click();">
-    </i>
-  {% else %}
-    <i class="far fa-heart text-gray-400 text-2xl hover:text-red-400 transition-transform duration-150 transform hover:scale-125 cursor-pointer"
-      onclick="document.getElementById('wishlist-submit-{{ product.id }}').click();">
-    </i>
-  {% endif %}
+<div id="wishlist-btn-{{ product.id }}">
+{% if in_wishlist %}
+  <button
+    hx-post="{% url 'addWishlist' variant.id %}"
+    hx-target="#wishlist-btn-{{ product.id }}"
+    hx-swap="outerHTML"
+    class="wishlist-btn sparkle-btn absolute top-3 right-3 z-10 text-red-500"
+  >
+     <i class="fa-solid fa-heart"></i>
+  </button>
+  
+{% else %}
+  <button id="myButton"
+    hx-post="{% url 'addWishlist' variant.id %}"
+    hx-target="#wishlist-btn-{{ product.id }}"
+    hx-swap="outerHTML"
+    class="wishlist-btn sparkle-btn absolute top-3 right-3 z-10 text-gray-400"
+  >
+   <i class="fa-regular fa-heart"></i>
+  </button>
+{% endif %}
 </div>
+
+

@@ -13,7 +13,7 @@
                 </div>
 
                 <!-- Add Funds Card -->
-                <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="bg-white rounded-lg shadow-sm p-6 mt-3">
                     <h2 class="text-xl font-semibold text-gray-900 mb-4">Add Funds</h2>
 
                     <div class="mb-4">
@@ -28,9 +28,13 @@
                     </div>
 
                     <button type="submit"
-                        class="w-full bg-blue-600 text-white font-medium py-3 px-4 rounded-lg hover:bg-blue-700 transition">
+                        class="w-full bg-orange-600 text-white font-medium py-3 px-4 rounded-lg hover:bg-orange-700 transition">
                         Add Funds
                     </button>
+
+                    {% if error_message %}
+                        {{error_message}}
+                    {% endif %}
                 </div>
             </form>
         </div>
@@ -92,33 +96,6 @@
                     {% endfor %}
                     {% endif %}
 
-                    <!-- Transaction 2 -->
-                    <!-- <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-4 py-4 hover:bg-gray-50 transition">
-                        <div class="col-span-1 md:col-span-3 flex items-center space-x-2">
-                            <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                            </svg>
-                            <span class="text-sm font-medium text-gray-900">Withdrawal</span>
-                        </div>
-
-                        <div class="col-span-1 md:col-span-3 text-sm text-gray-600 md:flex md:items-center">
-                            <span class="md:hidden font-medium text-gray-600">Date: </span>Oct 26, 2023
-                        </div>
-                        <div
-                            class="col-span-1 md:col-span-2 text-sm font-semibold text-red-600 md:text-right md:flex md:items-center md:justify-end">
-                            -$75.50
-                        </div>
-                    </div> -->
-
-                    <!-- {% if transaction %}
-                    {% for t in transition %}
-                    {{t.amount}}
-                    {{t.transaction_type}}
-                    {% endfor %}
-                    {% endif %} -->
-
                 </div>
 
             </div>
@@ -127,6 +104,7 @@
     </div>
 
 </div>
+
 
 <script>
 document.getElementById("wallet-form").addEventListener("submit", function (e) {
@@ -137,7 +115,6 @@ document.getElementById("wallet-form").addEventListener("submit", function (e) {
     const formData = new FormData();
     formData.append("amount", amount);
 
-    // Step 1 — Create Razorpay Order from backend
     fetch("{% url 'walletList' %}", {
         method: "POST",
         headers: { "X-CSRFToken": "{{ csrf_token }}" },
@@ -145,15 +122,161 @@ document.getElementById("wallet-form").addEventListener("submit", function (e) {
     })
     .then(res => res.json())
     .then(data => {
-        if (data.error) {
-            alert("Failed to create Razorpay order. Try again.");
+
+        // Validation error (from backend)
+        if (data.status === "error") {
+            Toastify({
+                text: data.message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+            }).showToast();
             return;
         }
 
-        //Configure Razorpay Options
+        // Razorpay Options
         const options = {
             key: data.key,
-            amount: data.amount, // amount in paise
+            amount: data.amount,
+            currency: data.currency,
+            name: "Nuts & Seeds",
+            description: "Wallet Top-Up",
+            order_id: data.order_id,
+            wallet_txn_id: data.wallet_txn_id,
+
+            handler: function (response) {
+
+                //  Verify payment on backend
+                fetch("{% url 'verifyWallet' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature,
+                    }),
+                    credentials: "include"
+                })
+                .then(res => res.json())
+                .then(result => {
+
+                    if (result.status === "success") {
+
+                        Toastify({
+                            text: "Rs" + amount + " added to your wallet successfully!",
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }).showToast();
+
+                        htmx.ajax('GET', '{% url "walletList" %}', '#user-right-content');
+
+                    } else {
+
+ 
+                        Toastify({
+                            text: result.message || "Payment verification failed.",
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                        }).showToast();
+                    }
+                })
+                .catch(() => {
+              
+                    Toastify({
+                        text: "Verification request failed. Please try again.",
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                    }).showToast();
+                });
+            },
+
+  
+            modal: {
+                ondismiss: function () {
+                    Toastify({
+                        text: "Payment cancelled.",
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                    }).showToast();
+                }
+            },
+
+            theme: {
+                color: "#FF6600"
+            }
+        };
+
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+
+    })
+    .catch(() => {
+        // Unexpected error (fetch or server)
+        Toastify({
+            text: "Something went wrong.Try again",
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+        }).showToast();
+    });
+});
+</script>
+
+
+
+
+
+
+
+
+
+<!-- <script>
+document.getElementById("wallet-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const amount = document.getElementById("amount").value;
+
+    const formData = new FormData();
+    formData.append("amount", amount);
+
+   
+    fetch("{% url 'walletList' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": "{{ csrf_token }}" },
+        body: formData,
+    })
+    .then(res => res.json())
+    .then(data => {
+            if (data.status === "error") {
+                Toastify({
+                    text: data.message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)"
+                }).showToast();
+
+            return; 
+        }
+
+
+        const options = {
+            key: data.key,
+            amount: data.amount,
             currency: data.currency,
             name: "Nuts & Seeds",
             description: "Wallet Top-Up",
@@ -161,9 +284,9 @@ document.getElementById("wallet-form").addEventListener("submit", function (e) {
             wallet_txn_id:data.wallet_txn_id,
 
 
-            // On successful payment
+
             handler: function (response) {
-                // Verify payment on backend
+         
                 fetch("{% url 'verifyWallet' %}", {
                     method: "POST",
                     headers: {
@@ -184,7 +307,6 @@ document.getElementById("wallet-form").addEventListener("submit", function (e) {
 
                         htmx.ajax('GET', '{% url "walletList" %}', '#user-right-content');
 
-                        // window.location.href = "{% url 'walletList' %}";
                     } else {
                         alert(result.message || "Payment verification failed.");
                     }
@@ -194,7 +316,7 @@ document.getElementById("wallet-form").addEventListener("submit", function (e) {
                 });
             },
 
-            // Optional: Handle popup close or failure
+   
             modal: {
                 ondismiss: function () {
                     alert("Payment cancelled.");
@@ -206,7 +328,7 @@ document.getElementById("wallet-form").addEventListener("submit", function (e) {
             }
         };
 
-        //Open Razorpay popup
+
         const rzp = new Razorpay(options);
         rzp.open();
     })
@@ -214,4 +336,5 @@ document.getElementById("wallet-form").addEventListener("submit", function (e) {
         alert("Something went wrong while creating Razorpay order.");
     });
 });
-</script>
+
+</script> -->

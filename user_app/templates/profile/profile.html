@@ -5,8 +5,10 @@
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold text-gray-900">Personal Information</h2>
 
-            <a href="" hx-get="{% url 'editProfile' %}" hx-swap="innerHTML" hx-target="#user-right-content"
-            class="text-blue-600 hover:text-blue-700 font-medium text-sm">Edit</a>
+            <button hx-get="{% url 'editProfile' %}" hx-swap="innerHTML" hx-target="#user-right-content"
+            class="text-gray-400 hover:text-gray-600 focus:outline-none">
+            <i class="fa-solid fa-file-pen"></i>
+            </button>
 
         </div>
 
@@ -40,23 +42,151 @@
 
 </div>
 
+<!-- referral Section -->
+<div class="bg-white shadow-md rounded-xl p-6 mb-8 mt-3">
+
+    <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
+        Your Exclusive Referral
+    </h2>
+
+    <p class="text-gray-600 text-sm mt-2">
+        Share your referral link and unlock exciting rewards together.
+        Help your friends join the journey!
+    </p>
+
+    <!-- Referral Code Box -->
+    <div class="mt-5 flex items-center bg-gray-100 border rounded-lg px-4 py-3 
+                justify-between w-full md:w-2/3">
+
+        <span class="text-gray-900 font-mono tracking-wide text-lg">
+            {{ user.referralID }}
+        </span>
+
+        <div class="flex items-center space-x-3">
+
+            <!-- Copy Icon -->
+            <button onclick="navigator.clipboard.writeText('{{ user.referralID }}')"
+                class="text-gray-600 hover:text-blue-600 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V5a2 2 0 012-2h6a2 2 0 012 2v12a2 2 0 01-2 2h-2m-4 0H6a2 2 0 
+                           01-2-2V9a2 2 0 012-2h2m4 12V9a2 2 0 00-2-2H6" />
+                </svg>
+            </button>
 
 
 
-
-
-
-
-<!-- <h1>profile</h1>
-
-{{user.email}}
-{{user.firstname}}
-{{user.phone_number}}
-
-<div>
-    <a href="{% url 'editProfile' %}"><h1>edit profile</h1></a>
+        </div>
+    </div>
 </div>
 
-<div>
-    <a href="{% url 'showAddress' %}"><h2>manage address</h2></a>
-</div> -->
+<!-- REFER & EARN SECTION -->
+<div class="bg-gray-100 shadow-md rounded-xl p-6 flex flex-col md:flex-row items-center 
+            justify-between">
+
+    <div class="flex items-center space-x-4">
+        <img src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" class="h-16 w-16" alt="Gift Icon">
+        <div>
+            <h3 class="text-xl font-semibold text-gray-900">Refer and Earn!</h3>
+            <p class="text-gray-600 text-sm">
+                Help your friends join the journey, and watch your wallet grow!
+            </p>
+        </div>
+    </div>
+
+    <!-- Button to open modal -->
+    <button onclick="openReferralModal()" class="mt-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-2
+            rounded-sm font-medium text-sm">
+        View Referral Terms & Conditions
+    </button>
+
+    <!-- Overlay -->
+    <div id="referralModal"
+        class="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50 hidden">
+
+        <!-- Modal box -->
+        <div class="bg-white w-11/12 md:w-1/2 rounded-xl shadow-lg p-6">
+
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-900">
+                    Referral Terms & Conditions
+                </h2>
+
+                <!-- Close Button -->
+                <button onclick="closeReferralModal()" class="text-gray-600 hover:text-gray-900">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="space-y-4 text-gray-700 text-sm max-h-96 overflow-y-auto">
+
+                <div>
+                    <h3 class="font-semibold text-gray-900">1. Introduction</h3>
+                    <p>
+                        This is an exciting opportunity for customers to earn rewards
+                        by inviting new users to join and purchase products.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-gray-900">2. Who Can Refer?</h3>
+                    <p>
+                        Anyone who wishes to purchase products from Nuts and Seeds
+                        can refer others using their unique referral ID.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-gray-900">3. How the Referral Works</h3>
+                    <p>
+                        A referral is valid when a new customer registers using your referral ID.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-gray-900">4. Rewards</h3>
+                    <p>
+                        When the referred customer places an order with successful payment,
+                        you will receive <span class="font-semibold">Rs. 100</span> as a reward.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-gray-900">5. Cases Where Rewards Are Not Given</h3>
+                    <p>
+                        • You cannot refer yourself. <br>
+                        • If the order is placed as COD (Cash on Delivery), the reward will not be given.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-gray-900">6. Referral Limit</h3>
+                    <p>
+                        You may refer up to <span class="font-semibold">10 people</span>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-right mt-6">
+                <button onclick="closeReferralModal()"
+                    class="bg-gray-700 text-white px-5 py-2 rounded-lg hover:bg-gray-800">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        function openReferralModal() {
+            document.getElementById("referralModal").classList.remove("hidden");
+        }
+        function closeReferralModal() {
+            document.getElementById("referralModal").classList.add("hidden");
+        }
+    </script>
+
+</div>

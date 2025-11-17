@@ -5,16 +5,12 @@
 
     <div class="relative rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition">
 
-        
-        <form hx-post="{% url 'addWishlist' p.id %}" hx-target="#wishlist-icon-{{ p.id }}" 
-            hx-swap="outerHTML" class="absolute top-3 right-3 z-10">
-            {% csrf_token %}
-            
-            {% include "partial_wishlist.html" with product=p wishlist_product_ids=wishlist_product_ids %}
-            <!-- Hidden submit button -->
-            <button type="submit" id="wishlist-submit-{{ p.id }}" class="hidden"></button>
+        <div id="wishlist-btn-{{ p.id }}">
+            {% with v=p.variants.all.0 %}
+                {% include "partial_wishlist.html" with product=p variant=v in_wishlist=v.in_user_wishlist %}
+            {% endwith %}
+        </div>
   
-        </form>
 
         <a href="{% url 'product_details' p.id %}" class="block">
             {% if p.images.all %}

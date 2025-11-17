@@ -6,19 +6,22 @@ from django.core.mail import send_mail
 from django.core.cache import cache
 from django.views.decorators.cache import cache_control,never_cache
 from django.contrib import messages
-from .models import CustomUser,UserAddress,Cart,CartItem,Orders,OrderItem,Wallet,WalletTransaction,OrderReturn,Wishlist,WishlistItem
-from django.contrib.auth import authenticate,login,logout
+from .models import CustomUser,UserAddress,Cart,CartItem,Orders,OrderItem,Wallet,WalletTransaction,OrderReturn,Wishlist,WishlistItem,Referral
+from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
 from admin_app.models import Products,Category,ProductVariant,Coupon,CouponUsage
 from django.db.models import Q,Min,Max,F,Sum
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse,HttpResponse
-from django.db import transaction
+from django.db import transaction,IntegrityError
 import razorpay,json
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from decimal import Decimal
 from user_app.helpers import get_offer_price
+from django.core.signing import TimestampSigner,BadSignature,SignatureExpired
+
+signer = TimestampSigner()
 
 
 # Create your views here.
@@ -30,13 +33,11 @@ def register(request):
     if request.user.is_authenticated:
         return redirect("home")
     
-    
     if request.method=="POST":
         form=UserRegistrationForm(request.POST)
         if form.is_valid():
             user_data=form.cleaned_data
             user_data["password"]=form.cleaned_data["password"]
-          
 
             otp=random.randint(100000,999999)
             print(f'otp:{otp}')
@@ -46,6 +47,7 @@ def register(request):
             send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[user_data['email']])
             messages.success(request,"otp send to the email")
             request.session["pending_email"] = user_data['email']
+            request.session["code"]=user_data['referral_code']
             return redirect("verify_otp")
 
     else:
@@ -58,6 +60,7 @@ def register(request):
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def verify_otp(request):    
     email = request.session.get("pending_email")
+    code=request.session.get("code")
 
     if not email:
         return redirect("signin")
@@ -73,11 +76,31 @@ def verify_otp(request):
                 if not user_data:
                     raise CustomUser.DoesNotExist
                 
-                user=CustomUser.objects.create(email=user_data['email'],phone_number=user_data['phone_number'],
-                firstname=user_data['firstname'],lastname=user_data['lastname'],password=user_data['password'],is_active=True)
+                referrer=None
+                if code:
+                    referrer=CustomUser.objects.filter(referralID=code).first()
+
+                    if not referrer:
+                        messages.error(request,"Invalid referral code")
+
+                    else:
+                        if (referrer.email==user_data['email']) or (referrer.phone_number==user_data['phone_number']):
+                            messages.error(request,"You cannot use your own referral code")
+                            referrer=None                  
+                
+                user=CustomUser.objects.create_user(email=user_data['email'],phone_number=user_data['phone_number'],
+                                            firstname=user_data['firstname'],lastname=user_data['lastname'],
+                                            password=user_data['password'],is_active=True)
 
                 user.set_password(user_data['password'])
+
+                if referrer:
+                    user.referred_by=referrer
                 user.save()
+
+                if referrer:
+                    Referral.objects.create(referrer=referrer,referred_user=user,reward_given=False,reward_amount=0)
+
              
             except CustomUser.DoesNotExist:
                 messages.error(request,"No account found for this email.")
@@ -188,6 +211,7 @@ def verify_forgot_otp(request):
             messages.error(request, "Invalid OTP. Try again.")
     return render(request,"forgot_otp.html")
 
+
 #RESET PASSWORD#
 def reset_password(request):
     email=request.session.get("reset_email")
@@ -219,6 +243,7 @@ def reset_password(request):
             return redirect("signin")
     return render(request,"password_reset.html")
 
+
 #HOME PAGE#
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
 @login_required(login_url='/user/login/')
@@ -236,6 +261,8 @@ def signout(request):
     cache.clear()
     return redirect("signin")
 
+
+#LANDING PAGE
 def landing(request):
     categories=Category.objects.all().order_by("-id")
     products=Products.objects.all().order_by("-id")
@@ -251,28 +278,23 @@ def products_by_category(request,id):
 
     return render(request,"products_by_catg.html",{"products":products})
 
+
 #LISTING ALL PRODUCTS
 @never_cache
 @login_required(login_url='/user/login/')
 def list_products(request):
     categories=Category.objects.all().order_by("-id")
-    # products=Products.objects.all().order_by("-id")
     products=Products.objects.prefetch_related("variants","images").all()
 
-    wishlist_product_ids = []
-    if request.user.is_authenticated:
-        wishlist = Wishlist.objects.filter(user=request.user).first()
-        if wishlist:
-            wishlist_product_ids = list(
-                wishlist.wishlistitem.values_list("product_id", flat=True)
-            )
+    wishlist_items = set(WishlistItem.objects.filter(wishlist__user=request.user).values_list('product_id', flat=True))
 
     for product in products:
         for variant in product.variants.all():
             variant.final_price,variant.discount_percent=get_offer_price(variant)
+            variant.in_user_wishlist = variant.id in wishlist_items
     
     return render(request,"list_by_products.html",{"products":products,"categories":categories,
-                                                   "wishlist_product_ids":wishlist_product_ids})
+                                                   "wishlist_items":wishlist_items})
 
 
 #FILETRING AND SORTING
@@ -318,48 +340,48 @@ def filterProducts(request,id=None):
         except ValueError:
             pass
 
-    wishlist_product_ids = []
-    if request.user.is_authenticated:
-        wishlist = Wishlist.objects.filter(user=request.user).first()
-        if wishlist:
-            wishlist_product_ids = list(
-                wishlist.wishlistitem.values_list("product_id", flat=True)
-            )
+
+    wishlist_items = set(WishlistItem.objects.filter(wishlist__user=request.user).values_list('product_id', flat=True))
     
     for product in products:
         for variant in product.variants.all():
             variant.final_price,variant.discount_percent=get_offer_price(variant)
+            variant.in_user_wishlist = variant.id in wishlist_items
 
-    return render(request,"partial_filter.html",{"products":products,"wishlist_product_ids":wishlist_product_ids})
+    return render(request,"partial_filter.html",{"products":products,"wishlist_items":wishlist_items})
 
 
 #DISPLAYING ALL WISHLIST PRODUCTS
 def wishlist_list(request):
     wishlist=Wishlist.objects.filter(user=request.user).first()
-    wishlist_items=WishlistItem.objects.filter(wishlist=wishlist).select_related('product','product__product').prefetch_related('product__product__images').order_by('product__product').distinct('product__product')
+    wishlist_items=WishlistItem.objects.filter(wishlist=wishlist).select_related('product','product__product').prefetch_related('product__product__images').order_by("-id")
+
+    # for item in wishlist_items:
+    #     variant=item.product
+    #     variant.final_price,variant.discount_percent=get_offer_price(variant)
+
     return render(request,"wishlist/wishlist.html",{"items":wishlist_items})
 
 
 # ADDING TO WISHLIST
 def add_to_wishlist(request,id):
-    wishlist,created=Wishlist.objects.get_or_create(user=request.user)
-    product=get_object_or_404(ProductVariant,id=id)
+    variant=get_object_or_404(ProductVariant,id=id)
 
-    existing_item=WishlistItem.objects.filter(wishlist=wishlist,product=product).first()
+    wishlist,created=Wishlist.objects.get_or_create(user=request.user)
+
+    product_variants = ProductVariant.objects.filter(product=variant.product)
+
+    existing_item = WishlistItem.objects.filter(wishlist=wishlist,product__in=product_variants).first()
 
     if existing_item:
-        existing_item.delete()
-        messages.success(request,"Removed from wishlist")
+        WishlistItem.objects.filter(wishlist=wishlist,product__in=product_variants).delete()
         in_wishlist = False
-      
 
     else:
-        WishlistItem.objects.create(wishlist=wishlist,product=product)
-        messages.success(request,"Added to wishlist")
+        WishlistItem.objects.create(wishlist=wishlist, product=variant)
         in_wishlist = True
-        
 
-    return render(request,"partial_wishlist.html",{"product":product,"in_wishlist":in_wishlist})
+    return render(request,"partial_wishlist.html",{"in_wishlist":in_wishlist,"variant":variant,"product":variant.product})
     
 
 #REMOVE FROM WISHLIST
@@ -380,8 +402,6 @@ def productDetail(request,id=id):
 
     for variant in variants:
         variant.final_price,variant.discount_percent=get_offer_price(variant)
-
-    # is_available=variants.quantity_stock > 0
         
     first_variant=variants[0] if variants else None
 
@@ -434,7 +454,7 @@ def edit_address(request,id):
         form=UserAddressForm(request.POST,instance=address)
         if form.is_valid():
             form.save()
-            messages.success(request,"Address updated !!")
+            messages.success(request,"Address updated")
             return redirect("showAddress")
     else:
         form=UserAddressForm(instance=address)
@@ -451,7 +471,7 @@ def delete_address(request,id):
         address.delete()
         if request.headers.get("HX-Request"): 
             return HttpResponse("")  
-        messages.success(request, "Address deleted !!")
+        messages.success(request, "Address deleted")
         return redirect("showAddress")
     
     return redirect("showAddress")
@@ -463,6 +483,8 @@ def show_profile(request):
     user=request.user
     return render(request,"profile/profile.html",{"user":user})
 
+
+#PARTIAL USER DASHBOARD
 @never_cache
 @login_required(login_url='/user/login/')
 def user_dashboard(request):
@@ -474,64 +496,92 @@ def user_dashboard(request):
 @login_required(login_url='/user/login/')
 def edit_profile(request):
     user=request.user
+    new_email=request.POST.get("new_email")
     if request.method=="POST":
         form=UserProfileForm(request.POST,instance=user)
         if form.is_valid():
-            user_data=form.cleaned_data
 
-            otp=random.randint(100000,999999)
-            print(f'otp:{otp}')
-            cache.set(f"otp:{user_data['email']}", otp, timeout=60)
-            cache.set(f"user_data:{user_data['email']}",user_data,timeout=60)
+            if new_email != user.email:
+                request.session['pending_email']=new_email
 
-            send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[user_data['email']])
-            messages.success(request,"otp send to the email")
-            request.session["pending_email"] = user_data['email']
-            return redirect("emailChangeOtp")
+                token = signer.sign(user.id)
+                domain=request.get_host()
+                link = f"http://{domain}/profile/verify-email/?token={token}"
 
+                subject = "Verify Your New Email"
+                message = f"""Hi {user.firstname},Click the link below to verify your new email address:{link}
+                If you didn't request this, ignore the email."""
+
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [new_email])
+                return render(request,"profile/edit_profile.html",{
+                    "form": form,
+                    "hx_message": "Verification email sent!",
+                })
+            
+            else:
+                form.save()
+                return render(request,"profile/edit_profile.html", {
+                "form": form,
+                "hx_message": "Profile Updated",
+                })
+            
     else:
         form=UserProfileForm(instance=user)
         
     return render(request,"profile/edit_profile.html",{"form":form})
 
 
-#OTP FOR EMAIL CHANGE
-@never_cache
-@login_required(login_url='/user/login/')
-def email_change_otp(request):
-    email = request.session.get("pending_email")
+#VERIFY CHANGE IN EMAIL
+def verify_email_change(request):
+    token=request.GET.get("token")
 
+    try:
+        user_id=signer.unsign(token,max_age=3600)
+    except SignatureExpired:
+        return HttpResponse("Verification link expired.")
+    except BadSignature:
+        return HttpResponse("Invalid token")
+    
+    user=CustomUser.objects.get(id=user_id)
+    new_email=request.session.get("pending_email")
+
+    user.email=new_email
+    user.save()
+
+    request.session.pop("pending_email",None)
+    logout(request)
+    return render(request,"profile/email_change_success.html")
+
+
+#EDIT PASSWORD
+def edit_password(request):
+    user=request.user
     if request.method=="POST":
-        entered_otp=request.POST.get('otp')
-        cached_otp = cache.get(f"otp:{email}")
-        user_data=cache.get(f"user_data:{email}")
+        current_pswd=request.POST.get("current_password")
+        new_pswrd=request.POST.get("new_password")
 
-        if cached_otp and str(cached_otp) == entered_otp:
-            try:
+        if not user.check_password(current_pswd):
+            response=render(request,"profile/edit_password.html")
 
-                if not user_data:
-                    raise CustomUser.DoesNotExist
+            response["HX-Trigger"] = json.dumps({
+                "toast_message": "Incorrect Password",
+                "toast_type": "error",
+            })
+            return response
+    
+
+        user.set_password(new_pswrd)
+        user.save()
+        update_session_auth_hash(request,user)
+        response=render(request,"profile/profile.html")
                 
-                user=CustomUser.objects.filter(id=request.user.id).update(email=user_data['email'],phone_number=user_data['phone_number'],
-                firstname=user_data['firstname'])
-            
-             
-            except CustomUser.DoesNotExist:
-                messages.error(request,"No account found for this email.")
-                return redirect("editProfile")
-            
-            
-            cache.delete(f"otp:{email}")
-            cache.delete(f"user_data:{email}")
-            request.session.pop("pending_email", None)
-
-            messages.success(request,"Your account has been verified. Please log in.")
-            return redirect("signin")
-        else:
-            messages.error(request,"Invalid or expired OTP.")
-            return redirect("emailChangeOtp")
-        
-    return render(request,"profile/email_change_otp.html",{"email":email})
+        response["HX-Trigger"] = json.dumps({
+                "toast_message": "Password Updated",
+                "toast_type": "success",
+        })
+        return response
+    
+    return render(request,"profile/edit_password.html")
 
 
 #ADD PRODUCT TO CART
@@ -539,6 +589,11 @@ def email_change_otp(request):
 @login_required(login_url='/user/login/')
 def add_to_cart(request,id):
     product=get_object_or_404(ProductVariant,id=id)
+
+    variant=ProductVariant.objects.filter(product=product.product)
+    wishlist,created=Wishlist.objects.get_or_create(user=request.user)
+
+    item=WishlistItem.objects.filter(wishlist=wishlist,product__in=variant)
 
     offer_price,discount_percent=get_offer_price(product)
 
@@ -553,12 +608,20 @@ def add_to_cart(request,id):
     cart_item=CartItem.objects.filter(cart=cart,product=product).first()
     if cart_item:
         cart_item.quantity=cart_item.quantity+1
+        product.quantity_stock-=1
+
         cart_item.save()
+        product.save()
+        messages.success(request,"Product incremented")
+        return redirect("product_details",product.product.id)
 
     else:
         cart_item=CartItem.objects.create(cart=cart,product=product,quantity=1)
-
-    return redirect("showCart")
+        product.quantity_stock-=1
+        product.save()
+        item.delete()
+        messages.success(request,"Product added to cart")
+        return redirect("product_details",product.product.id)
 
 
 #SHOW CART
@@ -585,16 +648,26 @@ def show_cart(request):
 @login_required(login_url='/user/login/')
 def update_quantity(request,id=id):
     item=get_object_or_404(CartItem,id=id,cart__user=request.user)
+    total_stock = item.quantity + item.product.quantity_stock
     action=request.POST.get("action")
 
     if action=="increase":
-        item.quantity=item.quantity+1
-        item.product.quantity_stock=item.product.quantity_stock-1
-    elif action=="decrease" and item.quantity > 1:
-        item.quantity=item.quantity-1
-        item.product.quantity_stock=item.product.quantity_stock
+        if item.quantity < total_stock:
+            item.quantity+=1
+            item.product.quantity_stock-=1
+            item.save()
+            item.product.save()
+        else:
+            messages.warning(request,"Cannot increase quantity. Product stock exhausted.")
 
-    item.save()
+    elif action=="decrease":
+        if item.quantity > 1:
+            item.quantity-=1
+            item.product.quantity_stock+=1
+            item.save()
+            item.product.save()
+        else:
+            messages.warning(request,"Cannot decrease quantity below 1.")
 
     offer_price, discount_percent=get_offer_price(item.product)
     row_total=item.quantity * offer_price
@@ -615,7 +688,9 @@ def remove_from_cart(request,id):
     item=get_object_or_404(CartItem,id=id,cart__user=request.user)
     if request.method=="POST":
         item.delete()
-        messages.success(request,"Item deleted !!")
+        item.product.quantity_stock+=item.quantity
+        item.product.save()
+        messages.success(request,"Product Removed")
         return redirect("showCart")
 
 
@@ -683,6 +758,7 @@ def checkout(request):
             discount_amount=Decimal(str(coupon_data.get("discount",0)))
             new_price=Decimal(str(coupon_data.get("new_total")))
             coupon_code=coupon_data.get("code")
+            coupon_obj=Coupon.objects.get(code=coupon_code)
 
             # the total price after coupon discount is set in variable payable_amount
             payable_amount=new_price
@@ -691,6 +767,7 @@ def checkout(request):
             discount_amount=Decimal(0)
             new_price=Decimal(0)
             coupon_code=None
+            coupon_obj=None
 
             # if coupon is not applied, take the previous total_price only
             payable_amount=total_price
@@ -704,12 +781,11 @@ def checkout(request):
                 messages.error(request,"Select one address")
                 return redirect("checkOut")
 
-            selected_address=UserAddress.objects.get(id=selected_address_id,user=request.user)
-
             if not payment_method:
                 messages.error(request,"Select a payment method")
                 return redirect("checkOut")
-        
+    
+            selected_address=UserAddress.objects.get(id=selected_address_id,user=request.user)   
 
             if payment_method=="cod":
                 if total_price > 1000:
@@ -720,14 +796,12 @@ def checkout(request):
                 with transaction.atomic():
                     for item in cart_items:
                         product=item.product
-                        # if product.quantity_stock < item.quantity:
-                        #     raise Exception("Insufficient stock")
                         product.quantity_stock-=item.quantity
                         product.save()
                                             
                     order=Orders.objects.create(user=request.user,address=selected_address,item_count=cart_items.count(),
                                    payment_method=payment_method, is_paid=False, total_price=payable_amount,
-                                   discount=discount_amount)
+                                   total_price_before_discount=total_price,discount=discount_amount,coupon=coupon_obj)
                     
                     #creating order items with offer price. unit price is set to offer price, so unit price wont change with changing offer price
                     order_items=[]
@@ -785,6 +859,8 @@ def checkout(request):
                     is_paid=False,
                     total_price=payable_amount,
                     discount=discount_amount,
+                    coupon=coupon_obj,
+                    total_price_before_discount=total_price,
                     razorpay_order_id=razorpay_order["id"],
                 )
                     order_items=[]
@@ -828,14 +904,12 @@ def checkout(request):
                     with transaction.atomic():
                         for item in cart_items:
                             product=item.product
-                            # if product.quantity_stock < item.quantity:
-                            #     raise Exception("Insufficient stock")
                             product.quantity_stock-=item.quantity
                             product.save()
                                             
                         order=Orders.objects.create(user=request.user,address=selected_address,item_count=cart_items.count(),
-                                   payment_method=payment_method, is_paid=False, total_price=payable_amount,
-                                   discount=discount_amount)
+                                   payment_method=payment_method, is_paid=True, total_price=payable_amount,
+                                   discount=discount_amount,coupon=coupon_obj,total_price_before_discount=total_price)
                     
                         order_items=[]
                         for item in cart_items:
@@ -844,7 +918,9 @@ def checkout(request):
                             total_price_per_item=unit_price * item.quantity
 
                             order_items.append(OrderItem(order=order, product=item.product, quantity=item.quantity, 
-                                           price=total_price_per_item, unit_price=unit_price))
+                                           price=total_price_per_item, unit_price=unit_price, payment_status="paid"))
+                            
+                        OrderItem.objects.bulk_create(order_items)
 
                         cart.cart_item.all().delete()
 
@@ -916,10 +992,16 @@ def partial_coupon(request):
             else:    
                 usage,_=CouponUsage.objects.get_or_create(user=request.user,coupon=coupon)
 
-                if usage.used_count < coupon.usage_limit:
+                if coupon.usage_limit is not None and usage.used_count >= coupon.usage_limit:
+                    error_message="Coupon usage limit reached"
+    
+                else:
                     if coupon.discount_type=="percentage":
                         discount_amount=total_price*coupon.discount_value/100
-                    else:
+                        if coupon.maximum_discount_limit:
+                            discount_amount=min(discount_amount,coupon.maximum_discount_limit)
+
+                    elif coupon.discount_type=="flat":
                         discount_amount=coupon.discount_value
 
                     applied_coupon=coupon
@@ -929,16 +1011,20 @@ def partial_coupon(request):
                     request.session["coupon_data"]={
                         "code":coupon.code,"discount":str(discount_amount),"new_total":str(total_price-discount_amount)
                     }
-                else:
-                    error_message="Coupon usage limt reached"
 
+        #the result should be occured when error message occurs           
+        if error_message:
+            discount_amount=0
+            applied_coupon=None
+            new_total=total_price
+            request.session.pop("coupon_data",None)
           
         return render(request,"checkout/partial_coupon.html",{"totalprice":total_price,"discount":discount_amount,
                             "applied_coupon":applied_coupon, "new_total":new_total,"error_message":error_message})
     
 
+#ALL COUPONS LIST
 def partial_coupon_list(request):
-    # coupons=Coupon.objects.filter(is_active=True,end_date__gte=timezone.now()).distinct().all()
     coupons=Coupon.objects.all()
     return render(request,"checkout/partial_coupon_list.html",{"coupons":coupons})
     
@@ -963,7 +1049,7 @@ def verify_payment(request):
 
             client.utility.verify_payment_signature(params_dict)
 
-            #get the order creating in checkout view
+            # get the order creating in checkout view
             order=Orders.objects.filter(razorpay_order_id=razorpay_order_id,user=request.user).first()
 
             if not order:
@@ -973,23 +1059,48 @@ def verify_payment(request):
                 order.is_paid=True
                 order.razorpay_order_id=razorpay_order_id
                 order.save()
+  
+            # filtering out referred user is the user who placed the order or else returns none
+            referral_records=Referral.objects.filter(referred_user=request.user, reward_given=False).first()
+        
+            if referral_records:
+                try:
+                    #taking whom this user was referred by
+                    referred_by_user=referral_records.referrer
+                    wallet,created=Wallet.objects.get_or_create(user=referred_by_user)
+                       
+                    reward_amount=Decimal("50.00")
+
+                    if wallet.balance is None:
+                        wallet.balance = Decimal("0.00")
+
+                    wallet.balance+=reward_amount
+                    wallet.save()
+                    wallet_txn=WalletTransaction.objects.create(wallet=wallet,transaction_type="credit",amount=reward_amount)
+                    wallet_txn.save()
+
+                    referral_records.reward_amount=reward_amount
+                    referral_records.reward_given=True
+                    referral_records.save()
+
+                except Exception as e:
+                    print("exception",e)
+                    pass
 
             cart = Cart.objects.get(user=request.user)
             cart_items = cart.cart_item.select_related('product')
 
             for item in cart_items:
-                        product=item.product
-                        # if product.stock_quantity < item.quantity:
-                        #     raise Exception("Insufficient stock")
-                        product.quantity_stock-=item.quantity
-                        product.save()
+                product=item.product
+                product.quantity_stock-=item.quantity
+                product.save()
 
             order_items=OrderItem.objects.filter(order=order)
             order_items.update(payment_status="paid")
 
             cart.cart_item.all().delete()
             
-            #get the session that was created in checkout view if the payment == razorpay
+            # get the session that was created in checkout view if the payment == razorpay
             razorpay_order_data=request.session.get("razorpay_order_data",None)
 
             if razorpay_order_data:
@@ -1033,7 +1144,6 @@ def verify_payment(request):
 
         except razorpay.errors.SignatureVerificationError:
             local_order_id=data.get("local_order_id")
-            print("DEBUG: Local order ID from frontend:", data.get("local_order_id"))
             order=Orders.objects.filter(id=local_order_id).first()
             
             if order:
@@ -1041,6 +1151,7 @@ def verify_payment(request):
                 order.save()
 
                 OrderItem.objects.filter(order=order).update(payment_status="failed")
+                print(OrderItem.objects.filter(order=order).update(payment_status="failed"))
 
                 return JsonResponse({"status": "failure", "order_id": order.id,
                                  "redirect_url": f"/user/order-failure/{order.id}/"})
@@ -1061,20 +1172,106 @@ def verify_payment(request):
             
             else:
                 return JsonResponse({"status": "failed", "message": "Unexpected error occurred."})
+
+
+#RAZORYPAY FAILURE HANDLE
+@csrf_exempt
+@login_required(login_url='/user/login/')
+def razorpay_failed(request):
+    if request.method != "POST":
+        return JsonResponse({"status": "failed", "message": "Invalid method"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        local_order_id = data.get("local_order_id")
+
+        order = Orders.objects.filter(id=local_order_id, user=request.user).first()
+        if not order:
+            return JsonResponse({"status": "failed", "message": "Order not found"}, status=404)
         
+        order.is_paid = False
+        order.save()
+
+        OrderItem.objects.filter(order=order).update(payment_status="failed",status="payment_pending")
+
+        return JsonResponse({"status": "failure", "order_id": order.id})
+    except Exception as e:
+        return JsonResponse({"status": "failed", "message": "Unexpected error occurred."}, status=500)
+
+
+#RETRY PAYMENT REQUEST
+@login_required(login_url='/user/login/')
+def retry_payment(request,id):
+    order=get_object_or_404(Orders,id=id,user=request.user)
+
+    if order.is_paid==True:
+        messages.error(request,"This order is already paid")
+        return redirect("order-list")
+    
+    else:
+        client = razorpay.Client(auth=(settings.RAZORPAY['KEY_ID'], settings.RAZORPAY['KEY_SECRET']))
+
+        razorpay_order = client.order.create({
+                        "amount": int(order.total_price * 100),
+                        "currency": "INR",
+                        "payment_capture": 1
+                    })
+        
+        order.razorpay_order_id=razorpay_order["id"]
+        order.save()
+
+        OrderItem.objects.filter(order=order).update(payment_status="failed")
+        
+        return render(request, "checkout/retry_razorpay.html", {
+        "order": order,
+        "razorpay_order": razorpay_order,
+        "razorpay_key": settings.RAZORPAY['KEY_ID'],
+        "amount": order.total_price,
+    })
+
+
+#RETRY PAYMENT VERIFY
+@csrf_exempt
+@login_required(login_url='/user/login/')
+def retry_payment_success(request):  
+    razorpay_payment_id = request.POST.get("razorpay_payment_id")
+    razorpay_order_id = request.POST.get("razorpay_order_id")
+    razorpay_signature = request.POST.get("razorpay_signature")
+
+    order = Orders.objects.filter(razorpay_order_id=razorpay_order_id).first()
+
+    client = razorpay.Client(auth=(settings.RAZORPAY['KEY_ID'], settings.RAZORPAY['KEY_SECRET']))
+
+    params = {
+        "razorpay_order_id": razorpay_order_id,
+        "razorpay_payment_id": razorpay_payment_id,
+        "razorpay_signature": razorpay_signature
+    }
+
+    try:
+        client.utility.verify_payment_signature(params)
+
+        # Fetch order using razorpay_order_id
+        if order:
+            order.is_paid = True
+            order.save()
+
+            OrderItem.objects.filter(order=order).update(payment_status="paid",status="order_received")
+            Cart.objects.get(user=order.user).cart_item.all().delete() 
+            return redirect("orderSuccess", order.id)       
+
+    except:
+        return redirect("paymentFailure",order.id)
+
 
 #ORDER PAYEMENT FAILURE        
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
 @login_required(login_url='/user/login/')
 def order_failure(request,id):
-
     order=get_object_or_404(Orders,id=id)
-    print(order.id)
-    order_item=OrderItem.objects.filter(order=order,payment_status="failed")
-    print(order_item)
+    items=order.orderitem.filter(payment_status="failed")
 
-    return render(request,"order/order_failure.html",{"items":order_item,"order":order})
-
+    return render(request,"order/order_failure.html",{"items":items,"order":order})
 
 
 #ORDER SUCCESSFULLY PLACES
@@ -1105,16 +1302,13 @@ def orders_list(request):
 #ORDER DETAILED PAGE
 @never_cache
 @login_required(login_url='/user/login/')
-def order_detail(request,id=id):
+def order_detail(request,id):
     order=get_object_or_404(Orders,id=id,user=request.user)
     ordered_item_details=order.orderitem.all()
 
     original_total = sum(item.price for item in ordered_item_details)
 
-    # order_data=request.session.get("order_data",{})
-    # coupon_code=order_data.get("coupon_code")
-    # discount_amount=order_data.get("discount_amount",0)
-    # grand_total=order_data.get("grand_total",order.total_price)
+    is_payment_failed=ordered_item_details.filter(payment_status='failed').exists()
 
     if request.method=="POST":
         item_id = request.POST.get("item_id")
@@ -1122,47 +1316,70 @@ def order_detail(request,id=id):
         if item_id:
             ordered_item = order.orderitem.get(id=item_id)
 
-            if ordered_item.payment_status=="pending":
+            if ordered_item.status=="order_received" and order.payment_method=='cod':
                 ordered_item.status="cancelled"
                 ordered_item.save()
-                messages.success(request,"Your order has been cancelled!!")
 
-            elif ordered_item.payment_status=="paid":
+                product=ordered_item.product
+                product.quantity_stock+=ordered_item.quantity
+                product.save()
+                messages.success(request,"Your order has been cancelled!!")
+                return redirect("orderDetail",id=order.id)
+
+            elif ordered_item.payment_status=="paid" and order.payment_method in ['razorpay','wallet']:
                 ordered_item.status="cancelled"
                 ordered_item.save()
+                
+                item_discount_share=(ordered_item.price/order.total_price_before_discount)*order.discount
+                refund_amount=ordered_item.price-item_discount_share
+                credit_amount=round(refund_amount,2)
                 wallet,created=Wallet.objects.get_or_create(user=request.user)
-                wallet.balance+=ordered_item.price
-                wallet_txn=WalletTransaction.objects.create(wallet=wallet,amount=ordered_item.price,is_paid=False,
+                wallet.balance+=credit_amount
+                wallet_txn=WalletTransaction.objects.create(wallet=wallet,amount=credit_amount,
                                 transaction_type='credit')
                 wallet.save()
                 wallet_txn.save()
-                messages.success(request,f"Your order has been cancelled.Rs.{ordered_item.price} added to wallet")
+
+                product=ordered_item.product
+                product.quantity_stock+=ordered_item.quantity
+                product.save()
+
+                messages.success(request,f"Your order has been cancelled.Rs.{credit_amount} added to wallet")
+                return redirect("orderDetail",id=order.id)
 
         else:
             messages.warning(request,"Order cannot be cancelled")
 
         return redirect("orderDetail",id=order.id)
 
-    return render(request,"order/order_detail.html",{"orders":ordered_item_details,"order":order,"og_total":original_total})
+    return render(request,"order/order_detail.html",{"orders":ordered_item_details,"order":order,"og_total":original_total,
+                                                     "is_payment_failed":is_payment_failed})
 
 
+#RETURN ORDER REQUEST SUBMIT
 def return_order_item(request,id=id):
     item=get_object_or_404(OrderItem,id=id,status="delivered")
+    print(item)
 
     if request.method=="POST":
         form=OrderReturnForm(request.POST,request.FILES)
-        if form.is_valid():
-            return_form=form.save(commit=False)
-            return_form.user=request.user
-            return_form.item=item
-            return_form.status="pending"
-            return_form.save()
+        try:
+            if form.is_valid():
+                return_form=form.save(commit=False)
+                return_form.user=request.user
+                return_form.item=item
+                return_form.status="pending"
+                return_form.save()
 
-            item.approval_status="pending"
-            item.save()
+                item.approval_status="pending"
+                item.save()
 
-            messages.success(request,"Your return request has been successfully submitted")
-            return redirect("order-list")
+                messages.success(request,"Your return request has been successfully submitted")
+                return redirect("orderDetail",item.order.id)
+        
+        except IntegrityError:
+            messages.error(request,"Return is already requested")
+            return redirect("orderDetail",item.order.id)
 
     else:
         form=OrderReturnForm()
@@ -1178,32 +1395,32 @@ def add_money_wallet(request):
         money=Decimal(request.POST.get("amount"))
 
         if money <= 0:
-            messages.error(request,"Invalid amount")
-            return redirect("walletList")
-        
-        try:
-            client = razorpay.Client(auth=(settings.RAZORPAY['KEY_ID'], settings.RAZORPAY['KEY_SECRET']))
+            return JsonResponse({"status": "error","message": "Enter a valid amount."})
+            
+        else:    
+            try:
+                client = razorpay.Client(auth=(settings.RAZORPAY['KEY_ID'], settings.RAZORPAY['KEY_SECRET']))
 
-            razorpay_order = client.order.create({"amount": int(money * 100),
-                        "currency": "INR",
-                        "payment_capture": 1
+                razorpay_order = client.order.create({"amount": int(money * 100),
+                            "currency": "INR",
+                            "payment_capture": 1
+                        })
+
+                wallet_txn=WalletTransaction.objects.create(wallet=wallet,amount=money,is_paid=False,
+                                    transaction_type='credit', razorpay_order_id=razorpay_order["id"])
+                        
+                # Send order details to frontend 
+                return JsonResponse({
+                    "key": settings.RAZORPAY['KEY_ID'],
+                    "amount": int(money * 100),
+                    "order_id": razorpay_order["id"],
+                    "currency": "INR",
+                    "wallet_txn_id":wallet_txn.id
                     })
-
-            wallet_txn=WalletTransaction.objects.create(wallet=wallet,amount=money,is_paid=False,
-                                transaction_type='credit', razorpay_order_id=razorpay_order["id"])
-                    
-            # Send order details to frontend 
-            return JsonResponse({
-                "key": settings.RAZORPAY['KEY_ID'],
-                "amount": int(money * 100),
-                "order_id": razorpay_order["id"],
-                "currency": "INR",
-                "wallet_txn_id":wallet_txn.id
-                })
-         
-        except Exception as e:
-            print(f"Razorpay order creation failed: {e}")
-            return JsonResponse({"error": "Failed to create wallet."}, status=500)
+            
+            except Exception as e:
+                print(f"Razorpay order creation failed: {e}")
+                return JsonResponse({"error": "Failed to create wallet."}, status=500)
 
     # normal html page render on initial load
     transaction=wallet.transaction.all().order_by("-created_at")

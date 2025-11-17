@@ -1,5 +1,4 @@
 <div class="mb-6">
-    <!-- delete starts -->
     {% if variant.final_price < variant.price %} <div class="flex flex-col mt-2">
         <p class="text-lg text-red-500 line-through opacity-70">
             Rs. {{ variant.price }}
@@ -21,9 +20,8 @@
 <p class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1">Rs. {{ variant.price }}</p>
 
 {% endif %}
-<!-- delete end -->
 
-<!-- <p class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1">Rs. {{variant.price}}</p> -->
+{% if variant.quantity_stock > 1 %}
 <span class="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full gap-5">In Stock
     {{variant.quantity_stock}}</span>
 <p class="text-xs sm:text-sm text-gray-500">Inclusive of all taxes</p>
@@ -42,3 +40,30 @@
         Wishlist
     </button>
 </div>
+
+{% else %}
+
+<p class="text-red-500 font-bold text-xl mb-4 mt-3">OUT OF STOCK</p>
+
+<div class="flex flex-col sm:flex-row gap-3 mb-6 sm:mb-8">
+
+    <!-- Disabled Add to Cart -->
+    <a 
+        class="flex-1 bg-orange-300 text-white font-semibold py-3 sm:py-4 rounded-lg 
+               shadow-lg text-center text-sm sm:text-base opacity-50 pointer-events-none cursor-not-allowed">
+        <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+    </a>
+
+    <!-- Disabled Wishlist -->
+    <button 
+        disabled
+        class="flex-1 bg-gray-400 text-white font-semibold py-3 sm:py-4 rounded-lg 
+               shadow-lg text-sm sm:text-base opacity-50 cursor-not-allowed">
+        Wishlist
+    </button>
+</div>
+
+</div>
+
+{% endif %}
+

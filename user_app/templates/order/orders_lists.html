@@ -57,7 +57,7 @@
                             {% elif order.is_failed_payment %}
                             <span class="text-base font-semibold text-gray-900">PAYMENT FAILED</span>
 
-                            {% elif order.payment_method == 'razorpay' %}
+                            {% elif order.payment_method == 'razorpay' or  order.payment_method == 'wallet' %}
                             <span class="text-base font-semibold text-gray-900">PAID</span>
 
 

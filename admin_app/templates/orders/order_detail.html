@@ -119,6 +119,14 @@
             <span class="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-semibold">
               Rejected
             </span>
+          {% elif item.status and item.status == "cancelled" %}
+             <span class="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-semibold">
+              Cancelled
+            </span>
+            {% elif item.status == "payment_pending" or item.payment_status == 'failed' %}
+             <span class="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-semibold">
+              Payment Pending
+            </span>
           {% else %}
             <form action="" method="post">
               {% csrf_token %}
@@ -129,13 +137,13 @@
                   Order Received
                 </option>
                 <option value="in_transit" {% if item.status == "in_transit" %}selected{% endif %}>
-                  Returned
+                  In Transit
                 </option>
                 <option value="delivered" {% if item.status == "delivered" %}selected{% endif %}>
                   Delivered
                 </option>
-                <option value="cancelled" {% if item.status == "cancelled" %}selected{% endif %}>
-                  Cancelled
+                <option value="Packed" {% if item.status == "packed" %}selected{% endif %}>
+                  Packed
                 </option>
               </select>
             </form>
@@ -162,7 +170,7 @@
 
                                         {% if item.returnitem.image %}
                                         <p><strong>Image Proof:</strong></p>
-                                        <img src="{{ item.returnitem.image.0.url }}" alt="Return Proof"
+                                        <img src="{{ item.returnitem.image.url }}" alt="Return Proof"
                                             class="w-32 rounded border">
                                         {% endif %}
 
@@ -214,7 +222,7 @@
                 <!-- Payment Method -->
                 <div>
                     <label class="text-sm font-medium text-gray-600">Payment Method:</label>
-                    <p class="text-base text-gray-900 mt-1">{{order.payment_method}}</p>
+                    <p class="text-lg font-bold text-red-500 mt-1">{{order.payment_method}}</p>
                 </div>
 
                 <!-- Payment Status -->
@@ -224,10 +232,19 @@
                     <span class="inline-block mt-1 px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded">
                         Pending
                     </span>
-                    {% elif order.payment_method == 'razorpay' or order.payment_method == 'wallet' %}
+
+                    {% elif order.payment_method == 'razorpay' and item.payment_status == 'paid' or 
+                        order.payment_method == 'wallet' and item.payment_status == 'paid' %}
+        
                     <span class="inline-block mt-1 px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded">
                         Paid
                     </span>
+
+                    {% elif order.payment_method == 'razorpay' and item.status == 'payment_pending' %}
+                    <span class="inline-block mt-1 px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded">
+                        Failed
+                    </span>
+                 
                     {% endif %}
                 </div>
 

@@ -71,7 +71,7 @@
 
                     <td class="px-4 sm:px-6 py-4">
                         <div class="flex items-center space-x-3 sm:space-x-4">
-                            <a href="">
+                            <a href="{% url 'deleteOfferCatg' cat.id %}">
                                 <button type="button"><i class="fa-solid fa-trash"></i></button>
                             </a>
                         </div>
@@ -140,7 +140,7 @@
 
                     <td class="px-4 sm:px-6 py-4">
                         <div class="flex items-center space-x-3 sm:space-x-4">
-                            <a href="">
+                            <a href="{% url 'deleteOfferPrdct' prod.id %}">
                                 <button type="button"><i class="fa-solid fa-trash"></i></button>
                             </a>
                         </div>

@@ -1,7 +1,12 @@
 <div class="bg-white rounded-lg shadow-sm p-6">
 
+    {% if hx_message %}
+    <div class="bg-green-100 text-green-800 px-4 py-3 rounded mb-4">
+    {{ hx_message }}
+    </div>
+    {% endif %}
     <!-- Personal Information Section -->
-    <form action="" hx-post="{% url 'editProfile' %}" hx-target="#user-right-content" hx-swap="innerHTML">
+    <form action=""  hx-post="{% url 'editProfile' %}" hx-target="#user-right-content" hx-swap="innerHTML">
         {% csrf_token %}
 
         <div class="mb-8">
@@ -16,7 +21,7 @@
             <div class="flex items-center justify-between mb-3">
                 <label class="block text-sm font-medium text-gray-900">Email Address</label>
             </div>
-            {{form.email}}
+            <input type="email" name="new_email" value="{{user.email}}" class="w-full bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none">
         </div>
 
         <!-- Mobile Number Section -->

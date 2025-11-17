@@ -82,6 +82,7 @@ class Coupon(models.Model):
     code=models.CharField(max_length=10,unique=True)
     discount_value=models.DecimalField(max_digits=10,decimal_places=2,default=0.0)
     minimum_purchase_amount=models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    maximum_discount_limit=models.DecimalField(max_digits=10,decimal_places=2,null=True,blank=True)
     usage_limit=models.IntegerField(blank=True,null=True)
     start_date=models.DateTimeField()
     end_date=models.DateTimeField()

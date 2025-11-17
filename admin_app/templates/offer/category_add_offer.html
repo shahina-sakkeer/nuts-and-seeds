@@ -21,17 +21,17 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M1 9L5 5 1 1" />
                             </svg>
-                            <span class="ml-1 text-sm font-medium text-gray-500">Add Product Offer</span>
+                            <span class="ml-1 text-sm font-medium text-gray-500">Add Category Offer</span>
                         </div>
                     </li>
                 </ol>
             </nav>
-            <h1 class="text-2xl font-bold text-gray-900">Add Product Offer</h1>
+            <h1 class="text-2xl font-bold text-gray-900">Add Category Offer</h1>
         </div>
     </div>
 
     <!-- Form Container -->
-    <form class="space-y-6" method="post" enctype="multipart/form-data">
+    <form class="space-y-6" method="post">
     {% csrf_token %}
 
     <div class="bg-white rounded-lg shadow-sm p-6">
@@ -41,7 +41,7 @@
 
            
             <div>
-                <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Product</label>
+                <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
                 {{ form.category }}
             </div>
 
@@ -70,6 +70,12 @@
                 {% for error in form.end_date.errors %}
                 <p class="text-red-500 text-sm mt-1">{{ error }}</p>
                 {% endfor %}
+            </div>
+
+               <!-- is active -->
+            <div>
+                <label for="Is Active" class="block text-sm font-medium text-gray-700 mb-2">Is Active</label>
+                {{form.is_active}}
             </div>
         </div>
 

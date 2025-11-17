@@ -2,6 +2,10 @@
 <div class="min-h-screen flex items-center justify-center">
 <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-2xl">
 
+    <h2 class="text-gray-600 font-semibold tracking-wide mb-4 border-b border-gray-300 pb-2">
+        ADD NEW <span class="text-black">ADDRESS</span>
+    </h2>
+
     <form class="space-y-4" hx-post="{% url 'addNewAddress' %}" hx-target="#address-section" hx-swap="beforeend"
     hx-on="htmx:afterRequest: this.remove">
     
@@ -9,10 +13,20 @@
         <div>
           <label class="block text-sm font-medium text-gray-600 mb-1">House Name</label>
           {{form.house_name}}
+          {% for error in form.house_name.errors %}
+
+          <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+          {% endfor %}
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-600 mb-1">Street</label>
           {{form.street}}
+          {% for error in form.street.errors %}
+
+          <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+          {% endfor %}
         </div>
       </div>
 
@@ -21,10 +35,20 @@
         <div>
           <label class="block text-sm font-medium text-gray-600 mb-1">Landmark</label>
           {{form.landmark}}
+          {% for error in form.landmark.errors %}
+
+          <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+          {% endfor %}
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-600 mb-1">City</label>
           {{form.city}}
+          {% for error in form.city.errors %}
+
+          <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+          {% endfor %}
         </div>
       </div>
 
@@ -33,6 +57,11 @@
         <div>
           <label class="block text-sm font-medium text-gray-600 mb-1">Pincode</label>
           {{form.pincode}}
+          {% for error in form.pincode.errors %}
+
+          <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+          {% endfor %}
         </div>
       </div>
 
@@ -41,6 +70,11 @@
         <div>
           <label class="block text-sm font-medium text-gray-600 mb-1">State</label>
           {{form.state}}
+          {% for error in form.state.errors %}
+
+          <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+          {% endfor %}
         </div>
       </div>
 

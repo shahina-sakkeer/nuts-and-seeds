@@ -9,14 +9,16 @@
     <button class="px-3 py-1 text-gray-600 hover:bg-gray-100"
     type="button" hx-post="{% url 'changeQuantity' product.id %}" 
     hx-target="#update-quantity-{{product.id}}"
-    hx-vals='{"action":"decrease"}' hx-swap="innerHTML">−</button>
+    hx-vals='{"action":"decrease"}' hx-swap="innerHTML">
+    −</button>
 
     <span class="px-4 py-1 border-l border-r border-gray-300">{{product.quantity}}</span>
 
     <button class="px-3 py-1 text-gray-600 hover:bg-gray-100"
     type="button" hx-post="{% url 'changeQuantity' product.id %}" 
     hx-target="#update-quantity-{{product.id}}"
-    hx-vals='{"action":"increase"}' hx-swap="innerHTML">+</button>
+    hx-vals='{"action":"increase"}' hx-swap="innerHTML" {% if product.product.quantity_stock == 0 %}disabled{% endif %}>
+    +</button>
 </div>
 
 {% if request.headers.hx_request %}

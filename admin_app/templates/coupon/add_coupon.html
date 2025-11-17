@@ -76,6 +76,16 @@
                 {% endfor %}
             </div>
 
+
+            <!-- Maximum discount Amount -->
+            <div>
+                <label for="minimum_purchase_amount" class="block text-sm font-medium text-gray-700 mb-2">Maximum Discount Limit</label>
+                {{ form.maximum_discount_limit }}
+                {% for error in form.maximum_discount_limit.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+
             <!-- Usage Limit -->
             <div>
                 <label for="usage_limit" class="block text-sm font-medium text-gray-700 mb-2">Usage Limit</label>
@@ -102,8 +112,10 @@
                 <p class="text-red-500 text-sm mt-1">{{ error }}</p>
                 {% endfor %}
             </div>
+
+            <!-- is active -->
             <div>
-                <label for="Is Active" class="block text-sm font-medium text-gray-700 mb-2">Is Active</label>
+                <label for="Is Active" class="block text-sm font-medium text-gray-700 mb-2">Activate</label>
                 {{form.is_active}}
             </div>
         </div>

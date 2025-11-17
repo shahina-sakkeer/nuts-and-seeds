@@ -62,9 +62,9 @@
         </div>
 
         <!-- Order Items -->
+        <h2 class="text-lg font-semibold text-gray-900 text-center mb-6">Order Items</h2>
         {% for item in items %}
         <div class="mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 text-center mb-6">Order Items</h2>
 
             <div class="flex flex-col items-center">
                 <!-- Product Image -->
@@ -82,6 +82,7 @@
                 <p class="text-lg font-bold text-gray-900">{{item.price}}</p>
             </div>
         </div>
+        {% endfor %}
 
 
         <!-- Delivery Address -->
@@ -99,9 +100,8 @@
                 <!-- Total Price -->
                 <div class="flex justify-between items-center">
                     <span class="text-sm text-gray-700">Total Price:</span>
-                    <span class="text-sm font-semibold text-gray-900">Rs. {{item.price}}</span>
+                    <span class="text-sm font-semibold text-gray-900">Rs. {{order.total_price_before_discount}}</span>
                 </div>
-        {% endfor %}
 
                 <!-- Discount-->
                 <div class="flex justify-between items-center">
@@ -120,9 +120,9 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{% url 'order-list' %}"
+            <a href="{% url 'retryPayment' order.id %}"
                 class="px-6 py-3 bg-orange-600 text-white font-medium rounded-lg hover:bg-blue-700 transition text-center">
-                View Order Details
+                Retry Payment
             </a>
             <a href="{% url 'order-list' %}"
                 class="px-6 py-3 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-800 transition text-center">

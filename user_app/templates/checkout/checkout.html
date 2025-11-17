@@ -19,32 +19,33 @@
 
                             <div class="space-y-3" id="address-section">
                                 {% for address in address %}
+                         
                                 <label class="flex items-start p-4 border-2 rounded-lg cursor-pointer transition
-        {% if default_address and default_address.id == address.id %}
-            border-green-500 bg-green-50 {% else %} border-gray-300 hover:border-green-400 hover:bg-green-50
-            {% endif %}">
-
+                                    {% if default_address and default_address.id == address.id %}
+                                        border-green-500 bg-green-50 {% else %} border-gray-300 hover:border-green-400 hover:bg-green-50
+                                    {% endif %}">
+                          
                                     <input type="radio" name="selected_address" value="{{ address.id }}" 
                                     {% if default_address and default_address.id == address.id %} checked {% endif %}
                                         class="mt-1 w-4 h-4 text-green-600 focus:ring-green-500">
 
-                                    <span class="ml-3 text-gray-900">
+                                    <span class="ml-3 text-gray-900"><i>
                                         {{ user.firstname }}, {{ address.house_name }}, {{ address.street }},
-                                        {{ address.pincode }}, {{ address.state }}
+                                        {{ address.pincode }}, {{ address.state }}</i>
                                     </span>
                                 </label>
                                 {% endfor %}
                             </div>
                         </div>
+                    </div>
 
-                        <div class="mt-6">
+                       <div class="mt-6">
                             <a href="" hx-get="{% url 'addNewAddress' %}" hx-target="#address-section"
-                                hx-swap="beforeend"
+                                hx-swap="afterend"
                                 class="inline-block px-4 py-2 border-2 border-orange-500 text-orange-600 font-medium rounded-lg hover:bg-green-50 transition">
                                 Add a new address
                             </a>
                         </div>
-                    </div>
 
                     <!-- Add New Address Button -->
 
@@ -137,7 +138,7 @@
                     <div class="flex items-center mt-5 space-x-2">
                         <button type="button" id="show-coupon"
                             class="w-2/3 bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded-lg"
-                            hx-get="{% url 'showCoupons' %}" hx-target="#coupon-list" hx-swap="outerHTML">
+                            hx-get="{% url 'showCoupons' %}" hx-target="#coupon-list" hx-swap="innerHTML">
                             Show Coupons
                         </button>
                     </div>
@@ -290,7 +291,8 @@
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
-                            selected_address: selectedAddressInput.value
+                            selected_address: selectedAddressInput.value,
+                            local_order_id: data.local_order_id  
                         };
 
                         fetch("{% url 'verifyPayment' %}", {
@@ -327,16 +329,39 @@
                 const rzp = new Razorpay(options);
 
                 rzp.on('payment.failed', function (response) {
-                    const localOrderId = data.local_order_id; // dynamically get order id
+                    const localOrderId = data.local_order_id; 
                     console.error("Razorpay payment failed:", response.error);
+                    
+                     const payload = {
+                            local_order_id: localOrderId,
+                            razorpay_order_id: response.error.metadata?.order_id || null,
+                            razorpay_payment_id: response.error.metadata?.payment_id || null,
+                            reason: response.error.reason || null
+                        };
+
+                    fetch("/razorpay-failed/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                        body: JSON.stringify(payload),
+                        credentials: "include"
+                    })
+                    .catch(err => {
+                        console.error("Failed to notify backend about payment failure:", err);
+                    })
+                    .finally(() => {
+                    // Redirect to failure page regardless of AJAX result
                     window.location.href = `/user/order-failure/${localOrderId}/`;
+                    });
                 });
 
-                rzp.open();
+                    rzp.open();
 
-            })
-            .catch(err => console.error("Error:", err));
-    });
+                    })
+                    .catch(err => console.error("Error:", err));
+                });
 
 
 </script>

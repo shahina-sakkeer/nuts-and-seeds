@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser,PermissionsMixin,BaseUse
 import re
 from django.core.exceptions import ValidationError
 from cloudinary.models import CloudinaryField
-from admin_app.models import ProductVariant,Products
+from admin_app.models import ProductVariant,Products,Coupon
 import uuid
 
 
@@ -16,6 +16,10 @@ class CustomUserManager(BaseUserManager):
         email=self.normalize_email(email)
         user=self.model(email=email,**extra_fields)
         user.set_password(password)
+
+        if not user.referralID:
+            user.referralID = generate_referralID()
+            
         user.save(using=self.db)
         return user
     
@@ -30,11 +34,18 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
+
+def generate_referralID():
+    return str(uuid.uuid4()).split('-')[0].upper()
+
+
 class CustomUser(AbstractBaseUser,PermissionsMixin):
     email=models.EmailField(unique=True)
     firstname=models.CharField(max_length=100)
     lastname=models.CharField(max_length=100,blank=True)
     phone_number=models.CharField(max_length=15,unique=True)
+    referralID=models.CharField(unique=True,blank=True,null=True)
+    referred_by=models.ForeignKey('self',related_name='referrals',null=True,blank=True,on_delete=models.SET_NULL)
     is_active=models.BooleanField(default=True)
     is_admin=models.BooleanField(default="False")
     is_blocked=models.BooleanField(default="False")
@@ -56,7 +67,19 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
         if self.phone_number and not phone_pattern.match(self.phone_number):
             raise ValidationError({"phone_number": "Invalid phone number format."})
         
-        
+
+class Referral(models.Model):
+    referrer=models.ForeignKey(CustomUser,related_name="referrer_data",on_delete=models.CASCADE)
+    referred_user=models.ForeignKey(CustomUser,related_name="referred_data",on_delete=models.CASCADE)
+    reward_given=models.BooleanField(default=False)
+    reward_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    created_at=models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return f"{self.referrer} referred {self.referred_user}"
+
+
 
 class UserAddress(models.Model):
     user=models.ForeignKey(CustomUser,related_name="useraddress",on_delete=models.CASCADE)
@@ -106,7 +129,9 @@ class Orders(models.Model):
     orderID=models.CharField(max_length=20,unique=True, default=generate_orderID)
     user=models.ForeignKey(CustomUser,related_name="orderuser",on_delete=models.CASCADE)
     address=models.ForeignKey(UserAddress,related_name="orderaddress",on_delete=models.CASCADE)
+    coupon=models.ForeignKey(Coupon,related_name="ordercoupon",on_delete=models.SET_NULL,null=True,blank=True)
     item_count=models.PositiveIntegerField()
+    total_price_before_discount=models.DecimalField(max_digits=10,decimal_places=2,default=0)
     total_price=models.DecimalField(max_digits=10,decimal_places=2)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
@@ -116,6 +141,7 @@ class Orders(models.Model):
     discount=models.DecimalField(max_digits=10,decimal_places=2,default=0.00)
     razorpay_order_id=models.CharField(max_length=255,blank=True,null=True)
     is_paid = models.BooleanField(default=False)
+
 
     def __str__(self):
         return f"order {self.orderID} by {self.user.firstname}"
@@ -144,7 +170,7 @@ class OrderItem(models.Model):
     unit_price=models.DecimalField(max_digits=10,decimal_places=2,default=0)
     price=models.DecimalField(max_digits=10,decimal_places=2)
     cancellation_reason=models.TextField(blank=True,null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='order_received')
     payment_status = models.CharField(max_length=20,
     choices=[('pending', 'Pending'), ('paid', 'Paid'), ('failed', 'Failed')],
     default='pending')
@@ -199,7 +225,6 @@ class WalletTransaction(models.Model):
 class Wishlist(models.Model):
     user=models.ForeignKey(CustomUser,related_name="userwishlist",on_delete=models.CASCADE)
     created_at=models.DateTimeField(auto_now_add=True)
-
 
 
 class WishlistItem(models.Model):

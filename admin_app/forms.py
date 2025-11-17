@@ -132,7 +132,7 @@ ProductVariantInlineFormSet=inlineformset_factory(Products,ProductVariant,form=P
 class CouponForm(forms.ModelForm):
     class Meta:
         model=Coupon
-        fields=["code","discount_type","minimum_purchase_amount","usage_limit",
+        fields=["code","discount_type","minimum_purchase_amount","usage_limit","maximum_discount_limit",
                 "start_date","end_date","is_active","description","discount_value"]
         
         widgets={
@@ -173,7 +173,11 @@ class CouponForm(forms.ModelForm):
                 "class": "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
                 "placeholder": "Enter product description",
                 "rows": 3
-            })
+            }),
+            "maximum_discount_limit":forms.NumberInput(attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+                "placeholder": "Enter maximum discount"
+            }),
         }
 
 
@@ -183,6 +187,14 @@ class CouponForm(forms.ModelForm):
             raise ValidationError("Invalid purchase amount.")
         
         return minimum_purchase_amount
+    
+
+    def clean_maximum_discount_limit(self):
+        maximum_discount_limit=self.cleaned_data.get("maximum_discount_limit")
+        if maximum_discount_limit and maximum_discount_limit <= 0:
+            raise ValidationError("Invalid limit.")
+        
+        return maximum_discount_limit
 
 
     def clean_usage_limit(self):
@@ -193,37 +205,37 @@ class CouponForm(forms.ModelForm):
         return usage_limit
     
 
-    def clean_discount_value(self):
-        discount_type=self.cleaned_data.get("discount_type")
-        discount_value=self.cleaned_data.get("discount_value")
-
-        if discount_type == "percentage":
-            if discount_value is not None and (discount_value > 60 or discount_value <= 0):
-                raise ValidationError("Percentage discount must be between 1% and 60%.")
-
-        elif discount_type == "flat":
-            if discount_value is not None and discount_value <= 0:
-                raise ValidationError("Flat discount must be greater than 0.")
-
-            
-        return discount_value
-    
-        
     def clean(self):
         cleaned_data=super().clean()
-        
+        discount_type=cleaned_data.get("discount_type")
+        discount_value=cleaned_data.get("discount_value")
+        minimum_purchase_amount=cleaned_data.get("minimum_purchase_amount")
         start_date=self.cleaned_data.get("start_date")
         end_date=self.cleaned_data.get("end_date")
-            
+
+        if discount_type=="percentage":
+            if discount_value is not None and discount_value <= 0 or discount_value > 70:
+                self.add_error("discount_value", "Percentage discount must be between 1% and 70%.")
+
+
+        if discount_type=="flat":
+            if discount_value is not None and discount_value <= 0:
+                self.add_error("discount_value","Discount amount cannot be less than 0.")
+
+            if discount_value and minimum_purchase_amount:
+                if discount_value > minimum_purchase_amount:
+                    self.add_error("discount_value","Flat discount cannot be greater than minimum purchase amount.")  
+
+
         if start_date and end_date is not None:
             if end_date < start_date:
                 self.add_error('end_date','End date cannot be less than start date.')
             elif end_date==start_date:
-                self.add_error('end_date','Start date and end date cannot be same.')
-
+                self.add_error('end_date','Start date and end date cannot be same.')      
 
         return cleaned_data
-    
+
+
 
 class CategoryOfferForm(forms.ModelForm):
     class Meta:
@@ -253,8 +265,8 @@ class CategoryOfferForm(forms.ModelForm):
 
     def clean_offer_percentage(self):
         offer_percentage=self.cleaned_data.get("offer_percentage")
-        if offer_percentage and offer_percentage<=0:
-            raise ValidationError("Value must be greater than 0")
+        if offer_percentage and offer_percentage<=0 or offer_percentage>=100:
+            raise ValidationError("Offer value should be from 0% to 100%")
         
         return offer_percentage
     
@@ -302,8 +314,8 @@ class ProductOfferForm(forms.ModelForm):
 
     def clean_offer_percentage(self):
         offer_percentage=self.cleaned_data.get("offer_percentage")
-        if offer_percentage and offer_percentage<=0:
-            raise ValidationError("Value must be greater than 0")
+        if offer_percentage and offer_percentage<=0 or offer_percentage>=100:
+            raise ValidationError("Offer value should be from 0% to 100%.")
         
         return offer_percentage
     

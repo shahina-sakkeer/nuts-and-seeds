@@ -228,6 +228,18 @@
     </script>
 
 
+<!-- dashborad filter -->
+<script>
+function setFilter(value) {
+    document.getElementById('filterType').value = value;
+}
+
+function enableCustom() {
+    document.getElementById("filterType").value = "custom";
+    document.getElementById("dateFields").classList.remove("hidden");
+    document.getElementById("customSubmit").classList.remove("hidden");
+}
+</script>
 
 
 </body>

@@ -29,31 +29,68 @@
 
 
 <!-- pagination  -->
-<nav aria-label="Page navigation" class="mt-6 flex justify-center">
-  <ul class="pagination flex space-x-2">
+<nav aria-label="Page navigation" class="flex justify-center mb-6">
+  <ul class="flex items-center space-x-2 bg-white shadow-md px-6 py-3 rounded-xl border">
+
+      {# Previous Button #}
       {% if page_obj.has_previous %}
       <li>
-          <a class="px-3 py-1 border rounded" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+          <a href="?page={{ page_obj.previous_page_number }}"
+             class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100 flex items-center gap-1">
+              <span>&lsaquo;</span> Previous
+          </a>
       </li>
       {% else %}
-      <li class="opacity-50 px-3 py-1 border rounded">Previous</li>
+      <li class="px-3 py-1 border rounded-lg text-gray-400 cursor-not-allowed flex items-center gap-1">
+          <span>&lsaquo;</span> Previous
+      </li>
       {% endif %}
 
+      {# Page Numbers With Ellipsis #}
       {% for num in page_obj.paginator.page_range %}
-      <li>
-          <a class="px-3 py-1 border rounded {% if page_obj.number == num %}bg-blue-500 text-white{% endif %}" 
-             href="?page={{ num }}">{{ num }}</a>
-      </li>
+          {% if num == page_obj.number %}
+              <li>
+                  <span class="px-3 py-1 border border-gray-400 rounded-lg bg-gray-100 font-medium">
+                      {{ num }}
+                  </span>
+              </li>
+
+          {% elif num < page_obj.number|add:-1 and num > 2 %}
+              {% if forloop.first %}
+              <li><span class="px-3 py-1 text-gray-500">…</span></li>
+              {% endif %}
+
+          {% elif num > page_obj.number|add:1 and num < page_obj.paginator.num_pages|add:-1 %}
+              {% if forloop.last %}
+              <li><span class="px-3 py-1 text-gray-500">…</span></li>
+              {% endif %}
+
+          {% else %}
+              <li>
+                  <a href="?page={{ num }}"
+                     class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100">
+                      {{ num }}
+                  </a>
+              </li>
+          {% endif %}
       {% endfor %}
 
+      {# Next Button #}
       {% if page_obj.has_next %}
       <li>
-          <a class="px-3 py-1 border rounded" href="?page={{ page_obj.next_page_number }}">Next</a>
+          <a href="?page={{ page_obj.next_page_number }}"
+             class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100 flex items-center gap-1">
+              Next <span>&rsaquo;</span>
+          </a>
       </li>
       {% else %}
-      <li class="opacity-50 px-3 py-1 border rounded">Next</li>
+      <li class="px-3 py-1 border rounded-lg text-gray-400 cursor-not-allowed flex items-center gap-1">
+          Next <span>&rsaquo;</span>
+      </li>
       {% endif %}
   </ul>
 </nav>
+
+<!-- pagination ends -->
 
 {% endblock %}

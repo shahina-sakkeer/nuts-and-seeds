@@ -113,6 +113,16 @@
                     <span class="text-sm font-semibold text-gray-900">Rs. {{order.discount}}</span>
                 </div>
 
+                <!-- Coupon name-->
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-700">Coupon :</span>
+                    {% if order.coupon %}
+                    <span class="text-sm font-semibold text-gray-900">{{order.coupon.code}}</span>
+                    {% else %}
+                    <span class="text-sm font-semibold text-gray-900">No Coupon Applied</span>
+                    {% endif %}
+                </div>
+
                 <!-- Grand total amount -->
                  <div class="flex justify-between items-center">
                     <span class="text-sm text-gray-700">Grand Total Price:</span>

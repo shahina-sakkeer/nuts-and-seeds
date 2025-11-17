@@ -76,7 +76,8 @@
                                 Manage Addresses
                             </a>
 
-                            <a href="#password"
+                            <a href="" hx-get="{% url 'editPassword' %}" hx-target="#user-right-content"
+                                hx-swap="innerHTML"
                                 class="block pl-6 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50">
                                 Manage Password
                             </a>

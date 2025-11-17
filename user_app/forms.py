@@ -14,6 +14,12 @@ class UserRegistrationForm(forms.ModelForm):
             "placeholder": "Enter your password",
             'autocomplete': 'off'
         }))
+    referral_code=forms.CharField(required=False,
+            widget=forms.TextInput(attrs={
+            "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
+            "placeholder": "Referral code (Optional)",
+            'autocomplete': 'off',
+        }))
 
     class Meta:
         model=CustomUser
@@ -73,7 +79,20 @@ class UserLoginForm(forms.Form):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model=CustomUser
-        fields=["email","firstname","phone_number"]
+        fields=["firstname","phone_number","referralID"]
+
+        widgets={
+            "firstname": forms.TextInput(attrs={
+                "class": "w-full bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none",
+                "placeholder": "firstname",
+                'autocomplete': 'off'
+            }),
+            "phone_number": forms.TextInput(attrs={
+                "class": "w-full bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none",
+                "placeholder": "phone number",
+                'autocomplete': 'off'
+            }),
+        }
 
 
 class UserAddressForm(forms.ModelForm):

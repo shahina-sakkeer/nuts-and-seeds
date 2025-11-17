@@ -2,140 +2,167 @@
 
 {% block content %}
 
-<!-- Main Container with Blue Border -->
 <div class="min-h-screen p-4 md:p-8">
     <div class="max-w-7xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
 
-        <!-- Main Content -->
+        {% if is_payment_failed %}
+        <div class="border border-red-300 bg-red-100 rounded-md p-4 flex gap-3 items-start">
+            <div class="text-red-600 text-xl mt-1">&#10060;</div>
+            <div>
+                <p class="font-semibold text-red-800">Payment Pending</p>
+                <p class="text-red-700 text-sm">
+                    Your payment for this order is still pending. Please complete the payment to process your order.
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
         <div class="p-6 md:p-8">
-            <!-- Order Details Header -->
+
+            <!-- Order Header -->
             <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 mb-2">Order Details</h1>
-                    <p class="text-sm text-gray-600">{{order.orderID}} | Placed on {{order.created_at}} | Payment through {{order.payment_method}}</p>
-                </div>
-                <div class="mt-4 md:mt-0">
-                    <!-- <span
-                        class="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
-                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                        Shipped
-                    </span> -->
+                    <p class="text-sm text-gray-600">
+                        {{order.orderID}} | Placed on {{order.created_at}} | Payment through {{order.payment_method}}
+                    </p>
                 </div>
             </div>
 
-            <!-- Two Column Layout -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <!-- Left Column - Items Ordered (2/3 width) -->
+                <!-- Left Section -->
                 <div class="lg:col-span-2 space-y-6">
-
-                    <!-- Items Ordered Section -->
                     <div class="bg-white border border-gray-200 rounded-lg p-6">
                         <h2 class="text-xl font-semibold text-gray-900 mb-6">Items Ordered</h2>
 
                         {% for item in orders %}
-                        <!-- Product 1 -->
                         <div class="flex items-start justify-between pb-6 mb-6 border-b border-gray-200">
+
                             {% with item.product.product.images.all as image %}
                             <div class="flex space-x-4 flex-1">
                                 {% if image %}
                                 <img src="{{image.0.image.url}}" alt="product image"
-                                    class="w-20 h-20 object-cover rounded-lg">
+                                     class="w-20 h-20 object-cover rounded-lg">
                                 {% endif %}
+                            {% endwith %}
+
                                 <div class="flex-1">
-                                    <h3 class="text-base font-semibold text-gray-900 mb-1">{{item.product.product.name}}
+                                    <h3 class="text-base font-semibold text-gray-900 mb-1">
+                                        {{item.product.product.name}}
                                     </h3>
                                     <p class="text-sm text-gray-600">Weight : {{item.product.weight}}g</p>
 
-                                    <!-- cancel item starts-->
-                                    {% if item.status == "pending" or item.status == 'paid' %}
-                                    <button type="button" class="inline-block mt-2 px-2 py-1 bg-red-100 text-red-600 text-xs font-medium rounded" 
-                                    data-bs-toggle="modal" data-bs-target="#cancelModal{{item.id}}">
-                                    CANCEL ORDER
-                                    </button>
+                                    <!-- CANCEL -->
+                                    {% if item.status == "order_received" or item.payment_status == 'paid' and item.status != 'delivered' and item.status != 'cancelled' and item.status != 'returned'  %}
+
+                                        <button type="button"
+                                            class="inline-block mt-2 px-2 py-1 bg-red-100 text-red-600 text-xs font-medium rounded"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#cancelModal{{item.id}}">
+                                            CANCEL ORDER
+                                        </button>
 
                                     {% elif item.status == "cancelled" %}
-                                    <p class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-600 text-xs font-medium rounded">
-                                        CANCELLED
-                                    </p>
+                                        <p class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-600 text-xs font-medium rounded">
+                                            CANCELLED
+                                        </p>
 
+                                    <!-- RETURN -->
                                     {% elif item.status == "delivered" %}
-                                    <button type="button" class="inline-block mt-2 px-2 py-1 bg-red-100 text-red-600 text-xs font-medium rounded" 
-                                    data-bs-toggle="modal" data-bs-target="#returnModal{{item.id}}">
-                                    <a href="{% url 'orderReturn' item.id %}">RETURN ORDER</a>
-                                    </button>
+                                        <button type="button"
+                                            class="inline-block mt-2 px-2 py-1 bg-red-100 text-red-600 text-xs font-medium rounded"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#returnModal{{item.id}}">
+                                            RETURN ORDER
+                                        </button>
 
+                                    {% elif item.status == 'returned' %} 
+                                       <p class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-600 text-xs font-medium rounded">
+                                            RETURNED
+                                        </p>
                                     {% endif %}
-    
-                                    <!-- cancel item and return item ends -->
-
                                 </div>
-                            
                             </div>
-                            {% endwith %}
+                          
+
                             <div class="text-right ml-4">
-                                <p class="text-sm text-gray-600 mb-1">Qty: 1</p>
+                                <p class="text-sm text-gray-600 mb-1">Qty: {{item.quantity}}</p>
                                 <p class="text-base font-bold text-gray-900">Rs. {{item.price}}</p>
-                                    <p class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-600 text-xs font-medium rounded">
-                                        {{item.status}}
-                                    </p>
+                                <p class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-600 text-xs font-medium rounded">
+                                    {{item.status}}
+                                </p>
                             </div>
                         </div>
 
-                        <!-- cancel order modal starts -->
+                        <!-- CANCEL MODAL -->
                         <div class="modal fade" id="cancelModal{{ item.id }}" tabindex="-1"
-                        aria-labelledby="cancelModalLabel{{ item.id }}" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="cancelModalLabel{{ item.id }}">Cancel Item</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to cancel <strong>{{ item.product.product.name }}</strong>?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close</button>
-                                    <form method="POST" style="display:inline;">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="item_id" value="{{ item.id }}">
-                                        <button type="submit" class="btn btn-danger">Yes, Cancel</button>
-                                    </form>
+                             aria-labelledby="cancelModalLabel{{ item.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="cancelModalLabel{{ item.id }}">Cancel Item</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        Are you sure you want to cancel
+                                        <strong>{{ item.product.product.name }}</strong>?
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+
+                                        <form method="POST" action="">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="item_id" value="{{ item.id }}">
+                                            <button type="submit" class="btn btn-danger">Yes, Cancel</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- cancel order modal ends -->
-                    </div>
 
-                {% endfor %}
-                    </div>
+                        <!-- RETURN MODAL -->
+                        <div class="modal fade" id="returnModal{{ item.id }}" tabindex="-1"
+                             aria-labelledby="returnModalLabel{{ item.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
 
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="returnModalLabel{{ item.id }}">Return Item</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
 
-                    <!-- Shipping and Billing Information -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Shipping Address -->
-                        <div class="bg-white border border-gray-200 rounded-lg p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Shipping Address</h3>
-                            <div class="text-sm text-gray-700 space-y-1">
-                                <p class="font-medium">{{user.firstname}}</p>
-                                <p>{{order.address.house_name}}</p>
-                                <p>{{order.address.city}}</p>
-                                <p>{{order.address.state}}</p>
-                                <p>{{user.phone_number}}</p>
+                                    <div class="modal-body">
+                                        Do you want to return
+                                        <strong>{{ item.product.product.name }}</strong>?
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+
+                                        <a href="{% url 'orderReturn' item.id %}" class="btn btn-danger">
+                                            Yes, Return
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        {% endfor %}
+
                     </div>
                 </div>
 
-                <!-- Right Column - Order Summary -->
+                <!-- RIGHT: Summary -->
                 <div class="lg:col-span-1">
                     <div class="bg-white border border-gray-200 rounded-lg p-6 sticky top-6">
                         <h2 class="text-xl font-semibold text-gray-900 mb-6">Order Summary</h2>
 
                         <div class="space-y-4">
-                            <!-- Subtotal -->
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-600">Subtotal</span>
                                 <span class="text-gray-900 font-medium">Rs. {{og_total}}</span>
@@ -143,45 +170,33 @@
 
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-600">Coupon Applied</span>
-                                <span class="text-gray-900 font-medium">{{coupon_code}}</span>
+                                <span class="text-gray-900 font-medium">{{order.coupon.code}}</span>
                             </div>
 
-                            <!-- Shipping -->
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-600">Discount</span>
                                 <span class="text-gray-900 font-medium">Rs. {{order.discount}}</span>
                             </div>
 
-                            <!-- Total -->
                             <div class="flex justify-between pt-2">
                                 <span class="text-lg font-semibold text-gray-900">Total</span>
                                 <span class="text-lg font-bold text-gray-900">Rs. {{order.total_price}}</span>
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
-                        <!-- <div class="mt-6 space-y-3">
-                        
-                            <button
-                                class="w-full px-4 py-3 bg-orange-600 text-white font-medium rounded-lg hover:bg-blue-700 transition flex items-center justify-center space-x-2">
+                        {% if is_payment_failed %}
+                        <div class="mt-6 space-y-3">
+                            <a href="{% url 'retryPayment' order.id %}"
+                               class="w-full px-4 py-3 bg-orange-600 text-white font-medium rounded-lg 
+                                      hover:bg-blue-700 transition flex items-center justify-center space-x-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
-                                    </path>
+                                          d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
                                 </svg>
-                                <span>Track Package</span>
-                            </button>
-
-                            <button
-                                class="w-full px-4 py-3 bg-white border-2 border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition flex items-center justify-center space-x-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
-                                    </path>
-                                </svg>
-                                <span>Print Invoice</span>
-                            </button>
-                        </div> -->
+                                <span>Retry Payment</span>
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -191,222 +206,5 @@
 
     </div>
 </div>
-
-
-<!-- Bottom Navigation (Mobile) -->
-<div class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 md:hidden">
-    <div class="flex justify-around items-center">
-        <button class="flex flex-col items-center space-y-1">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-                </path>
-            </svg>
-        </button>
-        <button class="flex flex-col items-center space-y-1">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-            </svg>
-        </button>
-        <button class="flex flex-col items-center space-y-1">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-        </button>
-    </div>
-</div>
-
 
 {% endblock %}
-
-
-
-
-<!-- <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-    <div class="bg-white rounded-2xl sm:p-8">
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-
-            <div class="lg:col-span-2 space-y-6">
-                {% for item in orders %}
-        
-                <div class="flex flex-col sm:flex-row gap-6">
-               
-                    <div class="flex-shrink-0">
-                        {% with item.product.product.images.all as image %}
-
-                        {% if image %}
-                        <img src="{{image.0.image.url}}" alt="Gaming Laptop"
-                            class="w-full sm:w-32 h-auto object-cover rounded-lg">
-                        {% endif %}
-                        {% endwith %}
-                    </div>
-
-               
-                    <div class="flex-1">
-                        <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">
-                            {{item.product.product.name}}
-                        </h2>
-                        <p class="text-sm text-gray-600 mb-1">Weight : {{item.product.weight}}g</p>
-
-                        <p class="text-2xl font-bold text-gray-900">Rs. {{item.price}}</p>
-                    </div>
-                </div>
-
-      
-                <div class="relative pl-8 py-4">
-
-                  
-                    <div class="relative mb-8">
-                        <div
-                            class="absolute -left-7 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                    d="M5 13l4 4L19 7"></path>
-                            </svg>
-                        </div>
-                        <p class="text-sm font-medium text-gray-900">{{order.created_at}}</p><br>
-
-                        <p class="text-sm text-gray-600 mb-1">Status: {{item.status}}</p>
-                    </div>
-
-                    {% if item.status == "pending" %}
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                        data-bs-target="#cancelModal{{item.id}}">
-                        Cancel Order
-                    </button>
-                    {% endif %}
-
-                    <div class="modal fade" id="cancelModal{{ item.id }}" tabindex="-1"
-                        aria-labelledby="cancelModalLabel{{ item.id }}" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="cancelModalLabel{{ item.id }}">Cancel Item</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to cancel <strong>{{ item.product.name }}</strong>?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close</button>
-                                    <form method="POST" style="display:inline;">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="item_id" value="{{ item.id }}">
-                                        <button type="submit" class="btn btn-danger">Yes, Cancel</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-
-                {% endfor %}
-            </div>
-
-
-
-            <div class="lg:col-span-1 space-y-6">
-
-                <div class="bg-gray-50 rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Delivery details</h3>
-
-                
-                    <div class="flex items-start space-x-3 mb-4">
-                        <svg class="w-5 h-5 text-gray-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-                            </path>
-                        </svg>
-                        <div>
-                            <p class="text-sm font-medium text-gray-900 mb-1">Other</p>
-                            <p class="text-sm text-gray-600">
-                                {{order.address.house_name}},{{order.address.city}},{{order.address.state}}</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start space-x-3">
-                        <svg class="w-5 h-5 text-gray-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">{{user.firstname}}</p>
-                            <p class="text-sm text-gray-600">{{user.phone_number}}</p>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="bg-gray-50 rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Price details</h3>
-
-                    <div class="space-y-3">
-                
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Total price</span>
-                            <span class="text-gray-900">Rs. {{order.total_price}}</span>
-                        </div>
-
-
-      
-                        {% if discount > 0 %}
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Total discount</span>
-                            <span class="text-green-600">Rs. {{discount | floatformat:2}}</span>
-                        </div>
-
-
-                     
-                        <div class="flex justify-between pt-2">
-                            <span class="text-base font-semibold text-gray-900">Total amount</span>
-                            <span class="text-base font-bold text-gray-900">Rs. {{grand_total | floatformat:2}}</span>
-                        </div>
-
-                        {% else %}
-
-           
-                        <div class="flex justify-between pt-2">
-                            <span class="text-base font-semibold text-gray-900">Total amount</span>
-                            <span class="text-base font-bold text-gray-900">Rs. {{order.total_price}}</span>
-                        </div>
-
-                        {% endif %}
-
-                        <div class="flex items-center justify-between pt-3 border-t border-gray-300">
-                            <span class="text-sm text-gray-600">Paid by</span>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-6 h-6 bg-green-100 rounded flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                {% if payment_method == cod %}
-                                <span class="text-sm font-medium text-gray-900">Cash On Delivery</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-        
-            </div>
-
-        </div>
-
-    </div>
-
-</div> -->

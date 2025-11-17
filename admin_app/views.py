@@ -12,8 +12,8 @@ from django.core.paginator import Paginator
 from user_app.models import CustomUser,Orders,OrderItem,OrderReturn,Wallet,WalletTransaction
 import base64
 from cloudinary.uploader import upload
-from datetime import date,timedelta
-from admin_app.helper import get_sales_data,get_most_ordered_product
+from datetime import date,timedelta,datetime
+from admin_app.helper import get_sales_data,get_ordered_products,get_ordered_categories
 
 
 # Create your views here.
@@ -23,12 +23,14 @@ from admin_app.helper import get_sales_data,get_most_ordered_product
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def admin_dashboard(request):
     filter_type=request.GET.get("filter","today")
+    start_date=request.GET.get("start")
+    end_date=request.GET.get("end")
 
     #filter option
     today=date.today()
     start_of_week=today - timedelta(days=today.weekday())
     start_of_month=today.replace(day=1)
-    top_product=None
+    start_of_year=today-timedelta(days=365)
 
     #overall total
     order_count=Orders.objects.count()
@@ -36,15 +38,43 @@ def admin_dashboard(request):
     total_discount=Orders.objects.aggregate(total=Sum('discount'))['total'] or 0
     net_sales=total_sales-total_discount
 
+    orders=Orders.objects.all().order_by("-created_at")[:5]
+
     if filter_type=="today":
         filtered_data=get_sales_data(today,today)
-        top_product = get_most_ordered_product(today, today)
+        products_show = get_ordered_products(today, today)
+        categories_show=get_ordered_categories(today,today)
+
     elif filter_type=="weekly":
         filtered_data=get_sales_data(start_of_week,today)
-        top_product = get_most_ordered_product(start_of_week, today)
-    else:
+        products_show = get_ordered_products(start_of_week, today)
+        categories_show=get_ordered_categories(start_of_week,today)
+        
+    elif filter_type=="monthly":
         filtered_data=get_sales_data(start_of_month,today)
-        filtered_data = get_sales_data(start_of_month, today)
+        products_show = get_ordered_products(start_of_month, today)
+        categories_show=get_ordered_categories(start_of_month,today)
+
+    elif filter_type=="yearly":
+        filtered_data=get_sales_data(start_of_year,today)
+        products_show = get_ordered_products(start_of_year, today)
+        categories_show=get_ordered_categories(start_of_year,today)
+
+    elif filter_type=="custom":
+        if start_date and end_date:
+            try:
+                start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+                end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+            except ValueError:
+                messages.error(request, "Invalid date format.")
+                return redirect("dashboard_home")
+        else:
+            messages.error(request, "Please select both start and end dates.")
+            return redirect("dashboard_home")
+        
+        filtered_data=get_sales_data(start_date,end_date)
+        products_show = get_ordered_products(start_date, end_date)
+        categories_show=get_ordered_categories(start_date,end_date)
         
 
     return render(request,"dashboard.html",{
@@ -57,7 +87,9 @@ def admin_dashboard(request):
         "filtered_discount": filtered_data["discount"],
         "filtered_net_sales": filtered_data["net"],
         "filtered_count": filtered_data["count"],
-        "top_product":top_product
+        "product_show":products_show,
+        "category_show":categories_show,
+        "orders":orders
     })
 
 
@@ -340,7 +372,11 @@ def searchCategory(request):
 @staff_required
 def order_list(request):
     orders=Orders.objects.all().order_by("-id")
-    return render(request,"orders/orders.html",{"orders":orders})
+
+    paginator=Paginator(orders,8)
+    page_number=request.GET.get("page")
+    page_obj=paginator.get_page(page_number)
+    return render(request,"orders/orders.html",{"orders":page_obj})
 
 
 #ORDER DETAILED PAGE
@@ -361,7 +397,7 @@ def order_detail_page(request,id):
             item.status=new_status
             item.save()
             messages.success(request,f"Order status changed to {new_status}")
-            return redirect("orderList")
+            return redirect("orderDetailView",order.id)
 
     return render(request,"orders/order_detail.html",{"items":ordered_item_details,"order":order})
 
@@ -378,7 +414,9 @@ def order_return_request(request,id):
         return_item.approval_status="refunded"
         item.status="returned"
 
-        refund_amount = item.price * item.quantity
+        item_discount_share=(item.price/item.order.total_price_before_discount)*item.order.discount
+
+        refund_amount=item.price-item_discount_share
 
         wallet,created=Wallet.objects.get_or_create(user=user)
         wallet.balance+=refund_amount

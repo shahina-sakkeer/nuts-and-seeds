@@ -1,77 +1,74 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 
+{% if cart_items %}
 
 <div class="min-h-screen bg-gray-100 py-8">
   <div class="max-w-7xl mx-auto px-4">
     <div class="bg-white rounded-xl shadow-lg p-6">
-      <!-- Grid Layout: Cart Items + Price Details -->
+
+      <!-- Grid Layout -->
       <div class="grid grid-cols-1 lg:grid-cols-[65%,35%] gap-6">
 
-        <!-- Left Section: Cart Items -->
+        <!-- LEFT SIDE: CART ITEMS -->
         <div class="space-y-6">
+
           <!-- Header -->
           <div class="flex justify-between items-center border-b pb-4">
             <h2 class="text-xl font-semibold">MY CART</h2>
           </div>
 
-
-
-          <!-- Cart Items -->
+          <!-- Cart Items List -->
           <div class="space-y-6">
 
-
             {% for item in cart_items %}
-            <!-- Item -->
             <div class="flex gap-4 pb-6 border-b">
-              <!-- Product Image -->
+
+              <!-- Image -->
               <div class="flex-shrink-0">
                 {% with item.product.product.images.all as image %}
-
-                {% if image %}
-                <img src="{{image.0.image.url}}" alt="Jade Plant" class="w-24 h-24 object-cover rounded-lg">
-                {% endif %}
-
+                  {% if image %}
+                    <img src="{{ image.0.image.url }}" class="w-24 h-24 object-cover rounded-lg">
+                  {% endif %}
                 {% endwith %}
               </div>
 
-              <!-- Product Details -->
+              <!-- Details -->
               <div class="flex-1">
-                <div class="flex justify-between">
-                  <div>
-                    <h3 class="font-semibold text-gray-800 mb-1">{{item.product.product.name}}</h3>
 
-                  </div>
+                <h3 class="font-semibold text-gray-800 mb-1">
+                  {{ item.product.product.name }}
+                </h3>
 
-                </div>
+                <!-- Quantity + Price -->
+                <div id="update-quantity-{{ item.id }}" class="flex items-center gap-4 mt-3">
 
-                <!-- Quantity and Actions -->
-                <div id="update-quantity-{{item.id}}" class="flex items-center gap-4 mt-3">
+                  <span id="item-total-{{ item.id }}" class="text-lg font-bold text-gray-900">
+                    Rs. {{ item.row_total|floatformat:2 }}
+                  </span>
 
-                  <!-- Price -->
-                  <span id="item-total-{{item.id}}" class="text-lg font-bold text-gray-900">Rs. {{item.row_total | floatformat:2}}</span>
                   {% include 'cart/partial_quantity.html' with product=item %}
-
                 </div>
-                <button class="text-sm font-semibold text-red-700 hover:text-red-900" data-bs-toggle="modal"
-                  data-bs-target="#deleteModal{{ item.id }}">REMOVE</button>
+
+                <!-- Remove -->
+                <button data-bs-toggle="modal" data-bs-target="#deleteModal{{ item.id }}"
+                        class="text-sm font-semibold text-red-700 hover:text-red-900">
+                  REMOVE
+                </button>
+
               </div>
             </div>
 
-
-            <!-- Modal for removing the product -->
-            <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1"
-              aria-labelledby="deleteModalLabel{{ item.id }}" aria-hidden="true">
+            <!-- Remove Modal -->
+            <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="deleteModalLabel{{ item.id }}">Confirm Delete</h5>
+                    <h5 class="modal-title">Confirm Delete</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                   </div>
-                  <div class="modal-body">
-                    Are you sure you want to remove this item?
-                  </div>
+                  <div class="modal-body">Are you sure you want to remove this item?</div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <form method="POST" action="{% url 'removeItem' item.id %}">
@@ -86,70 +83,84 @@
             {% endfor %}
           </div>
 
-      {% if cart_items %}
-
-          <!-- Place Order Button (Sticky on Mobile) -->
+          <!-- Checkout Button -->
           <div class="sticky bottom-0 bg-white pt-4">
-            <a href="{% url 'checkOut' %}"><button
-              class="w-full lg:w-auto lg:float-right bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-12 rounded-lg transition shadow-md">
-              CHECKOUT
-            </button></a>
+            <a href="{% url 'checkOut' %}">
+              <button class="w-full lg:w-auto lg:float-right bg-orange-600 hover:bg-orange-700 text-white
+                             font-bold py-3 px-12 rounded-lg transition shadow-md">
+                CHECKOUT
+              </button>
+            </a>
           </div>
+
         </div>
-      {% else %}
 
-      <p>no product in cart</p>
-
-      {% endif %}
-
-
-        <!-- Right Section: Price Details -->
+        <!-- RIGHT SIDE: PRICE DETAILS -->
         <div class="lg:sticky lg:top-6 h-fit">
           <div class="border border-gray-200 rounded-lg p-5 space-y-4">
-            <!-- Title -->
+
             <h3 class="text-gray-500 font-semibold uppercase text-sm border-b pb-3">Price Details</h3>
 
-            <!-- Price Breakdown -->
             <div class="space-y-3 text-sm">
               <div class="flex justify-between">
-                <span class="text-gray-700">Price</span>
-                <span id="cart-total" class="font-bold text-gray-900 text-base">{{total | floatformat:2}}</span>
+                <span>Price</span>
+                <span class="font-bold text-gray-900">{{ total|floatformat:2 }}</span>
               </div>
+
               <div class="flex justify-between">
-                <span class="text-gray-700">Discount</span>
+                <span>Discount</span>
                 <span class="text-green-600 font-semibold">Rs. 0</span>
               </div>
 
-
-              <!-- Total Amount -->
-              <div class="border-t pt-3">
-                <div class="flex justify-between items-center">
-                  <span class="font-bold text-gray-900 text-base">Total Amount</span>
-                  <span id="cart-total" class="font-bold text-gray-900 text-base">{{total | floatformat:2}}</span>
-                </div>
+              <div class="border-t pt-3 flex justify-between items-center">
+                <span class="font-bold text-gray-900">Total Amount</span>
+                <span class="font-bold text-gray-900">{{ total|floatformat:2 }}</span>
               </div>
 
-
-
-              <!-- Footer Message -->
               <div class="flex items-start gap-2 pt-3 border-t">
-                <svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clip-rule="evenodd"></path>
+                <svg class="w-4 h-4 text-gray-400 mt-0.5" fill="currentColor">
+                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 
+                           001.4 0l4-4z"/>
                 </svg>
-                <p class="text-xs text-gray-500 leading-relaxed">Safe and Secure Payments. Easy returns. 100% Authentic
-                  products.</p>
+                <p class="text-xs text-gray-500 leading-relaxed">
+                  Safe and Secure Payments. Easy returns. 100% Authentic products.
+                </p>
               </div>
+
             </div>
           </div>
-
         </div>
+
       </div>
+
     </div>
   </div>
+</div>
 
+{% else %}
 
-  {% endblock %}
+<!-- EMPTY CART -->
+<div class="min-h-screen flex flex-col items-center justify-center p-6">
+  
+  <div class="flex justify-center mb-6">
+      <img src="{% static 'images/cart.webp' %}" alt="Empty Cart" class="w-40">
+  </div>
 
+  <h1 class="text-3xl font-semibold text-gray-800">
+      Your Cart is <span class="text-red-600 font-bold">Empty!</span>
+  </h1>
 
+  <p class="text-gray-600 mt-3">
+      Must add items to the cart before you proceed to checkout.
+  </p>
+
+  <a href="{% url 'all_products' %}" 
+     class="inline-flex items-center mt-6 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full shadow-md">
+      RETURN TO SHOP
+  </a>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

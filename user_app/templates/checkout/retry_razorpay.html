@@ -1,0 +1,21 @@
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+window.onload = function () {
+
+    var options = {
+        "key": "{{ razorpay_key }}",
+        "amount": "{{ razorpay_order.amount }}",
+        "currency": "INR",
+        "name": "Your Store",
+        "description": "Retry Payment",
+        "order_id": "{{ razorpay_order.id }}",
+        "callback_url": "{% url 'retrySuccess' %}",
+    };
+
+    var rzp1 = new Razorpay(options);
+
+    // Automatically open Razorpay when page loads
+    rzp1.open();
+};
+</script>
