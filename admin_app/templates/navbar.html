@@ -195,17 +195,17 @@
                 const checkbox = slot.querySelector('.remove-checkbox');
                 const img = slot.querySelector('img');
 
-                // ✅ mark for backend deletion
+                // mark for backend deletion
                 if (checkbox) {
                     checkbox.checked = true;
                     console.log("Marked for deletion:", checkbox.value);
                 }
 
-                // ✅ hide preview image + remove button
+                // hide preview image + remove button
                 if (img) img.style.display = "none";
                 e.target.style.display = "none";
 
-                // ✅ show "+ Add" again
+                // show "+ Add" again
                 let addSpan = slot.querySelector('.add-image');
                 if (addSpan) {
                     addSpan.style.display = 'flex';
@@ -228,7 +228,8 @@
     </script>
 
 
-<!-- dashborad filter -->
+
+<!-- dashborad filter starts -->
 <script>
 function setFilter(value) {
     document.getElementById('filterType').value = value;
@@ -240,6 +241,187 @@ function enableCustom() {
     document.getElementById("customSubmit").classList.remove("hidden");
 }
 </script>
+<!-- dashborad filter ends-->
+
+
+<!-- dashboard file download -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+document.getElementById("downloadMenuBtn").addEventListener("click", function () {
+    const menu = document.getElementById("downloadMenu");
+    menu.classList.toggle("hidden");
+});
+
+// Close dropdown if clicked outside
+document.addEventListener("click", function(e) {
+    const menu = document.getElementById("downloadMenu");
+    const btn = document.getElementById("downloadMenuBtn");
+
+    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add("hidden");
+    }
+});
+</script>
+
+<script>
+/* -----------------------------------------------------
+  PART 1 — SVG → PNG (Fix for Donut Pie Charts in PDF)
+-------------------------------------------------------- */
+function svgToPng(svgElement) {
+    return new Promise(resolve => {
+
+        const cloneSvg = svgElement.cloneNode(true);
+        cloneSvg.removeAttribute("class");
+
+        const rect = svgElement.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+
+        cloneSvg.setAttribute("width", width);
+        cloneSvg.setAttribute("height", height);
+
+        const svgText = new XMLSerializer().serializeToString(cloneSvg);
+        const img = new Image();
+
+        img.onload = function () {
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+
+            resolve(canvas.toDataURL("image/png"));
+        };
+
+        img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgText)));
+    });
+}
+
+
+/* -----------------------------------------------------
+  PART 2 — Prepare Dashboard for PDF (Clone + Replace SVG)
+-------------------------------------------------------- */
+async function prepareDashboardForPdf() {
+    const original = document.getElementById("dashboard-section");
+    const clone = original.cloneNode(true);
+
+    const svgs = clone.querySelectorAll("svg");
+
+    for (let svg of svgs) {
+        const rect = svg.getBoundingClientRect();
+        const pngUrl = await svgToPng(svg);
+
+        const img = document.createElement("img");
+        img.src = pngUrl;
+        img.style.width = rect.width + "px";
+        img.style.height = rect.height + "px";
+
+        svg.replaceWith(img);
+    }
+
+    clone.style.background = "white";
+    clone.style.padding = "20px";
+
+    return clone;
+}
+
+
+/* -----------------------------------------------------
+  PART 3 — PDF DOWNLOAD BUTTON
+-------------------------------------------------------- */
+document.getElementById("download").addEventListener("click", async () => {
+    const btn = document.getElementById("download");
+    btn.innerText = "Preparing PDF...";
+    btn.disabled = true;
+
+    const clone = await prepareDashboardForPdf();
+
+    const opt = {
+        margin: 0.2,
+        filename: "dashboard-report.pdf",
+        image: { type: "jpeg", quality: 1 },
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            scrollX: 0,
+            scrollY: 0
+        },
+        jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+    };
+
+    html2pdf().set(opt).from(clone).save().then(() => {
+        btn.innerText = "Download PDF";
+        btn.disabled = false;
+    });
+});
+
+
+/* -----------------------------------------------------
+  PART 4 — PREPARE EXCEL DATA (Get Data From Django Context)
+-------------------------------------------------------- */
+
+let productData = [
+    {% for item in product_show %}
+    {
+        Product: "{{ item.name }}",
+        Quantity: "{{ item.quantity }}",
+        Revenue: "{{ item.revenue }}",
+        Percentage: "{{ item.percentage }}%"
+    },
+    {% endfor %}
+];
+
+let categoryData = [
+    {% for item in category_show %}
+    {
+        Category: "{{ item.name }}",
+        Quantity: "{{ item.quantity }}",
+        Revenue: "{{ item.revenue }}",
+        Percentage: "{{ item.percentage }}%"
+    },
+    {% endfor %}
+];
+
+let orderData = [
+    {% for o in orders %}
+    {
+        Customer: "{{ o.user.firstname }}",
+        OrderID: "{{ o.orderID }}",
+        Date: "{{ o.created_at }}",
+        Amount: "{{ o.total_price }}",
+        Payment: "{{ o.payment_method }}",
+        Status: "{{ o.orderitem.all.0.status }}"
+    },
+    {% endfor %}
+];
+
+
+/* -----------------------------------------------------
+  PART 5 — FRONTEND EXCEL DOWNLOAD BUTTON
+-------------------------------------------------------- */
+document.getElementById("downloadExcel").addEventListener("click", () => {
+
+    let wb = XLSX.utils.book_new();
+
+    // Sheet 1 — Product Summary
+    let ws1 = XLSX.utils.json_to_sheet(productData);
+    XLSX.utils.book_append_sheet(wb, ws1, "Top Products");
+
+    // Sheet 2 — Category Summary
+    let ws2 = XLSX.utils.json_to_sheet(categoryData);
+    XLSX.utils.book_append_sheet(wb, ws2, "Top Categories");
+
+    // Sheet 3 — Recent Orders
+    let ws3 = XLSX.utils.json_to_sheet(orderData);
+    XLSX.utils.book_append_sheet(wb, ws3, "Recent Orders");
+
+    XLSX.writeFile(wb, "dashboard-report.xlsx");
+});
+</script>
+
 
 
 </body>

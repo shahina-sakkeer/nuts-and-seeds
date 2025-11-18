@@ -133,12 +133,12 @@ class UserAddressForm(forms.ModelForm):
             })
         }
 
-    def clean_house_name(self):
-        house_name=self.cleaned_data.get("house_name")
+    # def clean_house_name(self):
+    #     house_name=self.cleaned_data.get("house_name")
         
-        if UserAddress.objects.filter(house_name__iexact=house_name).exclude(id=self.instance.id).exists():
-                raise ValidationError("This house name already exists")
-        return house_name
+    #     if UserAddress.objects.filter(house_name__iexact=house_name).exclude(id=self.instance.id).exists():
+    #             raise ValidationError("This house name already exists")
+    #     return house_name
     
     def clean_pincode(self):
         pincode=self.cleaned_data.get("pincode")

@@ -14,6 +14,7 @@ import base64
 from cloudinary.uploader import upload
 from datetime import date,timedelta,datetime
 from admin_app.helper import get_sales_data,get_ordered_products,get_ordered_categories
+from decimal import Decimal
 
 
 # Create your views here.
@@ -91,6 +92,7 @@ def admin_dashboard(request):
         "category_show":categories_show,
         "orders":orders
     })
+
 
 
 #CUSTOMER MANAGEMENT    
@@ -414,11 +416,16 @@ def order_return_request(request,id):
         return_item.approval_status="refunded"
         item.status="returned"
 
-        item_discount_share=(item.price/item.order.total_price_before_discount)*item.order.discount
+        price=Decimal(str(item.price))
+        total_before_discount=Decimal(str(item.order.total_price_before_discount))
+        discount=Decimal(str(item.order.discount))
 
-        refund_amount=item.price-item_discount_share
+        item_discount_share=(price/total_before_discount)*discount
+
+        refund_amount=price-item_discount_share
 
         wallet,created=Wallet.objects.get_or_create(user=user)
+        wallet.balance=Decimal(str(wallet.balance))
         wallet.balance+=refund_amount
         wallet_txn=WalletTransaction.objects.create(wallet=wallet,amount=refund_amount,is_paid=False,
                                 transaction_type='credit')
@@ -487,6 +494,7 @@ def add_category_offer(request):
         form=CategoryOfferForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request,"Offer added")
             return redirect("allOffers")
     else:
         form=CategoryOfferForm()
@@ -499,6 +507,7 @@ def add_product_offer(request):
         form=ProductOfferForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request,"Offer added")
             return redirect("allOffers")
     else:
         form=ProductOfferForm()
@@ -517,3 +526,5 @@ def delete_product_offer(request,id):
     product_offer=get_object_or_404(ProductOffer,id=id)
     product_offer.delete()
     return redirect("allOffers")
+
+

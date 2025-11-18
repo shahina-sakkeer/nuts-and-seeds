@@ -758,7 +758,7 @@ def checkout(request):
             discount_amount=Decimal(str(coupon_data.get("discount",0)))
             new_price=Decimal(str(coupon_data.get("new_total")))
             coupon_code=coupon_data.get("code")
-            coupon_obj=Coupon.objects.get(code=coupon_code)
+            coupon_obj=Coupon.objects.filter(code=coupon_code).first()
 
             # the total price after coupon discount is set in variable payable_amount
             payable_amount=new_price
@@ -990,9 +990,11 @@ def partial_coupon(request):
                 error_message="Cart total does not meet the minimum amount."
             
             else:    
-                usage,_=CouponUsage.objects.get_or_create(user=request.user,coupon=coupon)
+                # usage,_=CouponUsage.objects.get_or_create(user=request.user,coupon=coupon)
+                usage=CouponUsage.objects.filter(user=request.user,coupon=coupon).first()
 
-                if coupon.usage_limit is not None and usage.used_count >= coupon.usage_limit:
+                if usage and coupon.usage_limit is not None and usage.used_count >= coupon.usage_limit:
+                    print(usage.used_count)
                     error_message="Coupon usage limit reached"
     
                 else:
@@ -1014,10 +1016,9 @@ def partial_coupon(request):
 
         #the result should be occured when error message occurs           
         if error_message:
-            discount_amount=0
-            applied_coupon=None
-            new_total=total_price
-            request.session.pop("coupon_data",None)
+            request.session.pop("coupon_data", None)
+            return render(request,"checkout/partial_coupon.html",{"totalprice":total_price,"discount":0,"applied_coupon":None,"new_total":total_price,"error_message":error_message})
+ 
           
         return render(request,"checkout/partial_coupon.html",{"totalprice":total_price,"discount":discount_amount,
                             "applied_coupon":applied_coupon, "new_total":new_total,"error_message":error_message})
@@ -1110,6 +1111,18 @@ def verify_payment(request):
                 new_total=razorpay_order_data.get("new_total",0)
                 discount=razorpay_order_data.get("discount",0)
 
+                if coupon_code:
+                    coupon=Coupon.objects.filter(code=coupon_code).first()
+                    if coupon:
+                        usage,created=CouponUsage.objects.get_or_create(user=request.user,coupon=coupon)
+                        usage.used_count+=1
+                        print(usage.used_count)
+                        usage.save()
+
+                # the getted session is deleted 
+                request.session.pop("coupon_data",None)
+                request.session.pop("razorpay_order_data",None)
+
             else:
                 # if coupon is not applied 
                 total_price=0
@@ -1125,16 +1138,17 @@ def verify_payment(request):
                 discount=Decimal(0)
                 new_total=payable_amount        
 
-                if coupon_code:
-                        coupon=Coupon.objects.filter(code=coupon_code).first()
-                        if coupon:
-                            usage,created=CouponUsage.objects.get_or_create(user=request.user,coupon=coupon)
-                            usage.used_count+=1
-                            usage.save()
+                # if coupon_code:
+                #         coupon=Coupon.objects.filter(code=coupon_code).first()
+                #         if coupon:
+                #             usage,created=CouponUsage.objects.get_or_create(user=request.user,coupon=coupon)
+                #             usage.used_count+=1
+                #             print(usage.used_count)
+                #             usage.save()
 
-                # the getted session is deleted 
-                request.session.pop("coupon_data",None)
-                request.session.pop("razorpay_order_data",None)
+                # # the getted session is deleted 
+                # request.session.pop("coupon_data",None)
+                # request.session.pop("razorpay_order_data",None)
 
             return JsonResponse({
                 "status": "success",
@@ -1330,12 +1344,19 @@ def order_detail(request,id):
                 ordered_item.status="cancelled"
                 ordered_item.save()
                 
-                item_discount_share=(ordered_item.price/order.total_price_before_discount)*order.discount
-                refund_amount=ordered_item.price-item_discount_share
-                credit_amount=round(refund_amount,2)
+                #converting every numbers into decimal
+                price=Decimal(str(ordered_item.price))
+                total_before_discount=Decimal(str(order.total_price_before_discount))
+                discount=Decimal(str(order.discount))
+
+                item_discount_share=(price/total_before_discount)*discount
+
+                refund_amount=price-item_discount_share
+
                 wallet,created=Wallet.objects.get_or_create(user=request.user)
-                wallet.balance+=credit_amount
-                wallet_txn=WalletTransaction.objects.create(wallet=wallet,amount=credit_amount,
+                wallet.balance=Decimal(str(wallet.balance))
+                wallet.balance+=refund_amount
+                wallet_txn=WalletTransaction.objects.create(wallet=wallet,amount=refund_amount,
                                 transaction_type='credit')
                 wallet.save()
                 wallet_txn.save()
@@ -1344,7 +1365,7 @@ def order_detail(request,id):
                 product.quantity_stock+=ordered_item.quantity
                 product.save()
 
-                messages.success(request,f"Your order has been cancelled.Rs.{credit_amount} added to wallet")
+                messages.success(request,f"Your order has been cancelled.Rs.{round(refund_amount,2)} added to wallet")
                 return redirect("orderDetail",id=order.id)
 
         else:
