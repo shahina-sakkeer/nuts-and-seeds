@@ -532,6 +532,8 @@ def edit_profile(request):
 
 
 #VERIFY CHANGE IN EMAIL
+@never_cache
+@login_required(login_url='/user/login/')
 def verify_email_change(request):
     token=request.GET.get("token")
 
@@ -554,6 +556,8 @@ def verify_email_change(request):
 
 
 #EDIT PASSWORD
+@never_cache
+@login_required(login_url='/user/login/')
 def edit_password(request):
     user=request.user
     if request.method=="POST":
@@ -898,7 +902,11 @@ def checkout(request):
                     return JsonResponse({"error": "Failed to create Razorpay order."}, status=500)
 
             elif payment_method=="wallet":
-                wallet=Wallet.objects.get(user=request.user)
+                wallet, created = Wallet.objects.get_or_create(user=request.user)
+
+                if wallet.balance is None:
+                    wallet.balance = Decimal("0.00")
+
                 if payable_amount <= wallet.balance:
 
                     with transaction.atomic():
@@ -967,6 +975,8 @@ def checkout(request):
 
 
 #CHECKOUT AFTER COUPON IS APPLIED
+@never_cache
+@login_required(login_url='/user/login/')
 def partial_coupon(request):
     total_price=Decimal(request.POST.get("total_price",0))
     discount_amount=0
@@ -1025,6 +1035,8 @@ def partial_coupon(request):
     
 
 #ALL COUPONS LIST
+@never_cache
+@login_required(login_url='/user/login/')
 def partial_coupon_list(request):
     coupons=Coupon.objects.all()
     return render(request,"checkout/partial_coupon_list.html",{"coupons":coupons})
@@ -1214,6 +1226,7 @@ def razorpay_failed(request):
 
 
 #RETRY PAYMENT REQUEST
+@never_cache
 @login_required(login_url='/user/login/')
 def retry_payment(request,id):
     order=get_object_or_404(Orders,id=id,user=request.user)
@@ -1378,6 +1391,8 @@ def order_detail(request,id):
 
 
 #RETURN ORDER REQUEST SUBMIT
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@login_required(login_url='/user/login/')
 def return_order_item(request,id=id):
     item=get_object_or_404(OrderItem,id=id,status="delivered")
     print(item)
@@ -1409,6 +1424,8 @@ def return_order_item(request,id=id):
 
 
 #ADD MONEY TO WALLET
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@login_required(login_url='/user/login/')
 def add_money_wallet(request):
     wallet,created=Wallet.objects.get_or_create(user=request.user)
 

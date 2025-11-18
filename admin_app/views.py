@@ -405,6 +405,8 @@ def order_detail_page(request,id):
 
 
 #ORDER RETURN REQUEST ACTION
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def order_return_request(request,id):
     return_item=get_object_or_404(OrderReturn,id=id,approval_status="pending")
     item=return_item.item
@@ -451,6 +453,8 @@ def order_return_request(request,id):
 
 
 #ADD COUPON
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def add_coupon(request):
     if request.method=="POST":
         form=CouponForm(request.POST)
@@ -468,12 +472,16 @@ def add_coupon(request):
 
 
 #ADD COUPON
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def list_coupon(request):
     coupon=Coupon.objects.all().order_by("-id")
     return render(request,"coupon/list_coupon.html",{"coupons":coupon})
 
 
 #DELETE COUPON
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def delete_coupon(request,id):
     coupon=get_object_or_404(Coupon,id=id)
     coupon.delete()
@@ -481,6 +489,8 @@ def delete_coupon(request,id):
 
 
 #LIST ALL OFFERS
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def all_offers(request):
     category=CategoryOffer.objects.all().order_by("-id")
     products=ProductOffer.objects.all().order_by("-id")
@@ -489,6 +499,8 @@ def all_offers(request):
 
 
 #ADD CATEGORY OFFER
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def add_category_offer(request):
     if request.method=="POST":
         form=CategoryOfferForm(request.POST)
@@ -502,6 +514,8 @@ def add_category_offer(request):
 
 
 #ADD PRODUCT OFFER
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def add_product_offer(request):
     if request.method=="POST":
         form=ProductOfferForm(request.POST)
@@ -515,6 +529,8 @@ def add_product_offer(request):
 
 
 #DELETE CATEGORY OFFER
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def delete_category_offer(request,id):
     category_offer=get_object_or_404(CategoryOffer,id=id)
     category_offer.delete()
@@ -522,6 +538,8 @@ def delete_category_offer(request,id):
 
 
 #DELETE PRODUCT OFFER
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
 def delete_product_offer(request,id):
     product_offer=get_object_or_404(ProductOffer,id=id)
     product_offer.delete()

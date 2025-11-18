@@ -104,7 +104,7 @@
             <div class="space-y-3 text-sm">
               <div class="flex justify-between">
                 <span>Price</span>
-                <span class="font-bold text-gray-900">{{ total|floatformat:2 }}</span>
+                <span class="font-bold text-gray-900"  id="cart-total">{{ total|floatformat:2 }}</span>
               </div>
 
               <div class="flex justify-between">
@@ -114,7 +114,7 @@
 
               <div class="border-t pt-3 flex justify-between items-center">
                 <span class="font-bold text-gray-900">Total Amount</span>
-                <span class="font-bold text-gray-900">{{ total|floatformat:2 }}</span>
+                <span class="font-bold text-gray-900 text-base" id="cart-total">{{ total|floatformat:2 }}</span>
               </div>
 
               <div class="flex items-start gap-2 pt-3 border-t">
