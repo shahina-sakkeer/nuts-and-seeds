@@ -4,28 +4,28 @@
 {% block content %}
 
 
-<div class="flex items-center justify-center mb-4 mt-6 gap-4">
-    <form action="" class="flex items-center">
-        <input type="text" name="search" placeholder="Search..." autocomplete="off" 
-        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
-        hx-get="{% url 'category_search' %}"
-            hx-trigger="keyup changed delay:300ms" hx-target="#category-list" hx-swap="innerHTML">
-    </form>
-
-    <!-- Add Category Button -->
-
-        <a href="{% url 'addCategory' %}">
-            <button
-                class="ml-2 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                + Add Category
-        </button>
-        </a>
+    <!-- Page Title and Actions -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4 sm:mb-0">CATEGORY</h2>
+        <div class="flex flex-col sm:flex-row gap-2">
+            <!-- Search Box -->
+        <form class="flex items-center" action="">
+            <input type="text" name="search" placeholder="Search..." autocomplete="off"
+                class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
+                hx-get="{% url 'category_search' %}" hx-trigger="keyup changed delay:300ms" hx-target="#category-list"
+                hx-swap="innerHTML">
+        </form>
+            <a href="{% url 'addCategory' %}"><button
+                class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 flex items-center justify-center">
+                <span class="mr-2">+</span> Add Category
+            </button></a>
+        </div>
     </div>
 
+    <div id="category-list" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {% include 'partial_category.html' with category=page_obj %}
+    </div>
 
-<div id="category-list" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-    {% include 'partial_category.html' with category=page_obj %}
-</div>
 
 
 <!-- pagination  -->

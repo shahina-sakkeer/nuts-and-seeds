@@ -1,8 +1,7 @@
 <form action="" hx-post="{% url 'deleteCategory' category.id %}" hx-target="#restore-delete-{{category.id}}" hx-swap="innerHTML">
     {% csrf_token %}
     <button type="submit"
-            class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition duration-200
-            {% if category.is_deleted %} bg-green-500 hover:bg-green-600 {% else %} bg-red-500 hover:bg-red-600 {% endif %}">
-            {% if category.is_deleted %} Restore {% else %} Delete {% endif %}
+            class="text-gray-400 hover:text-red-600">
+            {% if category.is_deleted %} <i class="fa-solid fa-arrow-rotate-left"></i> {% else %} <i class="fa-solid fa-trash"></i> {% endif %}
     </button>
 </form>

@@ -2,113 +2,85 @@
 
 {% block content %}
 
-<div class="flex items-center justify-center mb-4 mt-6 gap-4">
-    <!-- Search Box -->
-    <!-- <form class="flex items-center" action="">
-        <input type="text" name="search" placeholder="Search..." autocomplete="off"
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
-            hx-get="{% url 'searching' %}" hx-trigger="keyup changed delay:300ms" hx-target="#product-list"
-            hx-swap="innerHTML">
-    </form> -->
-    
-    <!-- <div class="flex justify-end mb-6"> -->
+{% if coupons %}
+
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4 sm:mb-0">COUPONS</h2>
+        <div class="flex flex-col sm:flex-row gap-2">
+
         <a href="{% url 'couponAdd' %}">
-            <button
-                class="ml-2 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                + Add Coupon
+            <button class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 flex items-center justify-center">
+                <span class="mr-2">+</span> Add Coupon
             </button>
         </a>
-    <!-- </div> -->
-</div>
+        </div>
+    </div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-
-    <!-- Product Table -->
-    <div class="bg-white rounded-lg shadow-md overflow-hidden ">
+<div class="bg-white rounded-lg shadow mb-6">
+    <!-- Table -->
+    <div class="overflow-x-auto">
         <table class="w-full">
-            <thead class="bg-gray-100 border-b">
+            <thead class="bg-gray-50 border-y border-gray-200">
                 <tr>
-                    <th
-                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                        COUPON CODE</th>
-                    <th
-                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                        START DATE</th>
-                    <th
-                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                        END DATE</th>
-                    <th
-                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                        DISCOUNT TYPE</th>
-                    <th
-                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                        DISCOUNT VALUE</th>
-                    <th
-                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                        MINIMUM PURCHASE AMOUNT</th>
-                    <th
-                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                        USAGE LIMIT</th>
-                    <th
-                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                        ACTION</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coupon code</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">start date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">end date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">discount type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">discount value</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">minimum purchase amount</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">usage limit</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                 </tr>
             </thead>
-            
-            {% for coupon in coupons %}
-            <tbody class="divide-y divide-gray-200">
-                <!-- Product Row 1 -->
-                <tr class="hover:bg-gray-50 transition duration-150">
-                    <td class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center space-x-3 sm:space-x-4">
-                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.code}}</span>
-                        </div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center space-x-3 sm:space-x-4">
-                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.start_date}}</span>
-                        </div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center space-x-3 sm:space-x-4">
-                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.end_date}}</span>
-                        </div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center space-x-3 sm:space-x-4">
-                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.discount_type}}</span>
-                        </div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center space-x-3 sm:space-x-4">
-                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.discount_value}}</span>
-                        </div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center space-x-3 sm:space-x-4">
-                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.minimum_purchase_amount}}</span>
-                        </div>
-                    </td>
-                     <td class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center space-x-3 sm:space-x-4">
-                            <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.usage_limit}}</span>
-                        </div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center space-x-3 sm:space-x-4">
-                            <a href="{% url 'couponDelete' coupon.id %}">
-                                <button type="button"><i class="fa-solid fa-trash"></i></button>
-                            </a>
-                            <!-- <span class="text-sm sm:text-base font-medium text-gray-800">{{coupon.usage_limit}}</span> -->
-                        </div>
-                    </td>
+                <tbody class="bg-white divide-y divide-gray-200">
+                <!-- Product Row -->
+                {% for coupon in coupons %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 text-sm text-gray-900">{{coupon.code}}</td>
+                
+                        <td class="px-6 py-4 text-sm text-gray-900">{{coupon.start_date|date:"Y-m-d"}}</td>
 
-                </tr>
-            </tbody>
-            {% endfor %}
+                        <td class="px-6 py-4 text-sm text-gray-900">{{coupon.end_date|date:"Y-m-d"}}</td>
+                            
+                        <td class="px-6 py-4 text-sm text-gray-900">{{coupon.discount_type}}</td>
+
+                        <td class="px-6 py-4 text-sm text-gray-900">{{coupon.discount_value}}</td>
+
+                        <td class="px-6 py-4 text-sm text-gray-900">{{coupon.minimum_purchase_amount}}</td>
+
+                        <td class="px-6 py-4 text-sm text-gray-900">{{coupon.usage_limit}}</td>
+                            
+                        <td class="px-6 py-4">
+                            <div class="flex items-center space-x-3">
+                                <a href="{% url 'couponDelete' coupon.id %}">
+                                    <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-trash"></i></button>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
         </table>
     </div>
 </div>
+
+{% else %}
+<div class="flex justify-center items-center py-16">
+    <div class="text-center">
+        <div class="text-6xl mb-4 text-gray-300">
+            <i class="fa-solid fa-ticket"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-700">No coupons created yet</h3>
+        <p class="text-gray-500 mt-1">Start by creating a new coupon for your store.</p>
+
+        <a href="{% url 'couponAdd' %}" 
+           class="inline-flex mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
+            <i class="fa-solid fa-plus mr-2"></i>
+            Create Coupon
+        </a>
+    </div>
+</div>
+{% endif %}
 
 
 {% endblock %}

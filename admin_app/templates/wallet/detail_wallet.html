@@ -83,7 +83,9 @@
                             {{txn.transactionID}}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{txn.created_at|date:"Y-m-d"}}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{txn.amount}}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{txn.transaction_type}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900
+                        {% if txn.transaction_type == 'debit' %} text-red-600 {% else %} text-green-600 {% endif %}">
+                        {{txn.transaction_type}}</td>
 
                         <!-- STATUS Column -->
                     <td class="px-6 py-4 whitespace-nowrap">  

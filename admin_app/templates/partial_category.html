@@ -1,54 +1,63 @@
+<!-- Center the CARD itself -->
+<div class="flex justify-center mb-6">
 
-    <!-- Product Table -->
-    <div class="bg-white rounded-lg shadow-md overflow-hidden max-w-3xl mx-auto">
+    <!-- Limit the card width -->
+    <div class="bg-white rounded-lg shadow w-full max-w-3xl">
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
             <table class="w-full">
-                <thead class="bg-gray-100 border-b">
+                <thead class="bg-gray-50 border-y border-gray-200">
                     <tr>
-                        <th
-                            class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                            Image</th>
-                        <th
-                            class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                            Name</th>
-                        <th
-                            class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                            Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Category
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Action
+                        </th>
                     </tr>
                 </thead>
-                {% for cat in category %}
-                <tbody class="divide-y divide-gray-200">
-                    <!-- Product Row 1 -->
-                    <tr class="hover:bg-gray-50 transition duration-150">
-                        <td class="px-4 sm:px-6 py-4">
-                            <div class="flex items-center space-x-3 sm:space-x-4">
-                                <img src="{{cat.image.url}}" alt="Category"
-                                    class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover shadow-sm">
+
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for cat in category %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <img src="{{cat.image.url}}" alt="Product"
+                                    class="w-10 h-10 rounded-lg object-cover">
+                                <span class="ml-3 font-medium text-gray-900">{{cat.name}}</span>
                             </div>
                         </td>
-                        <td class="px-4 sm:px-6 py-4">
-                            <div class="flex items-center space-x-3 sm:space-x-4">
-                                <span class="text-sm sm:text-base font-medium text-gray-800">{{cat.name}}</span>
-                            </div>
-                        </td>
-                        <td class="px-4 sm:px-6 py-4 text-right">
-                            <div class="flex justify-end space-x-2 sm:space-x-3">
+
+                        <td class="px-6 py-4">
+                            <div class="flex items-center space-x-3">
                                 <a href="{% url 'editCategory' cat.id %}">
-                                    <button
-                                    class="bg-green-500 hover:bg-green-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition duration-200">
-                                    Edit
-                                </button>
+                                    <button class="text-gray-400 hover:text-gray-600">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
                                 </a>
+
                                 <div id="restore-delete-{{cat.id}}">
                                     {% include 'restdel_button.html' with category=cat %}
                                 </div>
                             </div>
                         </td>
                     </tr>
+                    {% endfor %}
                 </tbody>
-                {% endfor %}
+
             </table>
+        </div>
+
     </div>
 </div>
+
+
+
+
+
+
+
 
 
 
