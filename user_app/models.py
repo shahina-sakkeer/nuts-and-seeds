@@ -170,7 +170,7 @@ class OrderItem(models.Model):
     unit_price=models.DecimalField(max_digits=10,decimal_places=2,default=0)
     price=models.DecimalField(max_digits=10,decimal_places=2)
     cancellation_reason=models.TextField(blank=True,null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='order_received')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Order Received')
     payment_status = models.CharField(max_length=20,
     choices=[('pending', 'Pending'), ('paid', 'Paid'), ('failed', 'Failed')],
     default='pending')
