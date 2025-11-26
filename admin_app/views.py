@@ -430,7 +430,7 @@ def order_return_request(request,id):
         wallet.balance=Decimal(str(wallet.balance))
         wallet.balance+=refund_amount
         wallet_txn=WalletTransaction.objects.create(wallet=wallet,amount=refund_amount,is_paid=False,
-                                transaction_type='credit')
+                                transaction_type='credit',source='order_return',order=item.order)
         wallet.save()
         wallet_txn.save()
         item.save()
@@ -544,5 +544,23 @@ def delete_product_offer(request,id):
     product_offer=get_object_or_404(ProductOffer,id=id)
     product_offer.delete()
     return redirect("allOffers")
+
+
+def list_wallet(request):
+    wallet_txn=WalletTransaction.objects.all().order_by("-created_at")
+
+    paginator=Paginator(wallet_txn,8)
+    page_number=request.GET.get("page")
+    page_obj=paginator.get_page(page_number)
+
+    return render(request,"wallet/list_wallet.html",{"wallet_txn":page_obj})
+
+
+def wallet_details(request,id):
+    wallet_txn=get_object_or_404(WalletTransaction,id=id)
+    return render(request,"wallet/detail_wallet.html",{"txn":wallet_txn})
+
+
+
 
 

@@ -1,0 +1,151 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+
+    <div class="bg-white rounded-lg shadow-md overflow-hidden ">
+        <table class="w-full">
+            <thead class="bg-gray-100 border-b">
+                <tr>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        Transaction ID</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        Customer</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        Date</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        Amount</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        Transaction Type</th>
+                    <th
+                        class="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        Actions</th>
+
+                </tr>
+            </thead>
+            {% for txn in wallet_txn %}
+            <tbody class="divide-y divide-gray-200">
+               
+                <tr class="hover:bg-gray-50 transition duration-150">
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{txn.transactionID}}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{txn.wallet.user.firstname}}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{txn.created_at|date:"Y-m-d"}}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span class="text-sm sm:text-base font-medium text-gray-800">{{txn.amount}}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <span
+                                class="text-sm sm:text-base font-medium text-gray-800">{{txn.transaction_type}}</span>
+                        </div>
+
+                    </td>
+
+                    <td class="px-4 sm:px-6 py-4">
+                        <a href="{% url 'walletDetail' txn.id %}">
+                            <button
+                                class="bg-green-500 hover:bg-green-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition duration-200">
+                                View Details
+                            </button>
+                        </a>
+                    </td>
+
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+<!-- pagination -->
+
+<!-- <nav aria-label="Page navigation" class="mb-6 flex justify-center">
+  <ul class="flex items-center space-x-2 bg-white shadow-md px-6 py-3 rounded-xl border">
+
+      {# Previous Button #}
+      {% if wallet_txn.has_previous %}
+      <li>
+          <a href="?page={{ wallet_txn.previous_page_number }}"
+             class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100 flex items-center gap-1">
+              <span>&lsaquo;</span> Previous
+          </a>
+      </li>
+      {% else %}
+      <li class="px-3 py-1 border rounded-lg text-gray-400 cursor-not-allowed flex items-center gap-1">
+          <span>&lsaquo;</span> Previous
+      </li>
+      {% endif %}
+
+      {# Page Numbers With Ellipsis #}
+      {% for num in wallet_txn.paginator.page_range %}
+          {% if num == wallet_txn.number %}
+              <li>
+                  <span class="px-3 py-1 border border-gray-400 rounded-lg bg-gray-100 font-medium">
+                      {{ num }}
+                  </span>
+              </li>
+
+          {% elif num < wallet_txn.number|add:-1 and num > 2 %}
+              {% if forloop.first %}
+              <li><span class="px-3 py-1 text-gray-500">…</span></li>
+              {% endif %}
+
+          {% elif num > wallet_txn.number|add:1 and num < wallet_txn.paginator.num_pages|add:-1 %}
+              {% if forloop.last %}
+              <li><span class="px-3 py-1 text-gray-500">…</span></li>
+              {% endif %}
+
+          {% else %}
+              <li>
+                  <a href="?page={{ num }}"
+                     class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100">
+                      {{ num }}
+                  </a>
+              </li>
+          {% endif %}
+      {% endfor %}
+
+      {# Next Button #}
+      {% if wallet_txn.has_next %}
+      <li>
+          <a href="?page={{ wallet_txn.next_page_number }}"
+             class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100 flex items-center gap-1">
+              Next <span>&rsaquo;</span>
+          </a>
+      </li>
+      {% else %}
+      <li class="px-3 py-1 border rounded-lg text-gray-400 cursor-not-allowed flex items-center gap-1">
+          Next <span>&rsaquo;</span>
+      </li>
+      {% endif %}
+  </ul>
+</nav> -->
+
+<!-- pagination ends -->
+
+
+
+<!-- {% endblock %} -->

@@ -27,5 +27,7 @@ urlpatterns=[
     path("offer/category/add/",views.add_category_offer,name="addOfferCategory"),
     path("offer/product/add/",views.add_product_offer,name="addOfferProduct"),
     path("offer/category/delete/<int:id>/",views.delete_category_offer,name="deleteOfferCatg"),
-    path("offer/product/delete/<int:id>/",views.delete_product_offer,name="deleteOfferPrdct")
+    path("offer/product/delete/<int:id>/",views.delete_product_offer,name="deleteOfferPrdct"),
+    path("wallet/",views.list_wallet,name="allWallet"),
+    path("wallet/<int:id>/",views.wallet_details,name="walletDetail"),
 ]

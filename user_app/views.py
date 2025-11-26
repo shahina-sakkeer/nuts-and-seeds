@@ -936,7 +936,7 @@ def checkout(request):
                         wallet.save()
 
                         WalletTransaction.objects.create(wallet=wallet, amount=payable_amount,is_paid=True,
-                                                         transaction_type='debit')
+                                                         transaction_type='debit',source='order_debit',order=order)
                     
                         if coupon_code:
                             coupon=Coupon.objects.filter(code=coupon_code).first()
@@ -1089,7 +1089,7 @@ def verify_payment(request):
 
                     wallet.balance+=reward_amount
                     wallet.save()
-                    wallet_txn=WalletTransaction.objects.create(wallet=wallet,transaction_type="credit",amount=reward_amount)
+                    wallet_txn=WalletTransaction.objects.create(wallet=wallet,transaction_type="credit",amount=reward_amount,source='referral')
                     wallet_txn.save()
 
                     referral_records.reward_amount=reward_amount
@@ -1370,7 +1370,7 @@ def order_detail(request,id):
                 wallet.balance=Decimal(str(wallet.balance))
                 wallet.balance+=refund_amount
                 wallet_txn=WalletTransaction.objects.create(wallet=wallet,amount=refund_amount,
-                                transaction_type='credit')
+                                transaction_type='credit',source='order_cancel',order=order)
                 wallet.save()
                 wallet_txn.save()
 
@@ -1445,7 +1445,7 @@ def add_money_wallet(request):
                         })
 
                 wallet_txn=WalletTransaction.objects.create(wallet=wallet,amount=money,is_paid=False,
-                                    transaction_type='credit', razorpay_order_id=razorpay_order["id"])
+                                    transaction_type='credit', razorpay_order_id=razorpay_order["id"],source='razorpay')
                         
                 # Send order details to frontend 
                 return JsonResponse({
@@ -1506,6 +1506,7 @@ def wallet_verify_payment(request):
                 wallet_txn.is_paid=True
                 wallet_txn.razorpay_order_id=razorpay_order_id
                 wallet_txn.transaction_type='credit'
+                wallet_txn.source='razorpay'
                 wallet_txn.save()
 
             wallet=wallet_txn.wallet

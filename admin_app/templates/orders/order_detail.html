@@ -136,15 +136,16 @@
                 <option value="order_received" {% if item.status == "order_received" %}selected{% endif %}>
                   Order Received
                 </option>
+                <option value="Packed" {% if item.status == "packed" %}selected{% endif %}>
+                  Packed
+                </option>
                 <option value="in_transit" {% if item.status == "in_transit" %}selected{% endif %}>
                   In Transit
                 </option>
                 <option value="delivered" {% if item.status == "delivered" %}selected{% endif %}>
                   Delivered
                 </option>
-                <option value="Packed" {% if item.status == "packed" %}selected{% endif %}>
-                  Packed
-                </option>
+                
               </select>
             </form>
           {% endif %}
@@ -165,7 +166,7 @@
                                     <h3 class="text-lg font-semibold mb-4">Return Request Details</h3>
 
                                     <div class="space-y-3 text-sm text-gray-700">
-                                        <p><strong>Reason Type:</strong> {{ item.returnitem.return_choice|default:"—"}}</p>
+                                        <p><strong>Reason Type:</strong> {{ item.returnitem.get_return_choice_display|default:"—"}}</p>
                                         <p><strong>Reason Description:</strong> {{item.returnitem.return_reason|default:"—" }}</p>
 
                                         {% if item.returnitem.image %}

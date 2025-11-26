@@ -209,16 +209,29 @@ class Wallet(models.Model):
 
     def __str__(self):
         return f"{self.user.firstname}'s wallet has Rs.{self.balance} as balance"
-    
+
+
+def generate_transactionID():
+    return str(uuid.uuid4()).split('-')[0].upper()    
 
 class WalletTransaction(models.Model):
+    SOURCE_CHOICES = {
+        ('razorpay','Credit through Razoypay'),
+        ('order_cancel','Refund - Order Cancelled'),
+        ('order_return','Refund - Order Returned'),
+        ('order_debit','Debited for order'),
+        ('referral','Referral Bonus')
+    }
+    transactionID=models.CharField(max_length=20, unique=True, default=generate_transactionID)
     wallet=models.ForeignKey(Wallet,related_name="transaction",on_delete=models.CASCADE)
+    order=models.ForeignKey(Orders,related_name="orderwallet",on_delete=models.SET_NULL,null=True,blank=True)
     amount=models.DecimalField(max_digits=10,decimal_places=2,default=0)
     transaction_type=models.CharField(max_length=200, choices=[
         ('credit','credit'),('debit','debit')
     ])
     is_paid=models.BooleanField(default=False)
     razorpay_order_id=models.CharField(max_length=255,blank=True,null=True)
+    source=models.CharField(max_length=150,choices=SOURCE_CHOICES,default="null")
     created_at=models.DateTimeField(auto_now=True)
 
 
