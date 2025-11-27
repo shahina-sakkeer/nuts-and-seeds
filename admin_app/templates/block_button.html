@@ -20,9 +20,9 @@
         <div class="flex justify-end space-x-2">
             <button 
                 hx-post="{% url 'blockCustomer' user.id %}" 
-                hx-target="#status-{{ user.id }}, #action-button-{{ user.id }}"
                 hx-include="[name='csrfmiddlewaretoken']"
-                hx-swap="innerHTML"
+                hx-swap="none"
+                hx-on::after-request="document.getElementById('modal-{{ user.id }}').classList.add('hidden')"
                 class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">
                 Yes
             </button>

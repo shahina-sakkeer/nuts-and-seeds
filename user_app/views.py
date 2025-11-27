@@ -18,7 +18,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from decimal import Decimal
-from user_app.helpers import get_offer_price
+from user_app.helpers import checkout_access, get_offer_price
 from django.core.signing import TimestampSigner,BadSignature,SignatureExpired
 
 signer = TimestampSigner()
@@ -398,6 +398,7 @@ def remove_from_wishlist(request,id):
 @login_required(login_url='/user/login/')
 def productDetail(request,id=id):
     product=get_object_or_404(Products,id=id)
+    related_products=Products.objects.filter(category=product.category).exclude(id=product.id)
     variants=list(product.variants.all())
 
     for variant in variants:
@@ -405,7 +406,7 @@ def productDetail(request,id=id):
         
     first_variant=variants[0] if variants else None
 
-    return render(request,"product_detail.html",{"prod":product,"first":first_variant,"variants":variants})
+    return render(request,"product_detail.html",{"prod":product,"first":first_variant,"variants":variants,"related_products":related_products})
 
 #PARTAIL PRODUCT VARIANT
 @never_cache
@@ -643,6 +644,9 @@ def show_cart(request):
         item.discount_percent=discount_percent
         item.row_total=offer_price * item.quantity
         cart_total+=item.row_total
+
+    request.session["checkout_session"]=True
+    request.session["order_placed"] = False
     
     return render(request,"cart/cart.html",{"cart_items":cart_items,"total":cart_total})
 
@@ -737,6 +741,7 @@ def add_new_address(request):
 
 
 #CHECKOUT PAGE
+@checkout_access
 @never_cache
 @login_required(login_url='/user/login/')
 def checkout(request):
@@ -1302,6 +1307,7 @@ def order_failure(request,id):
 
 
 #ORDER SUCCESSFULLY PLACES
+@checkout_access
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
 @login_required(login_url='/user/login/')
 def order_placed(request,id=id):
@@ -1310,6 +1316,9 @@ def order_placed(request,id=id):
     order_item=OrderItem.objects.filter(order=latest_order).all()
 
     original_total = sum(item.price for item in order_item)
+
+    request.session["checkout_session"]=False
+    request.session["order_placed"]=True
 
     return render(request,"order/order_placed.html",{"items":order_item,"order":latest_order,"og_total":original_total})
 

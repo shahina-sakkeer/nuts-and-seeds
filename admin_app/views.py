@@ -13,6 +13,8 @@ from user_app.models import CustomUser,Orders,OrderItem,OrderReturn,Wallet,Walle
 import base64
 from cloudinary.uploader import upload
 from datetime import date,timedelta,datetime
+from django.http import HttpResponse
+from django.template.loader import render_to_string
 from admin_app.helper import get_sales_data,get_ordered_products,get_ordered_categories
 from decimal import Decimal
 
@@ -115,6 +117,14 @@ def blockUser(request,id):
     if request.method=="POST":
         user.is_blocked=not user.is_blocked
         user.save()
+
+        status_html = render_to_string('status_column.html', {'user': user})
+        action_html = render_to_string('block_button.html', {'user': user})
+
+        response = HttpResponse(
+        f'<div id="status-{user.id}" hx-swap-oob="true">{status_html}</div>'
+        f'<div id="action-button-{user.id}" hx-swap-oob="true">{action_html}</div>'
+    )
     
     return render(request,"status_column.html",{"user":user})
 

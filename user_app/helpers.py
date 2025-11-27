@@ -1,5 +1,8 @@
 from django.utils import timezone
 from admin_app.models import ProductOffer,CategoryOffer
+from django.shortcuts import redirect
+from user_app.models import Orders
+
 
 def get_offer_price(variant):
     now=timezone.now()
@@ -34,3 +37,14 @@ def get_offer_price(variant):
 
 
 
+def checkout_access(view_func):
+    def wrapper(request,*args,**kwargs):
+        if not request.session.get("checkout_session",False):
+            return redirect("showCart")
+        
+        if request.session.get("order_placed",False):
+            return redirect("order-list")
+        
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
