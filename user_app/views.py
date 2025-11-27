@@ -8,10 +8,11 @@ from django.views.decorators.cache import cache_control,never_cache
 from django.contrib import messages
 from .models import CustomUser,UserAddress,Cart,CartItem,Orders,OrderItem,Wallet,WalletTransaction,OrderReturn,Wishlist,WishlistItem,Referral
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
-from admin_app.models import Products,Category,ProductVariant,Coupon,CouponUsage
+from admin_app.models import Products,Category,ProductVariant,Coupon,CouponUsage,Banner
 from django.db.models import Q,Min,Max,F,Sum
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse,HttpResponse
+from django.template.loader import render_to_string
 from django.db import transaction,IntegrityError
 import razorpay,json
 from django.conf import settings
@@ -250,7 +251,9 @@ def reset_password(request):
 def home_page(request):
     category=Category.objects.all().order_by("-id")
     products=Products.objects.all().order_by("-id")
-    return render(request,"home.html",{"products":products,"category":category})
+    banner=Banner.objects.all()
+
+    return render(request,"home.html",{"products":products,"category":category,"banner":banner})
 
 
 #logout#
@@ -733,7 +736,16 @@ def add_new_address(request):
             address=form.save(commit=False)
             address.user=request.user
             address.save()
-            return render(request, "checkout/partial_address_show.html", {"address": address,"user":request.user,"default_address":address})
+            
+            html = render_to_string("checkout/partial_address_show.html", {
+                "address": address,
+                "user": request.user,
+                "default_address": address
+            })
+
+            return HttpResponse(html)
+        
+        return render(request, "checkout/partial_checkout.html", {"form": form})
 
     else:
         form=UserAddressForm()

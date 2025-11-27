@@ -1,11 +1,11 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from admin_app.forms import AdminLoginForm,CategoryForm,ProductForm,ProductImageForm,ProductVariantFormSet,ProductVariantInlineFormSet,CouponForm,CategoryOfferForm,ProductOfferForm
+from admin_app.forms import AdminLoginForm,CategoryForm,ProductForm,ProductImageForm,ProductVariantFormSet,ProductVariantInlineFormSet,CouponForm,CategoryOfferForm,ProductOfferForm,BannerForm
 from admin_app.decorators import staff_required
 from django.contrib.auth import authenticate,login,logout
 from django.core.cache import cache
 from django.views.decorators.cache import cache_control
 from django.contrib import messages
-from admin_app.models import Category,Products,ProductImage,ProductVariant,Coupon,CategoryOffer,ProductOffer
+from admin_app.models import Category,Products,ProductImage,ProductVariant,Coupon,CategoryOffer,ProductOffer,Banner
 from django.db import transaction,IntegrityError
 from django.db.models import Q,Sum
 from django.core.paginator import Paginator
@@ -556,6 +556,7 @@ def delete_product_offer(request,id):
     return redirect("allOffers")
 
 
+#LIST ALL WALLET TRANSACTIONS
 def list_wallet(request):
     wallet_txn=WalletTransaction.objects.all().order_by("-created_at")
 
@@ -566,9 +567,43 @@ def list_wallet(request):
     return render(request,"wallet/list_wallet.html",{"wallet_txn":page_obj})
 
 
+#VIEW DETAILS OF ONE TRANSACTION
 def wallet_details(request,id):
     wallet_txn=get_object_or_404(WalletTransaction,id=id)
     return render(request,"wallet/detail_wallet.html",{"txn":wallet_txn})
+
+
+def list_banner(request):
+    banner=Banner.objects.all()
+    return render(request,"banner/banner.html",{"banner":banner})
+
+
+#ADD BANNER
+def add_banner(request):
+    if request.method=="POST":
+        form=BannerForm(request.POST,request.FILES)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request,"New Banner added")
+            return redirect("bannerList")
+        
+    else:
+        form=BannerForm()
+
+    return render(request,"banner/add_banner.html",{"form":form})
+
+
+def delete_banner(request,id):
+    banner=get_object_or_404(Banner,id=id)
+    banner.delete()
+
+    messages.success(request,"Banner deleted")
+    return redirect("bannerList")
+    
+
+
+
 
 
 

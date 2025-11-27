@@ -30,4 +30,7 @@ urlpatterns=[
     path("offer/product/delete/<int:id>/",views.delete_product_offer,name="deleteOfferPrdct"),
     path("wallet/",views.list_wallet,name="allWallet"),
     path("wallet/<int:id>/",views.wallet_details,name="walletDetail"),
+    path("banner/",views.list_banner,name="bannerList"),
+    path("banner/add/",views.add_banner,name="bannerAdd"),
+    path("banner/delete/<int:id>/",views.delete_banner,name="bannerDelete")
 ]

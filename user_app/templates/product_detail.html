@@ -162,11 +162,55 @@
     </div>
 
 
-    {% for related_p in related_products %}
 
-    {{related_p.name}}
+   
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    {% endfor %}
+    <div class="flex justify-between items-center border-b pb-4 mt-3">
+        <h2 class="text-2xl font-semibold ">RELATED PRODUCTS THAT YOU MIGHT LIKE</h2>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-12 mt-4">
+
+        {% for related_p in related_products %}
+        <a href="{% url 'product_details' related_p.id %}"
+            class="product-card bg-white rounded-xl shadow-md overflow-hidden relative group fade-in">
+
+            <!-- Product Image -->
+            <div class="aspect-square bg-gray-100 overflow-hidden">
+                {% for img in related_p.images.all %}
+                <img src="{{img.image.url}}" alt="" class="product-image w-full h-full object-cover">
+                {% endfor %}
+            </div>
+
+            <!-- Product Info -->
+            <div class="p-4">
+                <h3 class="text-sm font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[40px]">{{related_p.name}}</h3>
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-gray-500 mb-1">From</p>
+                        <p class="text-lg font-bold text-orange-600">
+                            {% if related_p.variants.all %}
+                            <span class="text-xs font-normal text-gray-500">Rs. {{related_p.variants.all.0.price}}</span>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <!-- Add to Cart Button -->
+                    <button
+                        class="opacity-0 group-hover:opacity-100 transition-opacity bg-orange-600 hover:bg-orange-700 text-white p-2 rounded-lg">
+                        <i class="fas fa-cart-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+
+    </div>
+</main>
+
 
     <!-- Why Choose Us Section -->
     <div class="bg-white rounded-xl lg:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-10 mt-6 sm:mt-8">

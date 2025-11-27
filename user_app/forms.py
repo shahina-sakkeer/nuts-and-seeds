@@ -143,8 +143,8 @@ class UserAddressForm(forms.ModelForm):
     def clean_pincode(self):
         pincode=self.cleaned_data.get("pincode")
         
-        if len(str(pincode)) < 6:
-            raise forms.ValidationError("Pincode must be at least 8 digits long.")
+        if len(str(pincode)) != 6:
+            raise forms.ValidationError("Pincode must be 6 digits long.")
         
         if int(pincode) < 0:
             raise forms.ValidationError("Pincode cannot be negative")

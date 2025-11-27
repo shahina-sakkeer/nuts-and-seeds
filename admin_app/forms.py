@@ -1,5 +1,5 @@
 from django import forms
-from admin_app.models import Category,Products,ProductVariant,ProductImage,Coupon,CategoryOffer,ProductOffer
+from admin_app.models import Category,Products,ProductVariant,ProductImage,Coupon,CategoryOffer,ProductOffer,Banner
 from django.forms import formset_factory,ValidationError,inlineformset_factory
 import re
     
@@ -331,3 +331,10 @@ class ProductOfferForm(forms.ModelForm):
                 self.add_error('end_date','Start date and end date cannot be same.')
 
         return cleaned_data
+    
+
+
+class BannerForm(forms.ModelForm):
+    class Meta:
+        model=Banner
+        fields=["name","image"]

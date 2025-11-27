@@ -9,6 +9,11 @@
                 <label class="block text-sm font-medium text-gray-900">House Name</label>
             </div>
             {{form.house_name}}
+            {% for error in form.house_name.errors %}
+
+            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+            {% endfor %}
         </div>
 
 
@@ -17,6 +22,11 @@
                 <label class="block text-sm font-medium text-gray-900">Street</label>
             </div>
             {{form.street}}
+            {% for error in form.street.errors %}
+
+            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+            {% endfor %}
         </div>
 
 
@@ -25,6 +35,11 @@
                 <label class="block text-sm font-medium text-gray-900">Landmark</label>
             </div>
             {{form.landmark}}
+            {% for error in form.landmark.errors %}
+
+            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+            {% endfor %}
         </div>
 
         <div class="mb-8">
@@ -32,6 +47,11 @@
                 <label class="block text-sm font-medium text-gray-900">City</label>
             </div>
             {{form.city}}
+            {% for error in form.city.errors %}
+
+            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+            {% endfor %}
         </div>
 
         <div class="mb-8">
@@ -39,6 +59,11 @@
                 <label class="block text-sm font-medium text-gray-900">State</label>
             </div>
             {{form.state}}
+            {% for error in form.state.errors %}
+
+            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+            {% endfor %}
         </div>
 
         <div class="mb-8">
@@ -46,6 +71,11 @@
                 <label class="block text-sm font-medium text-gray-900">Pincode</label>
             </div>
             {{form.pincode}}
+            {% for error in form.pincode.errors %}
+
+            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+            {% endfor %}
 
         </div>
 

@@ -134,6 +134,10 @@ class ProductOffer(models.Model):
         return f"{self.product.name} has {self.offer_percentage} %"
     
 
+class Banner(models.Model):
+    name=models.CharField(max_length=200,null=True,blank=True)
+    image=CloudinaryField('image')
+    created_at=models.DateField(auto_now_add=True)
 
 
 

@@ -1,6 +1,6 @@
 <label
-    class="flex items-start p-4 border-2 border-green-500 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition">
-    <input type="radio" name="selected_address" value="{{address.id}}" class="mt-1 w-4 h-4 text-green-600 focus:ring-green-500"
+    class="flex items-start p-4 border-2 rounded-lg cursor-pointer">
+    <input type="radio" name="selected_address" value="{{address.id}}" class="mt-1 w-4 h-4"
     {% if default_address and default_address.id == address.id %} 
     checked 
     {% endif %} >

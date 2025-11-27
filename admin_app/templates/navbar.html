@@ -57,8 +57,8 @@
                 <a href="{% url 'allWallet' %}" class="flex items-center px-4 py-3 mb-2 text-gray-700 hover:bg-gray-100 rounded-lg">
                     <span class="mr-3"><i class="fa-solid fa-credit-card"></i></span> Wallet
                 </a>
-                <a href="#" class="flex items-center px-4 py-3 mb-2 text-gray-700 hover:bg-gray-100 rounded-lg">
-                    <span class="mr-3">📈</span> Banner
+                <a href="{% url 'bannerList' %}" class="flex items-center px-4 py-3 mb-2 text-gray-700 hover:bg-gray-100 rounded-lg">
+                    <span class="mr-3"><i class="fa-solid fa-image mr-2"></i></span> Banner
                 </a>
                 <a href="{% url 'users' %}" class="flex items-center px-4 py-3 mb-2 text-gray-700 hover:bg-gray-100 rounded-lg">
                     <span class="mr-3"><i class="fa-solid fa-users"></i></span> Customers
@@ -98,7 +98,7 @@
         });
     </script>
 
-    <!-- cropper.js -->
+    <!-- cropper.js for adding product -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const imageInputs = document.querySelectorAll(".image-input");
@@ -147,7 +147,7 @@
 
             // Save crop
             cropSave.addEventListener("click", function (e) {
-                e.preventDefault(); // <-- prevent form auto-submit here
+                e.preventDefault(); 
 
                 if (cropper && currentHidden && currentPreview) {
                     const canvas = cropper.getCroppedCanvas({
@@ -166,7 +166,65 @@
     </script>
 
 
-    <!-- Remove image from edit product -->
+<!-- cropper.js for adding banner -->
+
+<script>
+let cropper;
+const bannerInput = document.getElementById("bannerInput");
+const modal = document.getElementById("cropperModal");
+const modalImage = document.getElementById("modalImage");
+const closeModal = document.getElementById("closeModal");
+const cropSave = document.getElementById("cropSave");
+const preview = document.getElementById("bannerPreview");
+const finalBannerImage = document.getElementById("finalBannerImage");
+
+//Open modal with Cropper.js when user selects on image
+bannerInput.addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    modalImage.src = url;
+    modal.classList.remove("hidden");
+
+    if (cropper) cropper.destroy();
+    cropper = new Cropper(modalImage, {
+        aspectRatio: 16 / 6,
+        viewMode: 1,
+        autoCropArea: 1
+    });
+});
+
+//Crop & Save
+cropSave.addEventListener("click", function () {
+    cropper.getCroppedCanvas().toBlob((blob) => {
+        const croppedFile = new File([blob], "banner.jpg", { type: "image/jpeg" });
+
+        // Push blob to a hidden file input
+        const dt = new DataTransfer();
+        dt.items.add(croppedFile);
+        finalBannerImage.files = dt.files;
+
+        // Show preview
+        preview.src = URL.createObjectURL(croppedFile);
+        preview.style.display = "block";
+
+        modal.classList.add("hidden");
+        cropper.destroy();
+    });
+});
+
+// Close modal without saving
+closeModal.addEventListener("click", () => {
+    modal.classList.add("hidden");
+    cropper.destroy();
+});
+</script>
+
+
+
+
+<!-- Remove image from edit product -->
     <script>
         let croppers = {};
 

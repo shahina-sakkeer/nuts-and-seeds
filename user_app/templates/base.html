@@ -103,6 +103,7 @@
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
                 <div class="flex-shrink-0">
+                    <!-- <img src="{% static 'images/palm-logo.png' %}" alt="logo" class="w-40"> -->
                     <a href="{% url 'home' %}"><span class="text-2xl font-bold text-gray-900">Nuts & Seeds</span></a>
                 </div>
 
@@ -240,6 +241,15 @@ document.body.addEventListener('htmx:targetError', (e) => {
             sparkle.addEventListener("animationend", () => sparkle.remove());
         }
     }
+});
+</script>
+
+
+<!-- script used for contains the new address in checkout page -->
+<script>
+document.body.addEventListener("address-added", function(event) {
+    document.querySelector("#address-section")
+        .insertAdjacentHTML("beforeend", event.detail.html);
 });
 </script>
 
