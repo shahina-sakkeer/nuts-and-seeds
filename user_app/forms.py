@@ -163,6 +163,13 @@ class UserAddressForm(forms.ModelForm):
         if state and not state.isalpha():
             self.add_error("state","State can only contains alphabets")
 
+        if city and len(city)<4:
+            self.add_error("city","City should contains atleast 4 characters")
+
+        if state and len(state)<4:
+            self.add_error("state","State should contains atleast 4 characters")
+
+
         return cleaned_data
 
 

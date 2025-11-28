@@ -1,9 +1,12 @@
 <!-- Product Grid -->
+{% if products %}
+
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     <!-- Product Card  -->
     {% for p in products %}
 
-    <div class="relative rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition">
+    <div class="relative rounded-lg overflow-hidden border border-gray-200 hover:border-orange-500 hover:shadow-xl 
+            transition-all duration-300 transform hover:-translate-y-1">
 
         <div id="wishlist-btn-{{ p.id }}">
             {% with v=p.variants.all.0 %}
@@ -14,14 +17,14 @@
 
         <a href="{% url 'product_details' p.id %}" class="block">
             {% if p.images.all %}
-            <img src="{{ p.images.all.0.image.url }}" alt="{{p.name}}" class="w-full h-64 object-cover">
+            <img src="{{ p.images.all.0.image.url }}" alt="{{p.name}}" class="w-full h-64 object-cover transition-transform duration-500 hover:scale-110">
             {% endif %}
         </a>
 
 
         <div class="p-4">
             <a href="#" class="block">
-                <h3 class="text-base font-medium text-gray-900 hover:text-gray-600 transition">{{ p.name }}</h3>
+                <h3 class="text-base font-medium text-gray-900 hover:text-orange-600 transition">{{ p.name }}</h3>
             </a>
 
             {% if p.variants.all %}
@@ -59,3 +62,39 @@
 </div>
 {% endfor %}
 </div>
+
+{% else %}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+
+    <div class="bg-orange-50 border border-orange-200 rounded-2xl p-10 shadow-sm text-center">
+
+        <!-- Icon -->
+        <div class="flex justify-center mb-6">
+            <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-md border border-orange-300">
+                <i class="fa-solid fa-box-open text-orange-600 text-4xl"></i>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <h2 class="text-3xl font-bold text-orange-700 mb-3">
+            No Products Found
+        </h2>
+
+        <!-- Message -->
+        <p class="text-gray-600 text-lg mb-8">
+            We couldn’t find any products that match your search.  
+            Try using different keywords or explore our full product list!
+        </p>
+
+        <!-- Button -->
+        <a href="{% url 'all_products' %}" 
+           class="inline-block px-8 py-3 bg-orange-600 text-white font-semibold rounded-lg shadow hover:bg-orange-700 transition">
+            Browse All Products
+        </a>
+    </div>
+
+</div>
+
+
+{% endif %}

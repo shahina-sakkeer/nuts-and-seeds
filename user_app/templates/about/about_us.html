@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <h1 class="text-4xl md:text-3xl font-bold mb-4">Who we are ? </h1>
+   
+
+
+<!-- Story Section -->
+<section class="py-16 bg-gray-50">
+  <div class="max-w-6xl mx-auto px-6 md:flex md:items-center md:space-x-12">
+    
+    <div class="md:w-1/2 mb-10 md:mb-0">
+      <img src="{% static 'images/about.png' %}"
+           class="rounded-2xl shadow-lg w-full h-59 object-cover">
+    </div>
+
+    <div class="md:w-1/2">
+      <h2 class="text-3xl font-semibold text-gray-800 mb-4">Our Story</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">
+        My journey with premium dry fruits began during a visit to Saudi Arabia,
+        where I tasted Ajwa dates for the first time. The experience was unforgettable.
+        When I returned home, I searched everywhere for the same authentic taste,
+        but it was nowhere to be found.
+      </p>
+
+      <p class="text-gray-600 leading-relaxed">
+        That moment sparked a simple thought—why shouldn’t people in my hometown
+        enjoy the same premium-quality imported nuts and dry fruits? Today, that idea
+        has grown into a venture serving customers across India, both through our
+        physical stores and online platform.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- Mission Section -->
+<section class="py-16">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <h2 class="text-3xl font-semibold text-gray-800 mb-12">Our Mission & Vision</h2>
+
+    <div class="grid md:grid-cols-2 gap-8">
+      
+      <div class="bg-white p-8 rounded-xl shadow-md border">
+        <h3 class="text-2xl font-semibold text-orange-600 mb-3">Our Mission</h3>
+        <p class="text-gray-600 leading-relaxed">
+          To provide fresh, authentic, and premium imported dry fruits at honest
+          and affordable prices, ensuring every household in India has access to
+          unmatched quality and taste.
+        </p>
+      </div>
+
+      <div class="bg-white p-8 rounded-xl shadow-md border">
+        <h3 class="text-2xl font-semibold text-orange-600 mb-3">Our Vision</h3>
+        <p class="text-gray-600 leading-relaxed">
+          To become India’s most trusted dry fruits brand by maintaining purity,
+          quality, sustainability, and exceptional customer experience—online and offline.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Why Choose Us Section -->
+    <div class="bg-white rounded-xl lg:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-10 mt-6 sm:mt-8">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4">Why Choose Nuts & Seeds?</h2>
+
+        <div class="mb-4 sm:mb-6">
+            <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-3">Our Promise</h3>
+            <p class="text-sm sm:text-base text-gray-600 leading-relaxed">
+                We are committed to providing the highest quality nuts and seeds with fast delivery and competitive
+                prices.
+            </p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+            <div class="text-center">
+                <div
+                    class="w-14 h-14 sm:w-16 sm:h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <i class="fas fa-truck text-orange-600 text-xl sm:text-2xl"></i>
+                </div>
+                <h4 class="font-semibold text-gray-800 mb-2 text-sm sm:text-base">Fast Delivery</h4>
+                <p class="text-xs sm:text-sm text-gray-600">Get your order delivered quickly</p>
+            </div>
+
+            <div class="text-center">
+                <div
+                    class="w-14 h-14 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <i class="fas fa-leaf text-green-600 text-xl sm:text-2xl"></i>
+                </div>
+                <h4 class="font-semibold text-gray-800 mb-2 text-sm sm:text-base">Organic Products</h4>
+                <p class="text-xs sm:text-sm text-gray-600">We offer only organic nuts</p>
+            </div>
+
+            <div class="text-center sm:col-span-2 md:col-span-1">
+                <div
+                    class="w-14 h-14 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <i class="fas fa-tag text-blue-600 text-xl sm:text-2xl"></i>
+                </div>
+                <h4 class="font-semibold text-gray-800 mb-2 text-sm sm:text-base">Best Prices</h4>
+                <p class="text-xs sm:text-sm text-gray-600">Enjoy the best prices on the market</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

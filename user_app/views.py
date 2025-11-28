@@ -43,7 +43,7 @@ def register(request):
             otp=random.randint(100000,999999)
             print(f'otp:{otp}')
             cache.set(f"otp:{user_data['email']}", otp, timeout=60)
-            cache.set(f"user_data:{user_data['email']}",user_data,timeout=60)
+            cache.set(f"user_data:{user_data['email']}",user_data,timeout=300)
 
             send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[user_data['email']])
             messages.success(request,"otp send to the email")
@@ -128,11 +128,16 @@ def resend_otp(request):
         return JsonResponse({"success": False, "message": "No pending email"}, status=400)
     
     if request.method=="POST":
+        user_data=cache.get(f"user_data:{email}")
+
+        if user_data is None:
+            messages.error(request, "Session expired. Please register again.")
+            return JsonResponse({"success": False, "message": "User data expired"}, status=400)
 
         otp=random.randint(100000,999999)
         cache.set(f"otp:{email}", otp, timeout=60)
+        cache.set(f"user_data:{user_data['email']}",user_data,timeout=300)
         send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[email])
-        messages.info(request, "A new OTP has been sent to your email.")
         return JsonResponse({"success": True, "message": "OTP resent successfully"})
       
 
@@ -799,8 +804,12 @@ def checkout(request):
             payment_method=request.POST.get("payment_method")
 
             if not selected_address_id:
-                messages.error(request,"Select one address")
-                return redirect("checkOut")
+                if request.POST.get("payment_method")=="razorpay":
+                    return JsonResponse({"success": False, "message": "Select one address"}, status=400)
+                
+                else:
+                    messages.error(request,"Select one address")
+                    return redirect("checkOut")
 
             if not payment_method:
                 messages.error(request,"Select a payment method")
@@ -1167,17 +1176,6 @@ def verify_payment(request):
                 discount=Decimal(0)
                 new_total=payable_amount        
 
-                # if coupon_code:
-                #         coupon=Coupon.objects.filter(code=coupon_code).first()
-                #         if coupon:
-                #             usage,created=CouponUsage.objects.get_or_create(user=request.user,coupon=coupon)
-                #             usage.used_count+=1
-                #             print(usage.used_count)
-                #             usage.save()
-
-                # # the getted session is deleted 
-                # request.session.pop("coupon_data",None)
-                # request.session.pop("razorpay_order_data",None)
 
             return JsonResponse({
                 "status": "success",
@@ -1545,4 +1543,5 @@ def wallet_verify_payment(request):
             return JsonResponse({"status": "failed", "message": "Unexpected error occurred."})
         
 
-
+def about(request):
+    return render(request,"about/about_us.html")

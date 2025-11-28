@@ -11,8 +11,8 @@
       {% for coup in coupons %}
       <tr class="hover:bg-gray-50">
         <td class="px-4 py-2 font-medium text-gray-800">{{ coup.code }}</td>
-        <td class="px-4 py-2 text-gray-700">{{ coup.discount }}%</td>
-        <td class="px-4 py-2 text-gray-600">{{ coup.end_date }}</td>
+        <td class="px-4 py-2 text-gray-700">{{ coup.discount_value }}%</td>
+        <td class="px-4 py-2 text-gray-600">{{ coup.end_date | date:"Y-m-d"}}</td>
       </tr>
       {% empty %}
       <tr>

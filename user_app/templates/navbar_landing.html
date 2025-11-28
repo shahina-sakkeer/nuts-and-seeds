@@ -214,6 +214,29 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+
+
+<!-- resent otp message display -->
+
+<script>
+    document.getElementById("resend-btn").addEventListener("click", function() {
+    fetch("{% url 'resend_otp' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+          
+            showSnackbar(data.message, "#3b82f6");
+        } else {
+            showSnackbar(data.message, "#ef4444");
+        }
+    });
+});
+</script>
     
 </body>
 

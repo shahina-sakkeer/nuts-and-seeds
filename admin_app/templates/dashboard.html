@@ -167,7 +167,7 @@
                     <svg viewBox="0 0 200 200" class="transform -rotate-90">
 
                         {% for item in product_show %}
-                        <circle cx="100" cy="100" r="80" fill="transparent" stroke="{{ item.color }}" stroke-width="60"
+                        <circle cx="100" cy="100" r="80" fill="transparent" stroke="{{ item.color }}" stroke-width="40"
                             stroke-dasharray="{{ item.dasharray }} 502" stroke-dashoffset="{{ item.dashoffset }}" />
                         {% endfor %}
 
@@ -234,7 +234,7 @@
                 <div class="relative w-48 h-48 flex-shrink-0">
                     <svg viewBox="0 0 200 200" class="transform -rotate-90">
                         {% for item in category_show %}
-                        <circle cx="100" cy="100" r="80" fill="transparent" stroke="{{ item.color }}" stroke-width="60"
+                        <circle cx="100" cy="100" r="80" fill="transparent" stroke="{{ item.color }}" stroke-width="40"
                             stroke-dasharray="{{ item.dasharray }} 502" stroke-dashoffset="{{ item.dashoffset }}" />
                         {% endfor %}
 
@@ -319,17 +319,17 @@
                             </div>
                         </td>
                         <td class="py-4 px-4 text-sm text-gray-700">{{o.orderID}}</td>
-                        <td class="py-4 px-4 text-sm text-gray-700">{{o.created_at}}</td>
+                        <td class="py-4 px-4 text-sm text-gray-700">{{o.created_at|date:"Y-m-d"}}</td>
                         <td class="py-4 px-4 text-sm font-medium text-gray-800">{{o.total_price}}</td>
                         <td class="py-4 px-4">
                             <div class="flex items-center space-x-2">
 
-                                <span class="text-sm text-green-600 font-medium">{{o.payment_method}}</span>
+                                <span class="text-sm text-green-600 font-medium">{{o.get_payment_method_display}}</span>
                             </div>
                         </td>
                         <td class="py-4 px-4">
                             <span
-                                class="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">{{o.orderitem.all.0.status}}</span>
+                                class="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">{{o.orderitem.all.0.get_status_display}}</span>
                         </td>
                     </tr>
                     {% endfor %}

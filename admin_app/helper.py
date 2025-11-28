@@ -19,6 +19,12 @@ def get_sales_data(start,end):
     }
 
 
+def get_recent_orders(start,end):
+    orders=Orders.objects.filter(created_at__date__range=[start,end]).all().order_by("-created_at")[:5]
+    return {"order":orders}
+
+
+
 def get_ordered_products(start, end):
 
     items = (OrderItem.objects.filter(order__created_at__date__range=[start, end]).values('product__product__name')

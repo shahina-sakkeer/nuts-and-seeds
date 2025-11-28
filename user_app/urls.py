@@ -50,6 +50,7 @@ urlpatterns=[
     path("verify_wallet/",views.wallet_verify_payment,name="verifyWallet"),
     path("wishlist/",views.wishlist_list,name="allWishlist"),
     path("wishlist/add/<int:id>/",views.add_to_wishlist,name="addWishlist"),
-    path("wishlist/delete/<int:id>/",views.remove_from_wishlist,name="removeWishlist")
+    path("wishlist/delete/<int:id>/",views.remove_from_wishlist,name="removeWishlist"),
+    path("about/",views.about,name="aboutUs")
 ]
 

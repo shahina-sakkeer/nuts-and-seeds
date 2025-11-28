@@ -1,14 +1,51 @@
+<style>
+.snackbar {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 14px 22px;
+    border-radius: 8px;
+    opacity: 0;
+    animation: fadeInOut 3s;
+    z-index: 9999;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, 20px); }
+    10% { opacity: 1; transform: translate(-50%, 0); }
+    90% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, 20px); }
+}
+</style>
+
+<script>
+function showSnackbar(message, bg) {
+    const bar = document.createElement("div");
+    bar.className = "snackbar";
+    bar.style.background = bg;
+    bar.innerText = message;
+    document.body.appendChild(bar);
+
+    setTimeout(()=>bar.remove(), 3000);
+}
+</script>
+
+
 {% if messages %}
 <script>
-    {% for message in messages %}
 
-    Toastify({
-        text: "{{ message|escapejs }}",
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-        backgroundColor:"{% if message.tags == 'success' %}linear-gradient(to right, #00b09b, #96c93d){% elif message.tags == 'error' %}linear-gradient(to right, #ff5f6d, #ffc371){% elif message.tags == 'warning' %}linear-gradient(to right, #f7971e, #ffd200){% else %}#0d6efd{% endif %}"
-      }).showToast();
-    {% endfor %}
+{% for message in messages %}
+    showSnackbar(
+        "{{ message|escapejs }}",
+        `{% if message.tags == "success" %}#22c55e
+        {% elif message.tags == "error" %}#ef4444
+        {% elif message.tags == "warning" %}#eab308
+        {% else %}#3b82f6{% endif %}`
+    );
+{% endfor %}
 </script>
+
 {% endif %}

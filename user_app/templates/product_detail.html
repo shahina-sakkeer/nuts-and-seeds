@@ -132,10 +132,10 @@
     </div>
 
     <!-- Reviews Section -->
-    <div class="bg-white rounded-xl lg:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-10 mt-6 sm:mt-8">
+    <!-- <div class="bg-white rounded-xl lg:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-10 mt-6 sm:mt-8">
         <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Reviews</h2>
 
-        <!-- Single Review -->
+      
         <div class="border-b border-gray-200 pb-4 sm:pb-6 mb-4 sm:mb-6">
             <div class="flex items-start gap-3 sm:gap-4">
                 <div class="flex-1 min-w-0">
@@ -155,15 +155,14 @@
             </div>
         </div>
 
-        <!-- Add Review Button -->
+       
         <button class="text-orange-600 hover:text-orange-700 font-semibold text-sm sm:text-base">
             <i class="fas fa-plus-circle mr-2"></i>Write a Review
         </button>
-    </div>
+    </div> -->
 
+{% if related_products %}
 
-
-   
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <div class="flex justify-between items-center border-b pb-4 mt-3">
@@ -198,11 +197,6 @@
                         </p>
                     </div>
 
-                    <!-- Add to Cart Button -->
-                    <button
-                        class="opacity-0 group-hover:opacity-100 transition-opacity bg-orange-600 hover:bg-orange-700 text-white p-2 rounded-lg">
-                        <i class="fas fa-cart-plus"></i>
-                    </button>
                 </div>
             </div>
         </a>
@@ -210,6 +204,9 @@
 
     </div>
 </main>
+
+{% endif %}
+
 
 
     <!-- Why Choose Us Section -->

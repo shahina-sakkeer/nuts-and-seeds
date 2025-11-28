@@ -15,7 +15,7 @@ from cloudinary.uploader import upload
 from datetime import date,timedelta,datetime
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from admin_app.helper import get_sales_data,get_ordered_products,get_ordered_categories
+from admin_app.helper import get_sales_data,get_ordered_products,get_ordered_categories,get_recent_orders
 from decimal import Decimal
 
 
@@ -41,27 +41,30 @@ def admin_dashboard(request):
     total_discount=Orders.objects.aggregate(total=Sum('discount'))['total'] or 0
     net_sales=total_sales-total_discount
 
-    orders=Orders.objects.all().order_by("-created_at")[:5]
 
     if filter_type=="today":
         filtered_data=get_sales_data(today,today)
         products_show = get_ordered_products(today, today)
         categories_show=get_ordered_categories(today,today)
+        recent_order=get_recent_orders(today,today)
 
     elif filter_type=="weekly":
         filtered_data=get_sales_data(start_of_week,today)
         products_show = get_ordered_products(start_of_week, today)
         categories_show=get_ordered_categories(start_of_week,today)
+        recent_order=get_recent_orders(start_of_week,today)
         
     elif filter_type=="monthly":
         filtered_data=get_sales_data(start_of_month,today)
         products_show = get_ordered_products(start_of_month, today)
         categories_show=get_ordered_categories(start_of_month,today)
+        recent_order=get_recent_orders(start_of_month,today)
 
     elif filter_type=="yearly":
         filtered_data=get_sales_data(start_of_year,today)
         products_show = get_ordered_products(start_of_year, today)
         categories_show=get_ordered_categories(start_of_year,today)
+        recent_order=get_recent_orders(start_of_year,today)
 
     elif filter_type=="custom":
         if start_date and end_date:
@@ -78,6 +81,7 @@ def admin_dashboard(request):
         filtered_data=get_sales_data(start_date,end_date)
         products_show = get_ordered_products(start_date, end_date)
         categories_show=get_ordered_categories(start_date,end_date)
+        recent_order=get_recent_orders(start_date,end_date)
         
 
     return render(request,"dashboard.html",{
@@ -92,7 +96,7 @@ def admin_dashboard(request):
         "filtered_count": filtered_data["count"],
         "product_show":products_show,
         "category_show":categories_show,
-        "orders":orders
+        "orders":recent_order["order"]
     })
 
 

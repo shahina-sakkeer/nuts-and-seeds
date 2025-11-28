@@ -24,7 +24,7 @@
 
 </head>
 
-<body class="bg-gray-50">
+<body class="min-h-screen flex flex-col bg-white">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
@@ -98,21 +98,21 @@
     </style>
 
     <!-- Navbar -->
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-orange-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
                 <div class="flex-shrink-0">
                     <!-- <img src="{% static 'images/palm-logo.png' %}" alt="logo" class="w-40"> -->
-                    <a href="{% url 'home' %}"><span class="text-2xl font-bold text-gray-900">Nuts & Seeds</span></a>
+                    <a href="{% url 'home' %}"><span class="text-2xl font-bold text-orange-500">Nuts & Seeds</span></a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="{% url 'home' %}" class="text-gray-900 font-medium hover:text-gray-600 transition">Home</a>
-                    <a href="{% url 'all_products' %}" class="text-gray-600 hover:text-gray-900 transition">Products</a>
-                    <a href="#" class="text-gray-600 hover:text-gray-900 transition">About Us</a>
-                    <a href="#" class="text-gray-600 hover:text-gray-900 transition">Contact</a>
+                    <a href="{% url 'home' %}" class="text-orange-600 font-medium hover:text-orange-700 transition">Home</a>
+                    <a href="{% url 'all_products' %}" class="text-gray-600 hover:text-orange-600 transition">Products</a>
+                    <a href="{% url 'aboutUs' %}" class="text-gray-600 hover:text-orange-600 transition">About Us</a>
+                    <a href="#" class="text-gray-600 hover:text-orange-600 transition">Contact</a>
                 </div>
 
                 <!-- Right Side Icons -->
@@ -122,32 +122,24 @@
                         <div class="hidden sm:block">
                             <input type="hidden" id="category-id" name="category_id" value="{{ cat.id|default:'' }}">
                             <input type="text" name="search" placeholder="Search..."
-                                class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
+                                class="px-4 py-2 border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 w-48 lg:w-64"
                                 hx-get="{% url 'filtering' %}" hx-trigger="keyup changed delay:300ms"
                                 hx-target="#category-product" hx-swap="innerHTML" hx-include="#category-id">
                         </div>
                     </form>
 
                     <!-- Wishlist Icon -->
-                     <a href="{% url 'allWishlist' %}"><button class="p-2 hover:bg-gray-100 rounded-lg transition">
-                        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
-                            </path>
-                        </svg>
+                     <a href="{% url 'allWishlist' %}"><button class="p-2 hover:bg-orange-100 rounded-lg transition">
+                        <i class="fa-regular fa-heart fa-lg text-orange-600"></i>
                     </button>
                     </a>
 
                     <!-- Cart Icon -->
                     <a href="{% url 'showCart' %}">
-                        <button class="p-2 hover:bg-gray-100 rounded-lg transition relative">
-                            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
-                                </path>
-                            </svg>
+                        <button class="p-2 hover:bg-orange-100 rounded-lg transition relative">
+                            <i class="fa-solid fa-cart-shopping fa-lg text-orange-600"></i>
                             <span id="cart-count"
-                            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full shadow">
+                            class="absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full shadow">
                             {{ cart_item_count }}
                             </span>
                         </button>
@@ -155,34 +147,42 @@
 
 
                     <!-- Profile icon -->
-                    <a href="{% url 'userDasboard' %}"><i class="fa-regular fa-user fa-lg text-gray-700"></i></a>
+                    <a href="{% url 'userDasboard' %}"><i class="fa-regular fa-user fa-lg text-orange-600 hover:text-orange-700"></i></a>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- Global Loader -->
+    <div id="loader"
+        class="fixed inset-0 bg-white bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="w-12 h-12 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
     {% include 'messages.html' %}
+
+    <main class="flex-grow">
     {% block content %}
 
 
 
     {% endblock %}
+    </main>
 
-    <footer class="bg-white border-t border-gray-200 mt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="flex flex-wrap justify-center gap-8 mb-8">
-                <a href="#" class="text-gray-600 hover:text-gray-900 transition">About Us</a>
-                <a href="#" class="text-gray-600 hover:text-gray-900 transition">Contact</a>
-                <a href="#" class="text-gray-600 hover:text-gray-900 transition">Privacy Policy</a>
-                <a href="#" class="text-gray-600 hover:text-gray-900 transition">Terms of Service</a>
-            </div>
-            <div class="text-center text-gray-500 text-sm">
-                <p>&copy; 2025 Nuts&Seeds. All rights reserved.</p>
-            </div>
+    <footer class="bg-orange-50 border-t border-orange-200 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <div class="flex flex-wrap justify-center gap-8 mb-8">
+            <a href="#" class="text-orange-700 hover:text-orange-900 transition">About Us</a>
+            <a href="#" class="text-orange-700 hover:text-orange-900 transition">Contact</a>
+            <a href="#" class="text-orange-700 hover:text-orange-900 transition">Privacy Policy</a>
+            <a href="#" class="text-orange-700 hover:text-orange-900 transition">Terms of Service</a>
         </div>
-        <div>
 
+        <div class="text-center text-orange-600 text-sm">
+            <p>&copy; 2025 Nuts & Seeds. All rights reserved.</p>
         </div>
+    </div>
     </footer>
 
 
@@ -198,12 +198,20 @@
     <!-- Modal for hidding after delete address confirmation -->
     <script>
         document.body.addEventListener('htmx:afterRequest', function (evt) {
-            const modalEl = document.querySelector('.modal.show');
-            if (modalEl) {
-                const modal = bootstrap.Modal.getInstance(modalEl);
+
+        const modalEl = document.querySelector('.modal.show');
+        if (modalEl) {
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) {
                 modal.hide();
             }
-        });
+        }
+
+    
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('padding-right');
+    });
     </script>
 
 
@@ -252,6 +260,38 @@ document.body.addEventListener("address-added", function(event) {
         .insertAdjacentHTML("beforeend", event.detail.html);
 });
 </script>
+
+
+<!-- loader for every pages -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const loader = document.getElementById("loader");
+
+    document.addEventListener("click", function (e) {  
+        const target = e.target.closest("a");
+
+        if (target && target.href && !target.href.startsWith("#")) {
+            loader.classList.remove("hidden");
+        }
+    });
+
+    window.addEventListener("load", function () {
+        loader.classList.add("hidden");
+    });
+});
+</script>
+
+<script>
+document.body.addEventListener('htmx:request', () => {
+    document.getElementById('loader').classList.remove('hidden');
+});
+
+document.body.addEventListener('htmx:afterOnLoad', () => {
+    document.getElementById('loader').classList.add('hidden');
+});
+</script>
+
 
 
 </body>
