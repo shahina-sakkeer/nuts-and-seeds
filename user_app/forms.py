@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser,UserAddress,OrderReturn
+from .models import CustomUser,UserAddress,OrderReturn,Review
 from django.forms import ValidationError
 import re
 
@@ -52,6 +52,8 @@ class UserRegistrationForm(forms.ModelForm):
         cleaned_data=super().clean()
         password=cleaned_data.get("password")
         confirm_password=cleaned_data.get("confirm_password")
+        firstname=cleaned_data.get("firstname")
+        lastname=cleaned_data.get("lastname")
 
         if password and confirm_password and password != confirm_password:
             self.add_error("password","Passwords doesnot match")
@@ -61,7 +63,15 @@ class UserRegistrationForm(forms.ModelForm):
             self.add_error("password",
                 "Password must be at least 8 characters long, ""contain at least one uppercase letter, one lowercase letter, and one digit."
             )
+
+        if firstname and not firstname.isalpha():
+            self.add_error("firstname","Name should contain only alphabets")
+
+        if lastname and not lastname.isalpha():
+            self.add_error("lastname","Name should contain only alphabets")
+
         return cleaned_data
+
 
 class UserLoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={
@@ -133,12 +143,7 @@ class UserAddressForm(forms.ModelForm):
             })
         }
 
-    # def clean_house_name(self):
-    #     house_name=self.cleaned_data.get("house_name")
-        
-    #     if UserAddress.objects.filter(house_name__iexact=house_name).exclude(id=self.instance.id).exists():
-    #             raise ValidationError("This house name already exists")
-    #     return house_name
+  
     
     def clean_pincode(self):
         pincode=self.cleaned_data.get("pincode")
@@ -203,3 +208,28 @@ class OrderReturnForm(forms.ModelForm):
             raise ValidationError("Reason should contain only alphabets")
         
         return return_reason
+    
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model=Review
+        fields=["comment","rating","image"]
+
+        widgets={
+            "comment":forms.TextInput(attrs={
+                "class":"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none resize-none",
+                "placeholder":"Comment you experiance"
+            }),
+        }
+
+
+    def clean_comment(self):
+        comment=self.cleaned_data.get("comment")
+
+        if len(comment)<3:
+            raise forms.ValidationError("Comments should contain atleast 3 letters")
+        
+        return comment
+
+

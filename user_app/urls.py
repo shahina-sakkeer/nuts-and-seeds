@@ -47,10 +47,11 @@ urlpatterns=[
     path("order-detail/<int:id>/",views.order_detail,name="orderDetail"),
     path("order-return/<int:id>/",views.return_order_item,name="orderReturn"),
     path("wallet/",views.add_money_wallet,name="walletList"),
-    path("verify_wallet/",views.wallet_verify_payment,name="verifyWallet"),
+    path("verify-wallet/",views.wallet_verify_payment,name="verifyWallet"),
     path("wishlist/",views.wishlist_list,name="allWishlist"),
     path("wishlist/add/<int:id>/",views.add_to_wishlist,name="addWishlist"),
     path("wishlist/delete/<int:id>/",views.remove_from_wishlist,name="removeWishlist"),
+    path("review/add/<int:id>/",views.add_review,name="addReview"),
     path("about/",views.about,name="aboutUs")
 ]
 

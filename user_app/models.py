@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from cloudinary.models import CloudinaryField
 from admin_app.models import ProductVariant,Products,Coupon
 import uuid
+from django.core.validators import MinValueValidator,MaxValueValidator
 
 
 # Create your models here.
@@ -63,9 +64,14 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     
     def clean(self):
         super().clean()
+
         phone_pattern=re.compile(r'^\+?1?\d{9,15}$|^(\d{3}[-.\s]?)?\d{3}[-.\s]?\d{4}$')
         if self.phone_number and not phone_pattern.match(self.phone_number):
             raise ValidationError({"phone_number": "Invalid phone number format."})
+        
+        if CustomUser.objects.filter(phone_number=self.phone_number).exclude(id=self.id).exists():
+            raise ValidationError({"phone_number": "Phone number already exists."})
+        
         
 
 class Referral(models.Model):
@@ -249,6 +255,18 @@ class WishlistItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} in wishlist"
+    
+
+class Review(models.Model):
+    user=models.ForeignKey(CustomUser,related_name="reviewuser",on_delete=models.SET_NULL,null=True,blank=True)
+    product=models.ForeignKey(ProductVariant,related_name="productreview",on_delete=models.CASCADE)
+    comment=models.TextField()
+    rating=models.IntegerField(default=0,validators=[MinValueValidator(1),MaxValueValidator(5)])
+    image=CloudinaryField('review_image',blank=True,null=True)
+    created_at=models.DateField(auto_now_add=True,null=True)
+
+    def __str__(self):
+        return f"{self.user} gave {self.rating} for {self.product}"
     
 
 

@@ -9,8 +9,7 @@
         <!-- Left Side - Image Gallery -->
         <div class="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4">
             {% for img in prod.images.all %}
-            <input type="radio" name="product-image" id="img{{ forloop.counter }}" class="image-radio" 
-            {% if forloop.first %}checked{% endif %}>
+            <input type="radio" name="product-image" id="img{{ forloop.counter }}" class="image-radio" {% if forloop.first %}checked{% endif %}>
 
             {% endfor %}
 
@@ -39,7 +38,8 @@
             <nav class="flex mb-4" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3">
                     <li class="inline-flex items-center">
-                        <a href="{% url 'all_products' %}" class="text-sm font-medium text-gray-700 hover:text-blue-600">
+                        <a href="{% url 'all_products' %}"
+                            class="text-sm font-medium text-gray-700 hover:text-blue-600">
                             Products
                         </a>
                     </li>
@@ -50,7 +50,8 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M1 9L5 5 1 1" />
                             </svg>
-                            <a href="#" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600">{{prod.category.name}}</a>
+                            <a href="#"
+                                class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600">{{prod.category.name}}</a>
                         </div>
                     </li>
                     <li aria-current="page">
@@ -60,7 +61,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M1 9L5 5 1 1" />
                             </svg>
-                                <span class="ml-1 text-sm font-medium text-gray-500">{{prod.name}}</span>
+                            <span class="ml-1 text-sm font-medium text-gray-500">{{prod.name}}</span>
                         </div>
                     </li>
                 </ol>
@@ -72,12 +73,14 @@
             <div class="flex flex-wrap gap-2 mb-6">
 
                 {% for v in variants %}
-                <input type="radio" name="weight" id="{{v.id}}" class="peer/{{v.id}} hidden" 
-                {% if forloop.first %}checked{% endif %}>
+                <input type="radio" name="weight" id="{{v.id}}" class="peer/{{v.id}} hidden" {% if forloop.first %}checked{% endif %}>
                 <label for="{{v.id}}"
                     class="cursor-pointer px-3 sm:px-4 py-2 border-2 border-gray-300 peer-checked/{{v.id}}:border-orange-600 peer-checked/250:bg-orange-50 peer-checked/{{v.id}}:text-orange-600 text-gray-600 rounded-lg font-semibold text-sm hover:border-orange-600 hover:text-orange-600 transition"
-                    hx-get="{% url 'weight_price' v.id %}" hx-target="#weight-measurment"
-                    hx-swap="innerHTML">{{v.weight}}{{v.unit}}</label>
+                    hx-get="{% url 'weight_price' v.id %}" hx-target="#weight-measurment" hx-swap="innerHTML"
+                    hx-trigger="click">{{v.weight}}{{v.unit}}</label>
+
+                <div hx-get="{% url 'weight_price' v.id %}" hx-target="#review-section"
+                    hx-trigger="click from:label[for='{{v.id}}']" hx-swap="innerHTML"></div>
                 {% endfor %}
 
             </div>
@@ -87,7 +90,7 @@
                 {% include 'partial_detail.html' with variant=first %}
             </div>
 
-            
+
 
             <!-- Product Tags -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-6 border-t border-gray-200">
@@ -131,82 +134,64 @@
         <p class="text-sm sm:text-base text-gray-600 leading-relaxed">{{prod.description}}</p>
     </div>
 
-    <!-- Reviews Section -->
-    <!-- <div class="bg-white rounded-xl lg:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-10 mt-6 sm:mt-8">
-        <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Reviews</h2>
 
-      
-        <div class="border-b border-gray-200 pb-4 sm:pb-6 mb-4 sm:mb-6">
-            <div class="flex items-start gap-3 sm:gap-4">
-                <div class="flex-1 min-w-0">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-1 sm:gap-0">
-                        <h3 class="font-semibold text-gray-800 text-sm sm:text-base">John</h3>
-                        <div class="flex items-center gap-1">
-                            <i class="fas fa-star text-yellow-400 text-xs"></i>
-                            <i class="fas fa-star text-yellow-400 text-xs"></i>
-                            <i class="fas fa-star text-yellow-400 text-xs"></i>
-                            <i class="fas fa-star text-yellow-400 text-xs"></i>
-                            <i class="fas fa-star text-yellow-400 text-xs"></i>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 text-xs sm:text-sm mb-3">Good packing</p>
-                    <img src="" alt="Review Image" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover">
-                </div>
-            </div>
+    <!-- Review section -->
+
+    <div id="review-section">
+        {% include 'partial_review.html' with reviews=reviews %}
+    </div>
+
+
+    </div>
+
+
+    {% if related_products %}
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <div class="flex justify-between items-center border-b pb-4 mt-3">
+            <h2 class="text-2xl font-semibold ">RELATED PRODUCTS THAT YOU MIGHT LIKE</h2>
         </div>
 
-       
-        <button class="text-orange-600 hover:text-orange-700 font-semibold text-sm sm:text-base">
-            <i class="fas fa-plus-circle mr-2"></i>Write a Review
-        </button>
-    </div> -->
+        <!-- Products Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-12 mt-4">
 
-{% if related_products %}
+            {% for related_p in related_products %}
+            <a href="{% url 'product_details' related_p.id %}"
+                class="product-card bg-white rounded-xl shadow-md overflow-hidden relative group fade-in">
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-    <div class="flex justify-between items-center border-b pb-4 mt-3">
-        <h2 class="text-2xl font-semibold ">RELATED PRODUCTS THAT YOU MIGHT LIKE</h2>
-    </div>
-
-    <!-- Products Grid -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-12 mt-4">
-
-        {% for related_p in related_products %}
-        <a href="{% url 'product_details' related_p.id %}"
-            class="product-card bg-white rounded-xl shadow-md overflow-hidden relative group fade-in">
-
-            <!-- Product Image -->
-            <div class="aspect-square bg-gray-100 overflow-hidden">
-                {% for img in related_p.images.all %}
-                <img src="{{img.image.url}}" alt="" class="product-image w-full h-full object-cover">
-                {% endfor %}
-            </div>
-
-            <!-- Product Info -->
-            <div class="p-4">
-                <h3 class="text-sm font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[40px]">{{related_p.name}}</h3>
-
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-gray-500 mb-1">From</p>
-                        <p class="text-lg font-bold text-orange-600">
-                            {% if related_p.variants.all %}
-                            <span class="text-xs font-normal text-gray-500">Rs. {{related_p.variants.all.0.price}}</span>
-                            {% endif %}
-                        </p>
-                    </div>
-
+                <!-- Product Image -->
+                <div class="aspect-square bg-gray-100 overflow-hidden">
+                    {% for img in related_p.images.all %}
+                    <img src="{{img.image.url}}" alt="" class="product-image w-full h-full object-cover">
+                    {% endfor %}
                 </div>
-            </div>
-        </a>
-        {% endfor %}
 
-    </div>
-</main>
+                <!-- Product Info -->
+                <div class="p-4">
+                    <h3 class="text-sm font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[40px]">{{related_p.name}}
+                    </h3>
 
-{% endif %}
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">From</p>
+                            <p class="text-lg font-bold text-orange-600">
+                                {% if related_p.variants.all %}
+                                <span class="text-xs font-normal text-gray-500">Rs.
+                                    {{related_p.variants.all.0.price}}</span>
+                                {% endif %}
+                            </p>
+                        </div>
 
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+
+        </div>
+    </main>
+
+    {% endif %}
 
 
     <!-- Why Choose Us Section -->

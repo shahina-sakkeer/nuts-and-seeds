@@ -1,12 +1,12 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.urls import reverse
-from .forms import UserRegistrationForm,UserLoginForm,UserAddressForm,UserProfileForm,OrderReturnForm
+from .forms import UserRegistrationForm,UserLoginForm,UserAddressForm,UserProfileForm,OrderReturnForm,ReviewForm
 import random
 from django.core.mail import send_mail
 from django.core.cache import cache
 from django.views.decorators.cache import cache_control,never_cache
 from django.contrib import messages
-from .models import CustomUser,UserAddress,Cart,CartItem,Orders,OrderItem,Wallet,WalletTransaction,OrderReturn,Wishlist,WishlistItem,Referral
+from .models import CustomUser,UserAddress,Cart,CartItem,Orders,OrderItem,Wallet,WalletTransaction,OrderReturn,Wishlist,WishlistItem,Referral,Review
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
 from admin_app.models import Products,Category,ProductVariant,Coupon,CouponUsage,Banner
 from django.db.models import Q,Min,Max,F,Sum
@@ -384,6 +384,7 @@ def add_to_wishlist(request,id):
     if existing_item:
         WishlistItem.objects.filter(wishlist=wishlist,product__in=product_variants).delete()
         in_wishlist = False
+        
 
     else:
         WishlistItem.objects.create(wishlist=wishlist, product=variant)
@@ -406,7 +407,9 @@ def remove_from_wishlist(request,id):
 @login_required(login_url='/user/login/')
 def productDetail(request,id=id):
     product=get_object_or_404(Products,id=id)
+    variant=product.variants.first()
     related_products=Products.objects.filter(category=product.category).exclude(id=product.id)
+    reviews=Review.objects.filter(product=variant).all()
     variants=list(product.variants.all())
 
     for variant in variants:
@@ -414,15 +417,20 @@ def productDetail(request,id=id):
         
     first_variant=variants[0] if variants else None
 
-    return render(request,"product_detail.html",{"prod":product,"first":first_variant,"variants":variants,"related_products":related_products})
+    return render(request,"product_detail.html",{"prod":product,"first":first_variant,"variants":variants,"related_products":related_products,"reviews":reviews})
 
 #PARTAIL PRODUCT VARIANT
 @never_cache
 @login_required(login_url='/user/login/')
 def weightFilter(request,id):
     product_variant=get_object_or_404(ProductVariant,id=id)
+    reviews=Review.objects.filter(product=product_variant)
 
     product_variant.final_price,product_variant.discount_percent=get_offer_price(product_variant)
+
+    target=request.headers.get("HX-Target")
+    if target == "review-section":
+        return render(request,"partial_review.html",{"reviews":reviews})
 
     return render(request,"partial_detail.html",{"variant":product_variant})
 
@@ -1541,6 +1549,30 @@ def wallet_verify_payment(request):
 
         except Exception as e:
             return JsonResponse({"status": "failed", "message": "Unexpected error occurred."})
+
+
+def add_review(request,id):
+    order_item=get_object_or_404(OrderItem,id=id)
+    product=order_item.product
+    user=request.user
+
+    if request.method=="POST":
+        form=ReviewForm(request.POST,request.FILES)
+        
+        if form.is_valid():
+            if order_item.status == "delivered":
+                review=form.save(commit=False)
+                review.user=user
+                review.product=product
+                review.save()
+                messages.success(request,"Thank you for the feedback")
+                return redirect("orderDetail",order_item.order.id)
+
+    else:
+        form=ReviewForm()
+
+    return render(request,"review/add_review.html",{"form":form,"product":product})
+        
         
 
 def about(request):
