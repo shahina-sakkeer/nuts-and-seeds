@@ -21,6 +21,7 @@ from django.utils import timezone
 from decimal import Decimal
 from user_app.helpers import checkout_access, get_offer_price
 from django.core.signing import TimestampSigner,BadSignature,SignatureExpired
+from django.core.paginator import Paginator
 
 signer = TimestampSigner()
 
@@ -178,7 +179,6 @@ def resend_otp(request):
       
 
 #USER LOGIN#
-
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def signin(request):
     if request.user.is_authenticated:
@@ -320,7 +320,9 @@ def products_by_category(request,id):
     category=get_object_or_404(Category,id=id)
     products=Products.objects.filter(category=category).prefetch_related("variants").all()
 
-    return render(request,"products_by_catg.html",{"products":products})
+    wishlist_items = set(WishlistItem.objects.filter(wishlist__user=request.user).values_list('product_id', flat=True))
+
+    return render(request,"products_by_catg.html",{"products":products,"wishlist_items":wishlist_items})
 
 
 #LISTING ALL PRODUCTS
@@ -332,12 +334,23 @@ def list_products(request):
 
     wishlist_items = set(WishlistItem.objects.filter(wishlist__user=request.user).values_list('product_id', flat=True))
 
-    for product in products:
+    paginator=Paginator(products,8)
+    page_number=request.GET.get("page")
+    page_obj=paginator.get_page(page_number)
+
+    for product in page_obj:
+        lowest_variant=None
+
         for variant in product.variants.all():
             variant.final_price,variant.discount_percent=get_offer_price(variant)
-            variant.in_user_wishlist = variant.id in wishlist_items
+
+            if lowest_variant is None or variant.final_price < lowest_variant.final_price:
+                lowest_variant = variant
+
+            product.lowest_variant = lowest_variant
+            lowest_variant.in_user_wishlist = lowest_variant.id in wishlist_items
     
-    return render(request,"list_by_products.html",{"products":products,"categories":categories,
+    return render(request,"list_by_products.html",{"page_obj":page_obj,"categories":categories,
                                                    "wishlist_items":wishlist_items})
 
 
@@ -369,7 +382,7 @@ def filterProducts(request,id=None):
             elif sort=="price_asc":
                 products=products.annotate(minim_price=Min("variants__price")).order_by("minim_price")
             else:
-                products=products.annotate(maxim_price=Max("variants__price")).order_by("-maxim_price")
+                products=products.annotate(minim_price=Min("variants__price")).order_by("-minim_price")
             
         except ValueError:
             pass
@@ -386,13 +399,23 @@ def filterProducts(request,id=None):
 
 
     wishlist_items = set(WishlistItem.objects.filter(wishlist__user=request.user).values_list('product_id', flat=True))
+
+    paginator=Paginator(products,8)
+    page_number=request.GET.get("page")
+    page_obj=paginator.get_page(page_number)
     
-    for product in products:
+    for product in page_obj:
+        lowest_variant=None
         for variant in product.variants.all():
             variant.final_price,variant.discount_percent=get_offer_price(variant)
-            variant.in_user_wishlist = variant.id in wishlist_items
 
-    return render(request,"partial_filter.html",{"products":products,"wishlist_items":wishlist_items})
+            if lowest_variant is None or variant.final_price < lowest_variant.final_price:
+                lowest_variant = variant
+
+            product.lowest_variant = lowest_variant
+            lowest_variant.in_user_wishlist = lowest_variant.id in wishlist_items
+
+    return render(request,"partial_filter.html",{"page_obj":page_obj,"wishlist_items":wishlist_items})
 
 
 #DISPLAYING ALL WISHLIST PRODUCTS
@@ -703,9 +726,6 @@ def show_cart(request):
         item.discount_percent=discount_percent
         item.row_total=offer_price * item.quantity
         cart_total+=item.row_total
-
-    request.session["checkout_session"]=True
-    request.session["order_placed"] = False
     
     return render(request,"cart/cart.html",{"cart_items":cart_items,"total":cart_total})
 
@@ -744,6 +764,7 @@ def update_quantity(request,id=id):
     for ci in cart_item:
         price,_=get_offer_price(ci.product)
         cart_total+=ci.quantity * price
+
 
     return render(request,"cart/partial_quantity.html",{"product":item,"price":row_total,"total":cart_total})
 
@@ -813,6 +834,9 @@ def add_new_address(request):
 @never_cache
 @login_required(login_url='/user/login/')
 def checkout(request):
+    request.session["checkout_session"]=True
+    request.session["order_placed"]=False
+
     try:
         cart=Cart.objects.get(user=request.user)
 

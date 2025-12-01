@@ -1,67 +1,80 @@
-<!-- Product Grid -->
-{% if products %}
+{% if page_obj %}
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Products Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-    <!-- Product Card  -->
-    {% for p in products %}
+        {% for p in page_obj %}
+        <div class="relative">
 
-    <div class="relative rounded-lg overflow-hidden border border-gray-200 hover:border-orange-500 hover:shadow-xl 
-            transition-all duration-300 transform hover:-translate-y-1">
-
-        <div id="wishlist-btn-{{ p.id }}">
+            <div id="wishlist-btn-{{ p.id }}">
             {% with v=p.variants.all.0 %}
                 {% include "partial_wishlist.html" with product=p variant=v in_wishlist=v.in_user_wishlist %}
             {% endwith %}
-        </div>
-  
-
-        <a href="{% url 'product_details' p.id %}" class="block">
-            {% if p.images.all %}
-            <img src="{{ p.images.all.0.image.url }}" alt="{{p.name}}" class="w-full h-64 object-cover transition-transform duration-500 hover:scale-110">
-            {% endif %}
-        </a>
-
-
-        <div class="p-4">
-            <a href="#" class="block">
-                <h3 class="text-base font-medium text-gray-900 hover:text-orange-600 transition">{{ p.name }}</h3>
-            </a>
-
-            {% if p.variants.all %}
-
-            {% with v=p.variants.all.0 %}
-
-            {% if v.final_price < v.price %} 
-
-            <div class="flex flex-col mt-2">
-                <p class="text-sm text-gray-500 line-through opacity-70">
-                    Rs. {{ v.price }}
-                </p>
-
-                <p class="text-lg font-semibold text-gray-900 mt-1">
-                    Rs. {{ v.final_price|floatformat:2 }}
-                </p>
-
             </div>
 
-            {% if v.discount_percent > 0 %}
-                <span class="text-xs font-semibold text-red-600 bg-red-100 px-2 py-1 rounded">
-                    {{ v.discount_percent|floatformat:0 }}% OFF
-                </span>
-            {% endif %}
-            
-            {% else %}
-            <p class="text-lg font-semibold text-gray-900 mt-2">Rs. {{ v.price }}</p>
+            <!-- Entire card is clickable -->
+            <a href="{% url 'product_details' p.id %}"
+               class="product-card bg-white rounded-xl overflow-hidden block relative group border border-gray-200 
+                      hover:border-orange-500 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
 
-        {% endif %}
-        {% endwith %}
-        {% endif %}
+                <!-- Product Image -->
+                <div class="aspect-square bg-gray-100 overflow-hidden">
+                    {% if p.images.all %}
+                    <img src="{{ p.images.all.0.image.url }}" alt=""
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    {% endif %}
+                </div>
+
+                <!-- Product Info -->
+                <div class="p-4">
+                    <h3 class="text-sm font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[40px]">
+                        {{ p.name }}
+                    </h3>
+
+                    <div class="flex items-center justify-between">
+
+                        {% if p.variants.all %}
+
+                        {% with v=p.lowest_variant %}
+
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">From</p>
+
+                            {% if v.final_price < v.price %}
+                            
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm text-gray-500 line-through opacity-70 whitespace-nowrap">
+                                    Rs. {{ v.price }}
+                                </span>
+
+                                <span class="text-sm font-bold text-orange-600 whitespace-nowrap">
+                                    Rs. {{ v.final_price|floatformat:2 }}
+                                </span>
+                            </div>
+
+                            {% else %}
+                            <span class="text-sm font-bold text-orange-600">
+                                Rs. {{ v.price }}
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% endwith %}
+                        {% endif %}
+
+                    </div>
+                    
+                </div>
+            </a>
+
+        </div>
+        {% endfor %}
 
     </div>
 
-</div>
-{% endfor %}
-</div>
+</main>
 
 {% else %}
 
@@ -69,25 +82,25 @@
 
     <div class="bg-orange-50 border border-orange-200 rounded-2xl p-10 shadow-sm text-center">
 
-        <!-- Icon -->
+     
         <div class="flex justify-center mb-6">
             <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-md border border-orange-300">
                 <i class="fa-solid fa-box-open text-orange-600 text-4xl"></i>
             </div>
         </div>
 
-        <!-- Title -->
+  
         <h2 class="text-3xl font-bold text-orange-700 mb-3">
             No Products Found
         </h2>
 
-        <!-- Message -->
+  
         <p class="text-gray-600 text-lg mb-8">
             We couldn’t find any products that match your search.  
             Try using different keywords or explore our full product list!
         </p>
 
-        <!-- Button -->
+    
         <a href="{% url 'all_products' %}" 
            class="inline-block px-8 py-3 bg-orange-600 text-white font-semibold rounded-lg shadow hover:bg-orange-700 transition">
             Browse All Products
@@ -96,5 +109,99 @@
 
 </div>
 
-
 {% endif %}
+
+
+<!-- pagination -->
+
+{% if page_obj %}
+<div class="flex justify-center mt-8">
+  <div class="inline-flex items-center gap-1 bg-gray-100 rounded-full px-3 py-1 text-sm">
+
+    {# Previous button #}
+    {% if page_obj.has_previous %}
+      <button
+        hx-get="{% url 'filtering' %}?page={{ page_obj.previous_page_number }}"
+        hx-target="#category-product"
+        hx-swap="innerHTML"
+        hx-include="#min-price, #max-price, #sort-option, #category-id"
+        class="px-4 py-1 rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+      >
+        Previous
+      </button>
+    {% else %}
+      <span class="px-4 py-1 rounded-full bg-white border border-gray-200 text-gray-400 cursor-not-allowed">
+        Previous
+      </span>
+    {% endif %}
+
+    {# Page numbers with ellipsis #}
+    {% for num in page_obj.paginator.page_range %}
+      {# Always show first, last, current, and neighbors #}
+      {% if num == page_obj.number %}
+        {# Active page #}
+        <button class="w-8 h-8 rounded-full bg-white shadow text-gray-900 font-semibold flex items-center justify-center"
+          disabled>
+
+          {{ num }}
+
+        </button>
+      {% elif num == 1 or num == page_obj.paginator.num_pages or num >= page_obj.number|add:'-1' and num <= page_obj.number|add:'1' %}
+        <button
+          hx-get="{% url 'filtering' %}?page={{ num }}"
+          hx-target="#category-product"
+          hx-swap="innerHTML"
+          hx-include="#min-price, #max-price, #sort-option, #category-id"
+          class="w-8 h-8 rounded-full text-gray-700 hover:bg-white flex items-center justify-center"
+        >
+          {{ num }}
+        </button>
+      {% elif num == 2 and page_obj.number > 3 %}
+        <span class="px-2 text-gray-400">…</span>
+      {% elif num == page_obj.paginator.num_pages|add:'-1' and page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+        <span class="px-2 text-gray-400">…</span>
+      {% endif %}
+    {% endfor %}
+
+    {# Next button #}
+    {% if page_obj.has_next %}
+      <button
+        hx-get="{% url 'filtering' %}?page={{ page_obj.next_page_number }}"
+        hx-target="#category-product"
+        hx-swap="innerHTML"
+        hx-include="#min-price, #max-price, #sort-option, #category-id"
+        class="px-4 py-1 rounded-full bg-black text-white hover:bg-gray-900"
+      >
+        Next
+      </button>
+    {% else %}
+      <span class="px-4 py-1 rounded-full bg-gray-900/10 text-gray-400 cursor-not-allowed">
+        Next
+      </span>
+    {% endif %}
+
+  </div>
+</div>
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

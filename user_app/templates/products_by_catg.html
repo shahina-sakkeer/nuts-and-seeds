@@ -2,45 +2,83 @@
 
 {% block content %}
 
-<!-- Main Content -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-    <!-- Products Grid -->
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
 
         {% for p in products %}
-        <a href="{% url 'product_details' p.id %}"
-            class="product-card bg-white rounded-xl overflow-hidden relative group border border-gray-200 hover:border-orange-500 
-          hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+        <div class="relative">
 
-            <!-- Product Image -->
-            <div class="aspect-square bg-gray-100 overflow-hidden">
-                {% for img in p.images.all %}
-                <img src="{{img.image.url}}" alt="" class="product-image w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                {% endfor %}
+            <div id="wishlist-btn-{{ p.id }}">
+            {% with v=p.variants.all.0 %}
+                {% include "partial_wishlist.html" with product=p variant=v in_wishlist=v.in_user_wishlist %}
+            {% endwith %}
             </div>
 
-            <!-- Product Info -->
-            <div class="p-4">
-                <h3 class="text-sm font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[40px]">{{p.name}}</h3>
+            <!-- Entire card is clickable -->
+            <a href="{% url 'product_details' p.id %}"
+               class="product-card bg-white rounded-xl overflow-hidden block relative group border border-gray-200 
+                      hover:border-orange-500 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
 
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-gray-500 mb-1">From</p>
-                        <p class="text-lg font-bold text-orange-600">
-                            {% if p.variants.all %}
-                            <span class="text-xs font-normal text-gray-500">Rs. {{p.variants.all.0.price}}</span>
-                            {% endif %}
-                        </p>
-                    </div>
-
+                <!-- Product Image -->
+                <div class="aspect-square bg-gray-100 overflow-hidden">
+                    {% for img in p.images.all %}
+                    <img src="{{ img.image.url }}" alt=""
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    {% endfor %}
                 </div>
-            </div>
-        </a>
+
+                <!-- Product Info -->
+                <div class="p-4">
+                    <h3 class="text-sm font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[40px]">{{p.name}}</h3>
+
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">From</p>
+                            <p class="text-lg font-bold text-orange-600">
+                                {% if p.variants.all %}
+                                <span class="text-lg font-bold text-orange-600">Rs. {{p.variants.all.0.price}}</span>
+                                {% endif %}
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </a>
+
+        </div>
         {% endfor %}
 
     </div>
 
 </main>
 
-    {% endblock %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

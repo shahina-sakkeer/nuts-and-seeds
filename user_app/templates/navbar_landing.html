@@ -232,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <!-- resent otp message display -->
 
 <script>
-    document.getElementById("resend-btn").addEventListener("click", function() {
+    document.getElementById("resendBtn").addEventListener("click", function() {
     fetch("{% url 'resend_otp' %}", {
         method: "POST",
         headers: {
