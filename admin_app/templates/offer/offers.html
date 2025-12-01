@@ -49,6 +49,10 @@
                             
                         <td class="px-6 py-4">
                             <div class="flex items-center space-x-3">
+                                <a href="{% url 'editOfferCatg' cat.id %}">
+                                    <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-pen-to-square"></i></button>
+                                </a>
+
                                 <a href="{% url 'deleteOfferCatg' cat.id %}">
                                     <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-trash"></i></button>
                                 </a>
@@ -93,6 +97,10 @@
                             
                         <td class="px-6 py-4">
                             <div class="flex items-center space-x-3">
+                                <a href="{% url 'editOfferPrdct' prod.id %}">
+                                    <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-pen-to-square"></i></button>
+                                </a>
+
                                 <a href="{% url 'deleteOfferPrdct' prod.id %}">
                                     <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-trash"></i></button>
                                 </a>

@@ -153,6 +153,8 @@ function togglePassword(fieldId, iconId) {
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+
+    const invalidOtp = {{ invalid_otp|yesno:"true,false" }};
     let timeLeft = 60;
     const minutes = document.getElementById("minutes");
     const seconds = document.getElementById("seconds");
@@ -184,7 +186,18 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 1000);
     }
 
-    startTimer();
+    if (!invalidOtp) {
+        startTimer();   
+    } else {
+
+    minutes.innerHTML = "00";
+    seconds.innerHTML = "00";
+
+
+    resendBtn.classList.remove("bg-gray-400", "cursor-not-allowed", "pointer-events-none");
+    resendBtn.classList.add("bg-red-600");
+    }
+
 
     resendBtn.addEventListener("click", function(event) {
         event.preventDefault();

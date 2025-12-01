@@ -493,6 +493,25 @@ def list_coupon(request):
     return render(request,"coupon/list_coupon.html",{"coupons":coupon})
 
 
+#EDIT COUPON
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
+def edit_coupon(request,id):
+    coupon=get_object_or_404(Coupon,id=id)
+
+    if request.method=="POST":
+        form=CouponForm(request.POST,instance=coupon)
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Coupon updated")
+            return redirect("couponList")
+    
+    else:
+        form=CouponForm(instance=coupon)
+
+    return render(request,"coupon/edit_coupon.html",{"form":form,"coupon":coupon})
+
+
 #DELETE COUPON
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
 @staff_required
@@ -540,6 +559,46 @@ def add_product_offer(request):
     else:
         form=ProductOfferForm()
     return render(request,"offer/product_add_offer.html",{"form":form})
+
+
+
+#EDIT CATEGORY OFFER
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
+def edit_category_offer(request,id):
+    category=get_object_or_404(CategoryOffer,id=id)
+
+    if request.method=="POST":
+        form=CategoryOfferForm(request.POST,instance=category)
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Offer updated")
+            return redirect("allOffers")
+    
+    else:
+        form=CategoryOfferForm(instance=category)
+
+    return render(request,"offer/category_edit_offer.html",{"form":form,"category":category})
+
+
+#EDIT PRODUCT OFFER
+@cache_control(no_store=True, no_cache=True, must_revalidate=True)
+@staff_required
+def edit_product_offer(request,id):
+    product=get_object_or_404(ProductOffer,id=id)
+
+    if request.method=="POST":
+        form=ProductOfferForm(request.POST,instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Offer updated")
+            return redirect("allOffers")
+    
+    else:
+        form=ProductOfferForm(instance=product)
+
+    return render(request,"offer/product_edit_offer.html",{"form":form,"product":product})
+    
 
 
 #DELETE CATEGORY OFFER

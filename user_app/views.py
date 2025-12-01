@@ -41,11 +41,29 @@ def register(request):
             user_data["password"]=form.cleaned_data["password"]
 
             otp=random.randint(100000,999999)
-            print(f'otp:{otp}')
+        
             cache.set(f"otp:{user_data['email']}", otp, timeout=60)
             cache.set(f"user_data:{user_data['email']}",user_data,timeout=300)
 
-            send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[user_data['email']])
+            message=f"""
+            Hi {user_data.get('firstname', '')},
+
+            Thank you for registering with Nuts & Seeds Market!
+
+            Your One-Time Password (OTP) for completing your account verification is:
+
+            OTP: {otp}
+
+            This OTP is valid for 1 minute.  
+            Please enter it on the verification page to activate your account.
+
+            If you didn’t request this, you can safely ignore this email.
+
+            Best regards,
+            Nuts & Seeds Market Team
+            """
+
+            send_mail("Verify you email", message, "shahinabinthsakkeer@gmail.com",[user_data['email']])
             messages.success(request,"otp send to the email")
             request.session["pending_email"] = user_data['email']
             request.session["code"]=user_data['referral_code']
@@ -116,9 +134,9 @@ def verify_otp(request):
             return redirect("signin")
         else:
             messages.error(request,"Invalid or expired OTP.")
-            return redirect("verify_otp")
+            return render(request,"verify_otp.html",{"email":email,"invalid_otp":True})
         
-    return render(request,"verify_otp.html",{"email":email})
+    return render(request,"verify_otp.html",{"email":email, "invalid_otp":False})
 
 #RESEND OTP#
 def resend_otp(request):
@@ -136,8 +154,26 @@ def resend_otp(request):
 
         otp=random.randint(100000,999999)
         cache.set(f"otp:{email}", otp, timeout=60)
-        cache.set(f"user_data:{user_data['email']}",user_data,timeout=300)
-        send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[email])
+        cache.set(f"user_data:{'email'}",user_data,timeout=300)
+        message=f"""
+            Hi {user_data.get('firstname', '')},
+
+            Thank you for registering with Nuts & Seeds Market!
+
+            Your One-Time Password (OTP) for completing your account verification is:
+
+            OTP: {otp}
+
+            This OTP is valid for 1 minute.  
+            Please enter it on the verification page to activate your account.
+
+            If you didn’t request this, you can safely ignore this email.
+
+            Best regards,
+            Nuts & Seeds Market Team
+            """
+        
+        send_mail("Verfiy your email", message, "shahinabinthsakkeer@gmail.com",[email])
         return JsonResponse({"success": True, "message": "OTP resent successfully"})
       
 
@@ -364,9 +400,9 @@ def wishlist_list(request):
     wishlist=Wishlist.objects.filter(user=request.user).first()
     wishlist_items=WishlistItem.objects.filter(wishlist=wishlist).select_related('product','product__product').prefetch_related('product__product__images').order_by("-id")
 
-    # for item in wishlist_items:
-    #     variant=item.product
-    #     variant.final_price,variant.discount_percent=get_offer_price(variant)
+    for item in wishlist_items:
+        variant=item.product
+        variant.final_price,variant.discount_percent=get_offer_price(variant)
 
     return render(request,"wishlist/wishlist.html",{"items":wishlist_items})
 
@@ -398,7 +434,8 @@ def remove_from_wishlist(request,id):
     item=get_object_or_404(WishlistItem,id=id)
     if request.method=="POST":
         item.delete()
-        return redirect("addWishlist")
+        messages.success(request,"Removed from wishlist")
+        return redirect("allWishlist")
 
 
 
@@ -408,8 +445,11 @@ def remove_from_wishlist(request,id):
 def productDetail(request,id=id):
     product=get_object_or_404(Products,id=id)
     variant=product.variants.first()
+
     related_products=Products.objects.filter(category=product.category).exclude(id=product.id)
     reviews=Review.objects.filter(product=variant).all()
+    wishlist_items = set(WishlistItem.objects.filter(wishlist__user=request.user).values_list('product_id', flat=True))
+
     variants=list(product.variants.all())
 
     for variant in variants:
@@ -417,7 +457,8 @@ def productDetail(request,id=id):
         
     first_variant=variants[0] if variants else None
 
-    return render(request,"product_detail.html",{"prod":product,"first":first_variant,"variants":variants,"related_products":related_products,"reviews":reviews})
+    return render(request,"product_detail.html",{"prod":product,"first":first_variant,"variants":variants,
+                                                 "related_products":related_products,"reviews":reviews,"wishlist_items":wishlist_items})
 
 #PARTAIL PRODUCT VARIANT
 @never_cache
@@ -611,38 +652,40 @@ def edit_password(request):
 def add_to_cart(request,id):
     product=get_object_or_404(ProductVariant,id=id)
 
-    variant=ProductVariant.objects.filter(product=product.product)
-    wishlist,created=Wishlist.objects.get_or_create(user=request.user)
+    if request.method=="POST":
 
-    item=WishlistItem.objects.filter(wishlist=wishlist,product__in=variant)
+        variant=ProductVariant.objects.filter(product=product.product)
+        wishlist,created=Wishlist.objects.get_or_create(user=request.user)
 
-    offer_price,discount_percent=get_offer_price(product)
+        item=WishlistItem.objects.filter(wishlist=wishlist,product__in=variant)
 
-    try:
-        cart=Cart.objects.get(user=request.user)
+        offer_price,discount_percent=get_offer_price(product)
 
-    except Cart.DoesNotExist:
-        cart=Cart.objects.create(user=request.user)
+        try:
+            cart=Cart.objects.get(user=request.user)
 
-    # this is a queyset of cartitem model
-    # this cartitem is taking only first object from queryset
-    cart_item=CartItem.objects.filter(cart=cart,product=product).first()
-    if cart_item:
-        cart_item.quantity=cart_item.quantity+1
-        product.quantity_stock-=1
+        except Cart.DoesNotExist:
+            cart=Cart.objects.create(user=request.user)
 
-        cart_item.save()
-        product.save()
-        messages.success(request,"Product incremented")
-        return redirect("product_details",product.product.id)
+        # this is a queyset of cartitem model
+        # this cartitem is taking only first object from queryset
+        cart_item=CartItem.objects.filter(cart=cart,product=product).first()
+        if cart_item:
+            cart_item.quantity=cart_item.quantity+1
+            product.quantity_stock-=1
 
-    else:
-        cart_item=CartItem.objects.create(cart=cart,product=product,quantity=1)
-        product.quantity_stock-=1
-        product.save()
-        item.delete()
-        messages.success(request,"Product added to cart")
-        return redirect("product_details",product.product.id)
+            cart_item.save()
+            product.save()
+            messages.success(request,"Product incremented")
+            return redirect("product_details",product.product.id)
+
+        else:
+            cart_item=CartItem.objects.create(cart=cart,product=product,quantity=1)
+            product.quantity_stock-=1
+            product.save()
+            item.delete()
+            messages.success(request,"Product added to cart")
+            return redirect("product_details",product.product.id)
 
 
 #SHOW CART
@@ -872,7 +915,7 @@ def checkout(request):
                     # the getted session is deleted 
                     request.session.pop("coupon_data",None)
 
-                    messages.success(request,"Order placed successfully.")
+                    messages.success(request,"Order placed successfully.Thank you")
                     return redirect("orderSuccess",id=order.id)
 
  
@@ -989,7 +1032,7 @@ def checkout(request):
                         # the getted session is deleted 
                         request.session.pop("coupon_data",None)
 
-                        messages.success(request,"Order placed successfully.")
+                        messages.success(request,"Order placed successfully. Thank you")
                         return redirect("orderSuccess",id=order.id)
 
                 else:
@@ -1072,7 +1115,7 @@ def partial_coupon(request):
 @never_cache
 @login_required(login_url='/user/login/')
 def partial_coupon_list(request):
-    coupons=Coupon.objects.all()
+    coupons=Coupon.objects.filter(end_date__gt=timezone.now()).all()
     return render(request,"checkout/partial_coupon_list.html",{"coupons":coupons})
     
 

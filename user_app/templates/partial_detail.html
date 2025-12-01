@@ -28,12 +28,16 @@
 </div>
 
 
-<!-- Add to Cart & Buy Now -->
-<div class="flex flex-col sm:flex-row gap-3 mb-6 sm:mb-8">
-    <a href="{% url 'addToCart' variant.id %}"
-        class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 sm:py-4 rounded-lg transition transform hover:scale-[1.02] shadow-lg text-center text-sm sm:text-base">
-        <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
-    </a>
+<!-- Add to Cart-->
+<div class="w-full mb-6 sm:mb-8">
+    <form action="{% url 'addToCart' variant.id %}" method="post">
+        {% csrf_token %}
+         <button type="submit"
+            class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 sm:py-4 rounded-lg 
+                   transition transform hover:scale-[1.02] shadow-lg text-center text-sm sm:text-base">
+                <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+        </button>
+    </form>
 
 </div>
 

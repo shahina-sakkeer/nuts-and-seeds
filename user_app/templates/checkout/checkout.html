@@ -170,11 +170,21 @@
 
                             <!-- Cash on Delivery -->
                             <label
-                                class="flex items-center border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-green-500 transition">
-                                <input type="radio" name="payment_method" value="cod" onclick="selectPayment('cod')"
-                                    class="w-4 h-4 text-green-600 focus:ring-green-500" checked />
-                                <span class="ml-3 text-gray-700 font-medium">Cash on Delivery</span>
+                                class="flex items-center border border-gray-300 rounded-lg p-3 cursor-pointer
+                                    {% if totalprice > 1000 %}opacity-50 cursor-not-allowed{% else %}hover:border-green-500{% endif %} transition">
+
+                                <input type="radio" name="payment_method" value="cod" onclick="selectPayment('cod')" 
+                                    
+                                {% if totalprice > 1000 %} disabled {% else %} checked {% endif %}
+
+                                    class="w-4 h-4 text-green-600 focus:ring-green-500" />
+
+                                <span class="ml-3 text-gray-700 font-medium">
+                                    Cash on Delivery
+                                    {% if totalprice > 1000 %} <span class="text-red-500 text-sm">(Not available for orders above Rs. 1000)</span> {% endif %}
+                                </span>
                             </label>
+
                         </div>
 
                     </div>

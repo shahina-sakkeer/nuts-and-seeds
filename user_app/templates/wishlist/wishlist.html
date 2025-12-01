@@ -2,7 +2,6 @@
 {% load static %}
 {% block content %}
 
-<!-- Main Content -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     {% if items %}
@@ -10,66 +9,133 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
 
         {% for item in items %}
-        <a href="{% url 'product_details' item.product.product.id %}"
-            class="product-card bg-white rounded-xl overflow-hidden relative group border border-gray-200 hover:border-orange-500 
-          hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+        <div class="relative">
 
-            <!-- Product Image -->
-            <div class="aspect-square bg-gray-100 overflow-hidden">
-                {% if item.product.product.images.all %}
-                <img src="{{ item.product.product.images.all.0.image.url }}" alt="" class="product-image w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                {% endif %}
-            </div>
+            <!-- Delete icon (outside the <a>) -->
+            <button 
+                data-bs-toggle="modal" 
+                data-bs-target="#deleteModal{{ item.id }}"
+                class="absolute top-3 right-3 z-20 w-10 h-10 bg-white border border-gray-200 rounded-xl 
+                       shadow-sm flex items-center justify-center hover:border-red-500 hover:text-red-500 transition"
+            >
+                <i class="fa-solid fa-trash text-gray-500"></i>
+            </button>
 
-            <!-- Product Info -->
-            <div class="p-4">
-                <h3 class="text-sm font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[40px]">{{ item.product.product.name }}</h3>
+            <!-- Entire card is clickable -->
+            <a href="{% url 'product_details' item.product.product.id %}"
+               class="product-card bg-white rounded-xl overflow-hidden block relative group border border-gray-200 
+                      hover:border-orange-500 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
 
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-gray-500 mb-1">From</p>
-                        <p class="text-lg font-bold text-orange-600">
-                            {% if item.product.product.variants.all %}
-                            <span class="text-xs font-normal text-gray-500">Rs. {{item.product.product.variants.all.0.price}}</span>
+                <!-- Product Image -->
+                <div class="aspect-square bg-gray-100 overflow-hidden">
+                    {% if item.product.product.images.all %}
+                    <img src="{{ item.product.product.images.all.0.image.url }}" alt=""
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    {% endif %}
+                </div>
+
+                <!-- Product Info -->
+                <div class="p-4">
+                    <h3 class="text-sm font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[40px]">
+                        {{ item.product.product.name }}
+                    </h3>
+
+                    <div class="flex items-center justify-between">
+
+                        {% if item.product.product.variants.all %}
+
+                        {% with v=item.product %}
+
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">From</p>
+
+                            {% if v.final_price < v.price %}
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm text-gray-500 line-through opacity-70">
+                                    Rs. {{ v.price }}
+                                </span>
+
+                                <span class="text-lg font-bold text-orange-600">
+                                    Rs. {{ v.final_price|floatformat:2 }}
+                                </span>
+                            </div>
+
+                            {% else %}
+                            <span class="text-lg font-bold text-orange-600">
+                                Rs. {{ v.price }}
+                            </span>
+
                             {% endif %}
-                        </p>
+
+                        </div>
+
+                        {% endwith %}
+                        {% endif %}
+
                     </div>
+                    
+                    <form action="{% url 'addToCart' item.product.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold 
+                                    py-2.5 sm:py-3 rounded-lg transition transform hover:scale-[1.02] 
+                                    shadow-md text-sm mt-3">
+                                <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+                        </button>
+                    </form>
 
                 </div>
+
+
+            </a>
+
+            <!-- Delete Modal -->
+            <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title">Confirm Delete</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">Are you sure you want to remove this item?</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form method="POST" action="{% url 'removeWishlist' item.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </a>
+
+        </div>
         {% endfor %}
 
     </div>
 
-   {% else %} 
 
+    {% else %}
 
+    <!-- Empty Wishlist Section -->
+    <div class="min-h-[70vh] flex flex-col items-center justify-center text-center px-6">
+        <div class="relative mb-6">
+            <img src="{% static 'images/wishlist.webp' %}" alt="Wishlist background" class="w-72">
+        </div>
 
-<div class="min-h-[70vh] flex flex-col items-center justify-center text-center px-6">
+        <h1 class="text-3xl font-semibold text-gray-800">
+            Your wishlist is <span class="text-red-600 font-bold">Empty!</span>
+        </h1>
 
-    <!-- Background Icon -->
-    <div class="relative mb-6">
-        <img src="{% static 'images/wishlist.webp' %}" 
-             alt="Wishlist background"
-             class="w-72">
+        <a href="{% url 'all_products' %}"
+           class="inline-flex items-center mt-6 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full shadow-md">
+            RETURN TO SHOP
+        </a>
     </div>
 
-    <!-- Heading -->
-    <h1 class="text-3xl font-semibold text-gray-800">
-      Your wishlist is <span class="text-red-600 font-bold">Empty!</span>
-  </h1>
+    {% endif %}
+</main>
 
-
-    <!-- Button -->
-    <a href="{% url 'all_products' %}" 
-     class="inline-flex items-center mt-6 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full shadow-md">
-      RETURN TO SHOP
-  </a>
-
-</div>
-
-{% endif %}
 
 {% endblock %}
 

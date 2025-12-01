@@ -1,0 +1,93 @@
+{% extends 'navbar.html' %}
+{% block content %}
+
+<!-- Main Content Area -->
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header Section -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <nav class="flex mb-4" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="{% url 'allOffers' %}" class="text-sm font-medium text-gray-700 hover:text-blue-600">
+                            Category Offer
+                        </a>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <svg class="w-3 h-3 text-gray-400 mx-1" fill="none" stroke="currentColor"
+                                viewBox="0 0 6 10">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M1 9L5 5 1 1" />
+                            </svg>
+                            <span class="ml-1 text-sm font-medium text-gray-500">Add Product Offer</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+            <h1 class="text-2xl font-bold text-gray-900">Add Product Offer</h1>
+        </div>
+    </div>
+
+    <!-- Form Container -->
+    <form class="space-y-6" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="bg-white rounded-lg shadow-sm p-6">
+
+        <!-- Two-column grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+           
+            <div>
+                <label for="product" class="block text-sm font-medium text-gray-700 mb-2">Product</label>
+                {{ form.product }}
+            </div>
+
+           
+            <div>
+                <label for="offer_percentage" class="block text-sm font-medium text-gray-700 mb-2">Discount Value</label>
+                {{ form.offer_percentage }}
+                {% for error in form.offer_percentage.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <!-- Start Date -->
+            <div>
+                <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                {{ form.start_date }}
+                {% for error in form.start_date.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <!-- End Date -->
+            <div>
+                <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+                {{ form.end_date }}
+                {% for error in form.end_date.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div>
+                <label for="Is Active" class="block text-sm font-medium text-gray-700 mb-2">Is Active</label>
+                {{form.is_active}}
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="mt-6">
+            <button type="submit"
+                class="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                Submit
+            </button>
+        </div>
+    </div>
+</form>
+</div>
+
+{% endblock %}
+
