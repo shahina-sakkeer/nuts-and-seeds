@@ -46,7 +46,6 @@
             transform: scale(1.5);
         }
 
-        /* Image switcher using CSS radio buttons */
         .image-radio {
             display: none;
         }
@@ -77,11 +76,11 @@
 
         .sparkle {
             position: absolute;
-            background-color: gold; /* Or any color for your sparkles */
+            background-color: gold; 
             border-radius: 50%;
             opacity: 0;
             animation: sparkle-fade-out 0.8s forwards;
-            pointer-events: none; /* Allows clicks to pass through sparkles */
+            pointer-events: none; 
             }
 
             @keyframes sparkle-fade-out {
@@ -90,7 +89,7 @@
                 opacity: 1;
             }
             100% {
-                transform: scale(1.5) translateY(-20px); /* Adjust for desired movement */
+                transform: scale(1.5) translateY(-20px); 
                 opacity: 0;
             }
             }
@@ -112,7 +111,7 @@
                     <a href="{% url 'home' %}" class="text-orange-600 font-medium hover:text-orange-700 transition">Home</a>
                     <a href="{% url 'all_products' %}" class="text-gray-600 hover:text-orange-600 transition">Products</a>
                     <a href="{% url 'aboutUs' %}" class="text-gray-600 hover:text-orange-600 transition">About Us</a>
-                    <a href="#" class="text-gray-600 hover:text-orange-600 transition">Contact</a>
+                    <a href="" class="text-gray-600 hover:text-orange-600 transition">Contact</a>
                 </div>
 
                 <!-- Right Side Icons -->

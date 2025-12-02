@@ -209,13 +209,11 @@ def signin(request):
 
     return render(request,"user_signin.html",{"form":form})
 
-#FORGOT PASSWORD#
 
+#FORGOT PASSWORD#
 @cache_control(no_store=True, no_cache=True, must_revalidate=True)
 def forgot_password(request):
-    # if request.session.get("reset_email"):
-    #     return redirect("forgot_password_otp")
-    
+
     if request.method=="POST":
         email=request.POST.get("email")
 
@@ -321,6 +319,10 @@ def products_by_category(request,id):
     products=Products.objects.filter(category=category).prefetch_related("variants").all()
 
     wishlist_items = set(WishlistItem.objects.filter(wishlist__user=request.user).values_list('product_id', flat=True))
+
+    for product in products:
+        for variant in product.variants.all():
+            variant.in_user_wishlist = variant.id in wishlist_items
 
     return render(request,"products_by_catg.html",{"products":products,"wishlist_items":wishlist_items})
 
@@ -477,6 +479,7 @@ def productDetail(request,id=id):
 
     for variant in variants:
         variant.final_price,variant.discount_percent=get_offer_price(variant)
+        variant.in_user_wishlist = variant.id in wishlist_items
         
     first_variant=variants[0] if variants else None
 
