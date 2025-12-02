@@ -85,12 +85,14 @@
 
           <!-- Checkout Button -->
           <div class="sticky bottom-0 bg-white pt-4">
-            <a href="{% url 'checkOut' %}">
-              <button class="w-full lg:w-auto lg:float-right bg-orange-600 hover:bg-orange-700 text-white
-                             font-bold py-3 px-12 rounded-lg transition shadow-md">
-                CHECKOUT
-              </button>
-            </a>
+            <form method="post" action="{% url 'showCart' %}">
+                {% csrf_token %}
+                <button type="submit"
+                    class="w-full lg:w-auto lg:float-right bg-orange-600 hover:bg-orange-700 text-white
+                          font-bold py-3 px-12 rounded-lg transition shadow-md">
+                    CHECKOUT
+                </button>
+            </form>
           </div>
 
         </div>

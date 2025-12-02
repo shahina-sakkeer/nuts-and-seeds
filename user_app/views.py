@@ -729,6 +729,17 @@ def show_cart(request):
         item.discount_percent=discount_percent
         item.row_total=offer_price * item.quantity
         cart_total+=item.row_total
+
+    if request.method == "POST":
+        if not cart_items:
+            messages.error(request, "Your cart is empty.")
+            return redirect("showCart")
+
+        request.session["checkout_session"]=True
+        request.session["order_placed"]=False
+
+        return redirect("checkOut")
+
     
     return render(request,"cart/cart.html",{"cart_items":cart_items,"total":cart_total})
 
@@ -837,9 +848,6 @@ def add_new_address(request):
 @never_cache
 @login_required(login_url='/user/login/')
 def checkout(request):
-    request.session["checkout_session"]=True
-    request.session["order_placed"]=False
-
     try:
         cart=Cart.objects.get(user=request.user)
 
