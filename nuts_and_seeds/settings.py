@@ -212,6 +212,8 @@ RAZORPAY = {
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "https://nuts-and-seeds.store",
+    "https://www.nuts-and-seeds.store",
 ]
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
