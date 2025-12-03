@@ -308,7 +308,9 @@ def signout(request):
 def landing(request):
     categories=Category.objects.all().order_by("-id")
     products=Products.objects.all().order_by("-id")
-    return render(request,"landing.html",{"products":products,"category":categories})
+
+    banner=Banner.objects.all()
+    return render(request,"landing.html",{"products":products,"category":categories,"banner":banner})
 
 
 #LIST CATEGORY PRODUCTS

@@ -44,7 +44,7 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     email=models.EmailField(unique=True)
     firstname=models.CharField(max_length=100)
     lastname=models.CharField(max_length=100,blank=True)
-    phone_number=models.CharField(max_length=15,unique=True)
+    phone_number=models.CharField(max_length=15,null=True, blank=True)
     referralID=models.CharField(unique=True,blank=True,null=True)
     referred_by=models.ForeignKey('self',related_name='referrals',null=True,blank=True,on_delete=models.SET_NULL)
     is_active=models.BooleanField(default=True)
