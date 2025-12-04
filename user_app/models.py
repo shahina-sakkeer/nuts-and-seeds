@@ -57,7 +57,7 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     objects=CustomUserManager()
 
     USERNAME_FIELD="email"
-    REQUIRED_FIELDS=["firstname","phone_number"]
+    REQUIRED_FIELDS=[]
 
     def __str__(self):
         return self.email
@@ -69,8 +69,10 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
         if self.phone_number and not phone_pattern.match(self.phone_number):
             raise ValidationError({"phone_number": "Invalid phone number format."})
         
-        if CustomUser.objects.filter(phone_number=self.phone_number).exclude(id=self.id).exists():
-            raise ValidationError({"phone_number": "Phone number already exists."})
+        if self.phone_number:
+            if CustomUser.objects.filter(phone_number=self.phone_number).exclude(id=self.id).exists():
+                raise ValidationError({"phone_number": "Phone number already exists."})
+
         
         
 
