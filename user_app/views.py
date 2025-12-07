@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render,redirect,get_object_or_404
 from django.urls import reverse
 from .forms import UserRegistrationForm,UserLoginForm,UserAddressForm,UserProfileForm,OrderReturnForm,ReviewForm
@@ -46,6 +47,9 @@ def register(request):
             cache.set(f"otp:{user_data['email']}", otp, timeout=60)
             cache.set(f"user_data:{user_data['email']}",user_data,timeout=300)
 
+            expiry_time=timezone.now() + datetime.timedelta(seconds=60)
+            cache.set(f"otp_expiry:{user_data['email']}", expiry_time, 60)
+
             message=f"""
             Hi {user_data.get('firstname', '')},
 
@@ -85,6 +89,15 @@ def verify_otp(request):
     if not email:
         return redirect("signin")
     
+
+    expiry_time = cache.get(f"otp_expiry:{email}")
+    remaining_seconds=0
+
+    if expiry_time:
+        now = timezone.now()
+        diff = expiry_time - now
+        remaining_seconds = max(int(diff.total_seconds()), 0)
+
     if request.method=="POST":
         entered_otp=request.POST.get('otp')
         cached_otp = cache.get(f"otp:{email}")
@@ -98,15 +111,7 @@ def verify_otp(request):
                 
                 referrer=None
                 if code:
-                    referrer=CustomUser.objects.filter(referralID=code).first()
-
-                    if not referrer:
-                        messages.error(request,"Invalid referral code")
-
-                    else:
-                        if (referrer.email==user_data['email']) or (referrer.phone_number==user_data['phone_number']):
-                            messages.error(request,"You cannot use your own referral code")
-                            referrer=None                  
+                    referrer=CustomUser.objects.filter(referralID=code).first()             
                 
                 user=CustomUser.objects.create_user(email=user_data['email'],phone_number=user_data['phone_number'],
                                             firstname=user_data['firstname'],lastname=user_data['lastname'],
@@ -116,12 +121,12 @@ def verify_otp(request):
 
                 if referrer:
                     user.referred_by=referrer
-                user.save()
-
-                if referrer:
+                    user.save()
                     Referral.objects.create(referrer=referrer,referred_user=user,reward_given=False,reward_amount=0)
 
-             
+                else:
+                    user.save()
+            
             except CustomUser.DoesNotExist:
                 messages.error(request,"No account found for this email.")
                 return redirect("signup")
@@ -131,13 +136,16 @@ def verify_otp(request):
             cache.delete(f"user_data:{email}")
             request.session.pop("pending_email", None)
 
-            messages.success(request,"Your account has been verified. Please log in.")
-            return redirect("signin")
+            user.backend="django.contrib.auth.backends.ModelBackend"
+            login(request,user)
+            messages.success(request,"Welcome to Nuts and seeds")
+            return redirect("home")
+        
         else:
             messages.error(request,"Invalid or expired OTP.")
-            return render(request,"verify_otp.html",{"email":email,"invalid_otp":True})
+            return render(request,"verify_otp.html",{"email":email,"invalid_otp":True,"remaining_seconds":remaining_seconds})
         
-    return render(request,"verify_otp.html",{"email":email, "invalid_otp":False})
+    return render(request,"verify_otp.html",{"email":email, "invalid_otp":False,"remaining_seconds":remaining_seconds})
 
 #RESEND OTP#
 def resend_otp(request):
@@ -194,7 +202,7 @@ def signin(request):
             if user is not None:
                 if user.is_active and not user.is_blocked:
                     login(request,user)
-                    messages.success(request, "Login successful!")
+                    messages.success(request, "Login successful")
                     return redirect("home")
                 elif user.is_blocked:
                     messages.error(request,"Your account is blocked")
@@ -595,20 +603,32 @@ def edit_profile(request):
                 link = f"http://{domain}/profile/verify-email/?token={token}"
 
                 subject = "Verify Your New Email"
-                message = f"""Hi {user.firstname},Click the link below to verify your new email address:{link}
-                If you didn't request this, ignore the email."""
+                message=f"""
+                    Hi {user.firstname},
+
+                    Thank you for choosing Nuts & Seeds Market!
+
+                    Click the link below to verify your new email address:
+                    
+                    {link}
+
+                    If you didn’t request this, you can safely ignore this email.
+
+                    Best regards,
+                    Nuts & Seeds Market Team
+                    """
 
                 send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [new_email])
                 return render(request,"profile/edit_profile.html",{
                     "form": form,
-                    "hx_message": "Verification email sent!",
+                    "toast_message": "Verification email sent!",
                 })
             
             else:
                 form.save()
                 return render(request,"profile/edit_profile.html", {
                 "form": form,
-                "hx_message": "Profile Updated",
+                "toast_message": "Profile Updated",
                 })
             
     else:

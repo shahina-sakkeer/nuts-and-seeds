@@ -21,7 +21,7 @@ class CustomUserManager(BaseUserManager):
         if not user.referralID:
             user.referralID = generate_referralID()
             
-        user.save(using=self.db)
+        user.save(using=self._db)
         return user
     
     def create_superuser(self, email, password=None, **extra_fields):
@@ -65,7 +65,7 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     def clean(self):
         super().clean()
 
-        phone_pattern=re.compile(r'^\+?1?\d{9,15}$|^(\d{3}[-.\s]?)?\d{3}[-.\s]?\d{4}$')
+        phone_pattern=re.compile(r"^[6-9]\d{9}$")
         if self.phone_number and not phone_pattern.match(self.phone_number):
             raise ValidationError({"phone_number": "Invalid phone number format."})
         

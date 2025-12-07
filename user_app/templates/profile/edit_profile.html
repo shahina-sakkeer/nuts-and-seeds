@@ -1,9 +1,9 @@
 <div class="bg-white rounded-lg shadow-sm p-6">
 
-    {% if hx_message %}
-    <div class="bg-green-100 text-green-800 px-4 py-3 rounded mb-4">
-    {{ hx_message }}
-    </div>
+    {% if toast_message %}
+    <script>
+    showSnackbar("{{ toast_message|escapejs }}", "#22c55e");
+    </script>
     {% endif %}
     <!-- Personal Information Section -->
     <form action=""  hx-post="{% url 'editProfile' %}" hx-target="#user-right-content" hx-swap="innerHTML">
@@ -11,9 +11,26 @@
 
         <div class="mb-8">
             <div class="flex items-center justify-between mb-3">
-                <label class="block text-sm font-medium text-gray-900">Name</label>
+                <label class="block text-sm font-medium text-gray-900">First name</label>
             </div>
             {{form.firstname}}
+            {% for error in form.firstname.errors %}
+
+            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+            {% endfor %}
+        </div>
+
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <label class="block text-sm font-medium text-gray-900">Last name</label>
+            </div>
+            {{form.lastname}}
+            {% for error in form.lastname.errors %}
+
+            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+            {% endfor %}
         </div>
 
         <!-- Email Address Section -->
@@ -30,6 +47,11 @@
                 <label class="block text-sm font-medium text-gray-900">Mobile Number</label>
             </div>
             {{form.phone_number}}
+            {% for error in form.phone_number.errors %}
+
+            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+
+            {% endfor %}
 
         </div>
 

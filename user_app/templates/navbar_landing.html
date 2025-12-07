@@ -155,10 +155,11 @@ function togglePassword(fieldId, iconId) {
 document.addEventListener("DOMContentLoaded", function() {
 
     const invalidOtp = {{ invalid_otp|yesno:"true,false" }};
-    let timeLeft = 60;
+    let timeLeft = {{ remaining_seconds|default:60 }};
     const minutes = document.getElementById("minutes");
     const seconds = document.getElementById("seconds");
     const resendBtn = document.getElementById("resendBtn");
+    const verifyBtn = document.getElementById("verifyBtn");
     let countdown;
 
     function updateTimer() {
@@ -169,36 +170,34 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function startTimer() {
-        timeLeft = 60;
         updateTimer();
+
         resendBtn.classList.add("bg-gray-400", "cursor-not-allowed", "pointer-events-none");
         resendBtn.classList.remove("bg-red-600");
+
+        verifyBtn.disabled = false;              
+        verifyBtn.classList.remove("opacity-50"); 
 
         countdown = setInterval(() => {
             if(timeLeft <= 0) {
                 clearInterval(countdown);
+
                 resendBtn.classList.remove("bg-gray-400", "cursor-not-allowed", "pointer-events-none");
                 resendBtn.classList.add("bg-red-600");
-            }else{
+
+                verifyBtn.disabled = true;        
+                verifyBtn.classList.add("opacity-50");   
+
+            } else {
                 timeLeft--;
                 updateTimer();
             }
         }, 1000);
     }
 
-    if (!invalidOtp) {
-        startTimer();   
-    } else {
+    startTimer();
 
-    minutes.innerHTML = "00";
-    seconds.innerHTML = "00";
-
-
-    resendBtn.classList.remove("bg-gray-400", "cursor-not-allowed", "pointer-events-none");
-    resendBtn.classList.add("bg-red-600");
-    }
-
-
+    // RESEND OTP
     resendBtn.addEventListener("click", function(event) {
         event.preventDefault();
 
@@ -206,7 +205,6 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        // Call resend_otp view via fetch
         fetch("{% url 'resend_otp' %}", {
             method: "POST",
             headers: {
@@ -215,14 +213,15 @@ document.addEventListener("DOMContentLoaded", function() {
             },
         }).then(response => {
             if(response.ok) {
-                startTimer(); // restart timer
+
+                timeLeft = 60;
+                startTimer();
+
                 alert("OTP resent successfully");
+
             } else {
                 alert("Failed to resend OTP");
             }
-        }).catch(error => {
-            console.error(error);
-            alert("Error sending OTP");
         });
     });
 });

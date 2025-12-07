@@ -54,7 +54,7 @@
                                     <p class="text-sm text-gray-600">Weight : {{item.product.weight}}g</p>
 
                                     <!-- CANCEL -->
-                                    {% if item.status == "order_received" or item.payment_status == 'paid' and item.status != 'delivered' and item.status != 'cancelled' and item.status != 'rejected' and item.status != 'returned'  %}
+                                    {% if item.status == "order_received" or item.payment_status == 'pending' or item.payment_status == 'paid' and item.status != 'delivered' and item.status != 'cancelled' and item.status != 'rejected' and item.status != 'returned'  %}
 
                                         <button type="button"
                                             class="inline-block mt-2 px-2 py-1 bg-red-100 text-red-600 text-xs font-medium rounded"
