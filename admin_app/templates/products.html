@@ -8,11 +8,13 @@
         <div class="flex flex-col sm:flex-row gap-2">
             <!-- Search Box -->
         <form class="flex items-center" action="">
+
             <input type="text" name="search" placeholder="Search..." autocomplete="off"
                 class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
-                hx-get="{% url 'searching' %}" hx-trigger="keyup changed delay:300ms" hx-target="#product-list"
+                hx-get="{% url 'searching' %}" hx-trigger="keyup changed delay:300ms, search" hx-target="#product-list"
                 hx-swap="innerHTML">
         </form>
+        
             <a href="{% url 'addProduct' %}"><button
                 class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 flex items-center justify-center">
                 <span class="mr-2">+</span> Add Product

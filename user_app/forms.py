@@ -14,10 +14,9 @@ class UserRegistrationForm(forms.ModelForm):
             "placeholder": "Enter your password",
             'autocomplete': 'off'
         }))
-    referral_code=forms.CharField(widget=forms.TextInput(attrs={
+    referral_code=forms.CharField(required=False, widget=forms.TextInput(attrs={
             "class": "w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent",
             "placeholder": "Referral code (Optional)",
-            "required":"False"
         }))
 
 

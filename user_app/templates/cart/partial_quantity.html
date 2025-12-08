@@ -17,7 +17,7 @@
     <button class="px-3 py-1 text-gray-600 hover:bg-gray-100"
     type="button" hx-post="{% url 'changeQuantity' product.id %}" 
     hx-target="#update-quantity-{{product.id}}"
-    hx-vals='{"action":"increase"}' hx-swap="innerHTML" {% if product.product.quantity_stock == 0 %}disabled{% endif %}>
+    hx-vals='{"action":"increase"}' hx-swap="innerHTML" {% if product.quantity == product.product.quantity_stock %}disabled{% endif %}>
     +</button>
 </div>
 
@@ -27,18 +27,4 @@
 </div>
 {% endif %}
 
-
-
-
-
-
-<!-- <button type="button" hx-post="{% url 'changeQuantity' product.id %}" hx-target="#update-quantity-{{product.id}}"
-    hx-vals='{"action":"increase"}' hx-swap="innerHTML">+</button>
-
-<h2 id="update-quantity-{{product.id}}">{{product.quantity}}</h2>
-
-<button type="button" hx-post="{% url 'changeQuantity' product.id %}" hx-target="#update-quantity-{{product.id}}"
-    hx-vals='{"action":"decrease"}' hx-swap="innerHTML">-</button> -->
-
-<!-- <h2 id="update-quantity-{{price.id}}">{{price}}</h2> -->
 

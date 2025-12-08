@@ -3,7 +3,7 @@
 {% block content %}
 
 <!-- Main Container -->
-<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12" id="order-section">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
     <!-- Success Card -->
     <div class="bg-white rounded-lg shadow-sm p-8 mb-6">
@@ -134,6 +134,7 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            
             <a href="{% url 'order-list' %}"
                 class="px-6 py-3 bg-orange-600 text-white font-medium rounded-lg hover:bg-blue-700 transition text-center">
                 View Order Details
@@ -142,51 +143,10 @@
                 class="px-6 py-3 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-800 transition text-center">
                 Continue Shopping
             </a>
-            <button id="download"
-                class="px-6 py-3 bg-red-500 text-white font-medium rounded-lg hover:bg-orange-800 transition text-center">
-                Download PDF
-            </button>
+
         </div>
     </div>
 </div>
-
-
-<!-- script for downloading order success page -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const downloadBtn = document.getElementById('download');
-  downloadBtn.addEventListener('click', async function() {
-    const element = document.getElementById('order-section');
-
-    // Wait for all Cloudinary images to load
-    await Promise.all([...element.querySelectorAll('img')].map(img => {
-      if (img.complete) return Promise.resolve();
-      return new Promise(resolve => {
-        img.onload = img.onerror = resolve;
-      });
-    }));
-
-    const opt = {
-      margin: 0.2,
-      filename: 'order_{{ order.orderID }}.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        allowTaint: false,
-        scrollX: 0,
-        scrollY: 0,
-        logging: false
-      },
-      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(element).save();
-  });
-});
-</script>
 
 {% endblock %}
 

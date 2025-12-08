@@ -7,7 +7,7 @@
         <div class="relative">
 
             <div id="wishlist-btn-{{ p.id }}">
-            {% with v=p.variants.all.0 %}
+            {% with v=p.first_variant %}
                 {% include "partial_wishlist.html" with product=p variant=v in_wishlist=v.in_user_wishlist %}
             {% endwith %}
             </div>

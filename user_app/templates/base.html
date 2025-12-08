@@ -121,7 +121,7 @@
                             <input type="hidden" id="category-id" name="category_id" value="{{ cat.id|default:'' }}">
                             <input type="text" name="search" placeholder="Search..."
                                 class="px-4 py-2 border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 w-48 lg:w-64"
-                                hx-get="{% url 'filtering' %}" hx-trigger="keyup changed delay:300ms"
+                                hx-get="{% url 'filtering' %}" hx-trigger="keyup changed delay:300ms, search"
                                 hx-target="#category-product" hx-swap="innerHTML" hx-include="#category-id">
                         </div>
                     </form>
@@ -282,8 +282,6 @@ document.body.addEventListener('htmx:afterOnLoad', () => {
     document.getElementById('loader').classList.add('hidden');
 });
 </script>
-
-
 
 </body>
 

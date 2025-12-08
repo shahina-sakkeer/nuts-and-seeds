@@ -15,6 +15,8 @@ class AdminLoginForm(forms.Form):
 
 
 class CategoryForm(forms.ModelForm):
+    image=forms.ImageField()
+
     class Meta:
         model=Category
         fields=["id","name","description","image"]
@@ -41,6 +43,22 @@ class CategoryForm(forms.ModelForm):
         if Category.all_category.filter(name__iexact=name).exclude(id=self.instance.id).exists():
                 raise ValidationError("A category with this name already exists")
         return name
+    
+
+    def clean_image(self):
+        image = self.cleaned_data.get("image")
+
+        if not image:
+            return image
+
+        if hasattr(image, "content_type"):
+            allowed = ["image/png", "image/jpeg", "image/webp"]
+
+            if image.content_type not in allowed:
+                raise ValidationError("Only PNG, JPG, JPEG, WEBP allowed.")    
+
+        return image
+    
 
 class ProductForm(forms.ModelForm):
     class Meta:

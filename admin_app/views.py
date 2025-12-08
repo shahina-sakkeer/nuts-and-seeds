@@ -171,6 +171,10 @@ def signout(request):
 @staff_required
 def list_category(request):
     categories=Category.objects.all().order_by("-id")
+    search=request.GET.get("search")
+
+    if search:
+        categories=categories.filter(name__icontains=search)
 
     paginator=Paginator(categories,5)
     page_number=request.GET.get("page")
@@ -185,8 +189,7 @@ def list_category(request):
 def add_category(request):
     if request.method=="POST":
         form=CategoryForm(request.POST, request.FILES)
-        if form.is_valid():
-            
+        if form.is_valid():            
             try:
                 form.save()
                 messages.success(request,"category is successfully added")
@@ -231,6 +234,10 @@ def delete_category(request,id):
 @staff_required
 def products(request):
     products=Products.objects.prefetch_related("variants","images").all().order_by("-id")
+    search=request.GET.get("search")
+
+    if search:
+        products=products.filter(name__icontains=search)
 
     paginator=Paginator(products,5)
     page_number=request.GET.get("page")

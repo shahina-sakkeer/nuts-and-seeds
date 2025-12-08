@@ -1,6 +1,61 @@
 <div class="bg-white rounded-lg shadow-sm p-6">
 
     <!-- Personal Information Section -->
+    {% if incomplete %}
+
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">Personal Information</h2>
+
+            <button hx-get="{% url 'editProfile' %}" hx-swap="innerHTML" hx-target="#user-right-content"
+            class="text-gray-400 hover:text-gray-600 focus:outline-none">
+            <i class="fa-solid fa-file-pen"></i>
+            </button>
+
+        </div>
+
+        <!-- Name Fields -->
+
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <label class="block text-sm font-medium text-gray-900">First Name</label>
+            </div>
+            <input type="email" placeholder="Missing first name : Please edit the field" readonly
+                class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+        </div>
+
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <label class="block text-sm font-medium text-gray-900">Last Name</label>
+            </div>
+            <input type="email" placeholder="Missing last name : Please edit the field" readonly
+                class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+        </div>
+        
+
+    </div>
+
+    <!-- Email Address Section -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+            <label class="block text-sm font-medium text-gray-900">Email Address</label>
+        </div>
+        <input type="email" value="{{user.email}}" readonly
+            class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+    </div>
+
+    <!-- Mobile Number Section -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+            <label class="block text-sm font-medium text-gray-900">Mobile Number</label>
+        </div>
+        <input type="tel" placeholder="Missing phone number : Please edit the field" readonly
+            class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+    </div>
+
+
+    {% else %}
+
     <div class="mb-8">
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold text-gray-900">Personal Information</h2>
@@ -51,7 +106,10 @@
             class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
     </div>
 
+    {% endif %}
+
 </div>
+
 
 <!-- referral Section -->
 <div class="bg-white shadow-md rounded-xl p-6 mb-8 mt-3">

@@ -87,8 +87,7 @@ def verify_otp(request):
     code=request.session.get("code")
 
     if not email:
-        return redirect("signin")
-    
+        return redirect("signin")    
 
     expiry_time = cache.get(f"otp_expiry:{email}")
     remaining_seconds=0
@@ -163,7 +162,11 @@ def resend_otp(request):
 
         otp=random.randint(100000,999999)
         cache.set(f"otp:{email}", otp, timeout=60)
-        cache.set(f"user_data:{'email'}",user_data,timeout=300)
+        cache.set(f"user_data:{email}",user_data,timeout=300)
+
+        expiry_time = timezone.now() + datetime.timedelta(seconds=60)
+        cache.set(f"otp_expiry:{email}", expiry_time, 60)
+
         message=f"""
             Hi {user_data.get('firstname', '')},
 
@@ -314,6 +317,9 @@ def signout(request):
 
 #LANDING PAGE
 def landing(request):
+    if request.user.is_authenticated:
+        return redirect("home")
+    
     categories=Category.objects.all().order_by("-id")
     products=Products.objects.all().order_by("-id")
 
@@ -351,16 +357,19 @@ def list_products(request):
     page_obj=paginator.get_page(page_number)
 
     for product in page_obj:
+        variants = product.variants.all().order_by("id") 
         lowest_variant=None
 
-        for variant in product.variants.all():
+        for variant in variants:
             variant.final_price,variant.discount_percent=get_offer_price(variant)
 
             if lowest_variant is None or variant.final_price < lowest_variant.final_price:
                 lowest_variant = variant
 
-            product.lowest_variant = lowest_variant
-            lowest_variant.in_user_wishlist = lowest_variant.id in wishlist_items
+            variant.in_user_wishlist = variant.id in wishlist_items    
+
+        product.lowest_variant = lowest_variant
+        product.first_variant = variants.first()
     
     return render(request,"list_by_products.html",{"page_obj":page_obj,"categories":categories,
                                                    "wishlist_items":wishlist_items})
@@ -417,15 +426,19 @@ def filterProducts(request,id=None):
     page_obj=paginator.get_page(page_number)
     
     for product in page_obj:
+        variants = product.variants.all().order_by("id") 
         lowest_variant=None
-        for variant in product.variants.all():
+
+        for variant in variants:
             variant.final_price,variant.discount_percent=get_offer_price(variant)
 
             if lowest_variant is None or variant.final_price < lowest_variant.final_price:
                 lowest_variant = variant
 
-            product.lowest_variant = lowest_variant
-            lowest_variant.in_user_wishlist = lowest_variant.id in wishlist_items
+            variant.in_user_wishlist = variant.id in wishlist_items
+
+        product.lowest_variant = lowest_variant
+        product.first_variant = variants.first()
 
     return render(request,"partial_filter.html",{"page_obj":page_obj,"wishlist_items":wishlist_items})
 
@@ -448,16 +461,13 @@ def add_to_wishlist(request,id):
 
     wishlist,created=Wishlist.objects.get_or_create(user=request.user)
 
-    product_variants = ProductVariant.objects.filter(product=variant.product)
-
-    existing_item = WishlistItem.objects.filter(wishlist=wishlist,product__in=product_variants).first()
+    existing_item = WishlistItem.objects.filter(wishlist=wishlist,product=variant).first()
 
     if existing_item:
-        WishlistItem.objects.filter(wishlist=wishlist,product__in=product_variants).delete()
+        existing_item.delete()
         in_wishlist = False
-        
 
-    else:
+    else:    
         WishlistItem.objects.create(wishlist=wishlist, product=variant)
         in_wishlist = True
 
@@ -485,7 +495,7 @@ def productDetail(request,id=id):
     reviews=Review.objects.filter(product=variant).all()
     wishlist_items = set(WishlistItem.objects.filter(wishlist__user=request.user).values_list('product_id', flat=True))
 
-    variants=list(product.variants.all())
+    variants=list(product.variants.all().order_by("id"))
 
     for variant in variants:
         variant.final_price,variant.discount_percent=get_offer_price(variant)
@@ -575,7 +585,11 @@ def delete_address(request,id):
 @login_required(login_url='/user/login/')
 def show_profile(request):
     user=request.user
-    return render(request,"profile/profile.html",{"user":user})
+
+    if not user.firstname or not user.lastname or not user.phone_number:
+        return render(request,"profile/profile.html",{"incomplete":True})
+
+    return render(request,"profile/profile.html",{"incomplete":False,"user":user})
 
 
 #PARTIAL USER DASHBOARD
@@ -705,8 +719,6 @@ def add_to_cart(request,id):
         variant=ProductVariant.objects.filter(product=product.product)
         wishlist,created=Wishlist.objects.get_or_create(user=request.user)
 
-        item=WishlistItem.objects.filter(wishlist=wishlist,product__in=variant)
-
         offer_price,discount_percent=get_offer_price(product)
 
         try:
@@ -719,19 +731,26 @@ def add_to_cart(request,id):
         # this cartitem is taking only first object from queryset
         cart_item=CartItem.objects.filter(cart=cart,product=product).first()
         if cart_item:
-            cart_item.quantity=cart_item.quantity+1
-            product.quantity_stock-=1
+            if cart_item.quantity < product.quantity_stock:
+                cart_item.quantity=cart_item.quantity+1
+                cart_item.save()
 
-            cart_item.save()
-            product.save()
-            messages.success(request,"Product incremented")
-            return redirect("product_details",product.product.id)
+                wishlist_item=WishlistItem.objects.filter(wishlist=wishlist,product=product).first()
+                if wishlist_item:
+                    wishlist_item.delete()
+    
+                messages.success(request,"Product incremented")
+                return redirect("product_details",product.product.id)
+            else:
+                messages.warning(request,"Product reaches to its limit")
+                return redirect("product_details",product.product.id)
 
         else:
             cart_item=CartItem.objects.create(cart=cart,product=product,quantity=1)
-            product.quantity_stock-=1
-            product.save()
-            item.delete()
+        
+            wishlist_item=WishlistItem.objects.filter(wishlist=wishlist,product=product).first()
+            if wishlist_item:
+                wishlist_item.delete()
             messages.success(request,"Product added to cart")
             return redirect("product_details",product.product.id)
 
@@ -771,24 +790,17 @@ def show_cart(request):
 @login_required(login_url='/user/login/')
 def update_quantity(request,id=id):
     item=get_object_or_404(CartItem,id=id,cart__user=request.user)
-    total_stock = item.quantity + item.product.quantity_stock
     action=request.POST.get("action")
 
     if action=="increase":
-        if item.quantity < total_stock:
-            item.quantity+=1
-            item.product.quantity_stock-=1
-            item.save()
-            item.product.save()
-        else:
-            messages.warning(request,"Cannot increase quantity. Product stock exhausted.")
+        item.quantity+=1
+        item.save()
 
     elif action=="decrease":
         if item.quantity > 1:
             item.quantity-=1
-            item.product.quantity_stock+=1
             item.save()
-            item.product.save()
+ 
         else:
             messages.warning(request,"Cannot decrease quantity below 1.")
 
@@ -812,8 +824,8 @@ def remove_from_cart(request,id):
     item=get_object_or_404(CartItem,id=id,cart__user=request.user)
     if request.method=="POST":
         item.delete()
-        item.product.quantity_stock+=item.quantity
-        item.product.save()
+        # item.product.quantity_stock+=item.quantity
+        # item.product.save()
         messages.success(request,"Product Removed")
         return redirect("showCart")
 
@@ -1080,6 +1092,34 @@ def checkout(request):
                                 usage.used_count+=1
                                 usage.save()
 
+                        
+                        # filtering out referred user is the user who placed the order or else returns none
+                        referral_records=Referral.objects.filter(referred_user=request.user, reward_given=False).first()
+                    
+                        if referral_records:
+                            try:
+                                #taking whom this user was referred by
+                                referred_by_user=referral_records.referrer
+                                wallet,created=Wallet.objects.get_or_create(user=referred_by_user)
+                                
+                                reward_amount=Decimal("50.00")
+
+                                if wallet.balance is None:
+                                    wallet.balance = Decimal("0.00")
+
+                                wallet.balance+=reward_amount
+                                wallet.save()
+                                wallet_txn=WalletTransaction.objects.create(wallet=wallet,transaction_type="credit",amount=reward_amount,source='referral')
+                                wallet_txn.save()
+
+                                referral_records.reward_amount=reward_amount
+                                referral_records.reward_given=True
+                                referral_records.save()
+
+                            except Exception as e:
+                                print("exception",e)
+                                pass
+
                     # create a session of coupon details to pass inside order_placed view
                         request.session["order_data"]={
                             "order_id":order.id,"coupon_code":coupon_code,"discount_amount":str(discount_amount),
@@ -1300,7 +1340,6 @@ def verify_payment(request):
                 order.save()
 
                 OrderItem.objects.filter(order=order).update(payment_status="failed")
-                print(OrderItem.objects.filter(order=order).update(payment_status="failed"))
 
                 return JsonResponse({"status": "failure", "order_id": order.id,
                                  "redirect_url": f"/user/order-failure/{order.id}/"})
@@ -1407,6 +1446,42 @@ def retry_payment_success(request):
             order.save()
 
             OrderItem.objects.filter(order=order).update(payment_status="paid",status="order_received")
+
+            # filtering out referred user is the user who placed the order or else returns none
+            referral_records=Referral.objects.filter(referred_user=request.user, reward_given=False).first()
+        
+            if referral_records:
+                try:
+                    #taking who referred this user
+                    referred_by_user=referral_records.referrer
+                    wallet,created=Wallet.objects.get_or_create(user=referred_by_user)
+                       
+                    reward_amount=Decimal("50.00")
+
+                    if wallet.balance is None:
+                        wallet.balance = Decimal("0.00")
+
+                    wallet.balance+=reward_amount
+                    wallet.save()
+                    wallet_txn=WalletTransaction.objects.create(wallet=wallet,transaction_type="credit",amount=reward_amount,source='referral')
+                    wallet_txn.save()
+
+                    referral_records.reward_amount=reward_amount
+                    referral_records.reward_given=True
+                    referral_records.save()
+
+                except Exception as e:
+                    print("exception",e)
+                    pass
+
+            cart = Cart.objects.get(user=request.user)
+            cart_items = cart.cart_item.select_related('product')
+
+            for item in cart_items:
+                product=item.product
+                product.quantity_stock-=item.quantity
+                product.save()
+
             Cart.objects.get(user=order.user).cart_item.all().delete() 
             return redirect("orderSuccess", order.id)       
 
@@ -1470,7 +1545,7 @@ def order_detail(request,id):
         if item_id:
             ordered_item = order.orderitem.get(id=item_id)
 
-            if ordered_item.status=="order_received" and order.payment_method=='cod':
+            if ordered_item.status=="order_received" or order.payment_method=='cod':
                 ordered_item.status="cancelled"
                 ordered_item.save()
 

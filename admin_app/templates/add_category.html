@@ -59,7 +59,12 @@
                     {{form.description}}
                 </div>
                 <div>
-                    <input type="file" name="image" required>
+                    <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
+                        Upload image
+                    </label>
+                    {% for error in form.image.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ error}}</p>
+                    {% endfor %}
                 </div>
                 <button type="submit"
                 class="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
