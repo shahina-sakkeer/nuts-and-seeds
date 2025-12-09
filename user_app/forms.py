@@ -227,6 +227,12 @@ class UserAddressForm(forms.ModelForm):
 
 
 class OrderReturnForm(forms.ModelForm):
+    image=forms.ImageField(
+        error_messages={
+            "invalid_image": "Only PNG, JPG, JPEG, WEBP files are allowed.",
+        }
+    )
+
     class Meta:
         model=OrderReturn
         fields=['return_choice','image','return_reason']
@@ -255,10 +261,31 @@ class OrderReturnForm(forms.ModelForm):
             raise ValidationError("Reason should contain only alphabets")
         
         return return_reason
+
+
+    def clean_image(self):
+        image = self.cleaned_data.get("image")
+
+        if not image:
+            return image
+
+        if hasattr(image, "content_type"):
+            allowed = ["image/png", "image/jpeg", "image/webp"]
+
+            if image.content_type not in allowed:
+                raise ValidationError("Only PNG, JPG, JPEG, WEBP allowed.")    
+
+        return image
     
 
 
 class ReviewForm(forms.ModelForm):
+    image=forms.ImageField(
+        error_messages={
+            "invalid_image": "Only PNG, JPG, JPEG, WEBP files are allowed.",
+        }
+    )
+
     class Meta:
         model=Review
         fields=["comment","rating","image"]
@@ -278,5 +305,19 @@ class ReviewForm(forms.ModelForm):
             raise forms.ValidationError("Comments should contain atleast 3 letters")
         
         return comment
+    
+    def clean_image(self):
+        image = self.cleaned_data.get("image")
+
+        if not image:
+            return image
+
+        if hasattr(image, "content_type"):
+            allowed = ["image/png", "image/jpeg", "image/webp"]
+
+            if image.content_type not in allowed:
+                raise ValidationError("Only PNG, JPG, JPEG, WEBP allowed.")    
+
+        return image
 
 

@@ -3,6 +3,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.urls import reverse
 from .forms import UserRegistrationForm,UserLoginForm,UserAddressForm,UserProfileForm,OrderReturnForm,ReviewForm
 import random
+import re
 from django.core.mail import send_mail
 from django.core.cache import cache
 from django.views.decorators.cache import cache_control,never_cache
@@ -238,8 +239,25 @@ def forgot_password(request):
         
         otp=random.randint(100000,999999)
         cache.set(f"reset_otp:{email}",otp,timeout=300)
+
+        expiry_time = timezone.now() + datetime.timedelta(seconds=60)
+        cache.set(f"reset_otp_expiry:{email}", expiry_time, 60)
+
         request.session["reset_email"]=email
-        send_mail("OTP Verification", f"Your OTP is {otp}. It will expire in 1 minute.", "shahinabinthsakkeer@gmail.com",[user.email])
+
+        message = f"""
+        Hi {user.firstname},
+
+        Your OTP for resetting your password is:
+
+        OTP: {otp}
+
+        This OTP is valid for 1 minute.
+
+        If you didn’t request this, ignore this email.
+        """
+
+        send_mail("Reset Password OTP", message, "shahinabinthsakkeer@gmail.com",[user.email])
         messages.success(request,"Otp for forgot password has been send to email.")
         return redirect("forgot_password_otp")
 
@@ -253,16 +271,66 @@ def verify_forgot_otp(request):
         messages.error(request,"Session expired. Try again.")
         return redirect("forgotpswd")
     
+    expiry_time = cache.get(f"reset_otp_expiry:{email}")
+    remaining_seconds = 0
+
+    if expiry_time:
+        now = timezone.now()
+        diff = expiry_time - now
+        remaining_seconds = max(int(diff.total_seconds()), 0)
+    
     if request.method == "POST":
         entered_otp=request.POST.get('otp')
         cached_otp = cache.get(f"reset_otp:{email}")
+
         if str(entered_otp) == str(cached_otp):
             cache.delete(f"reset_otp:{email}")
             request.session["otp_verified"] = True
             return redirect("reset_password")
+            
         else:
             messages.error(request, "Invalid OTP. Try again.")
-    return render(request,"forgot_otp.html")
+            return render(request, "forgot_otp.html", {"remaining_seconds": remaining_seconds,"invalid_otp": True})
+
+    return render(request,"forgot_otp.html",{"remaining_seconds": remaining_seconds,"invalid_otp": False})
+
+
+#RESEND OTP FOR FORGOT PASSWORD
+def resend_forgot_otp(request):
+    email = request.session.get("reset_email")
+
+    if not email:
+        return JsonResponse({"success": False, "message": "Session expired. Try again."}, status=400)
+
+    if request.method == "POST":
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return JsonResponse({"success": False, "message": "User not found"}, status=400)
+
+        otp = random.randint(100000, 999999)
+
+        cache.set(f"reset_otp:{email}", otp, timeout=60)
+
+        expiry_time = timezone.now() + datetime.timedelta(seconds=60)
+        cache.set(f"reset_otp_expiry:{email}", expiry_time, 60)
+
+        message = f"""
+        Hi {user.firstname},
+
+        Your OTP for resetting your password is:
+
+        OTP: {otp}
+
+        This OTP is valid for 1 minute.
+
+        If you didn’t request this, ignore this email.
+        """
+
+        send_mail("Reset Password OTP", message, "shahinabinthsakkeer@gmail.com", [email])
+
+        return JsonResponse({"success": True, "message": "OTP resent successfully"})
+
 
 
 #RESET PASSWORD#
@@ -278,14 +346,25 @@ def reset_password(request):
         password1=request.POST.get("password1")
         password2=request.POST.get("password2")
 
+        if not password1 or not password2:
+            messages.error(request, "Password fields cannot be empty.")
+            return redirect("reset_password")
+
+        pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$'
+        if password1 and not re.match(pattern, password1):
+            messages.error(request,"Password must be at least 8 characters long, ""contain at least one uppercase letter, one lowercase letter, and one digit.")
+            return redirect("reset_password")
+            
         if password1 != password2:
             messages.error(request,"Password do not match")
             return redirect("reset_password")
+        
         else:
             try:
                 user=CustomUser.objects.get(email__iexact=email)
             except CustomUser.DoesNotExist:
                 messages.error(request,"No user found. Please restart the process.")
+                return redirect("forgotpswd")
 
             user.set_password(password1)
             user.save()
@@ -423,6 +502,7 @@ def filterProducts(request,id=None):
 
 
     wishlist_items = set(WishlistItem.objects.filter(wishlist__user=request.user).values_list('product_id', flat=True))
+
 
     paginator=Paginator(products,8)
     page_number=request.GET.get("page")
@@ -759,7 +839,6 @@ def add_to_cart(request,id):
 
     if request.method=="POST":
 
-        variant=ProductVariant.objects.filter(product=product.product)
         wishlist,created=Wishlist.objects.get_or_create(user=request.user)
 
         offer_price,discount_percent=get_offer_price(product)
@@ -785,11 +864,16 @@ def add_to_cart(request,id):
     
                 messages.success(request,"Product incremented")
                 return redirect("product_details",product.product.id)
-            else:
-                messages.warning(request,"Product reaches to its limit")
+            
+            elif cart_item.quantity >= product.quantity_stock:
+                messages.warning(request,"Sorry, Product reaches to its limit")
                 return redirect("product_details",product.product.id)
 
-        else:
+        else:                        
+            if product.quantity_stock == 0:
+                messages.warning(request,"Sorry, Product is out of stock")
+                return redirect("product_details",product.product.id)
+            
             cart_item=CartItem.objects.create(cart=cart,product=product,quantity=1)
         
             wishlist_item=WishlistItem.objects.filter(wishlist=wishlist,product=product).first()
@@ -797,6 +881,8 @@ def add_to_cart(request,id):
                 wishlist_item.delete()
             messages.success(request,"Product added to cart")
             return redirect("product_details",product.product.id)
+        
+    return redirect("product_details",product.product.id)
 
 
 #SHOW CART
@@ -1005,7 +1091,7 @@ def checkout(request):
                         total_price_per_item=unit_price * item.quantity
 
                         order_items.append(OrderItem(order=order, product=item.product, quantity=item.quantity, 
-                                           price=total_price_per_item, unit_price=unit_price))
+                                           price=total_price_per_item, unit_price=unit_price,payment_status="pending"))
                     
                     OrderItem.objects.bulk_create(order_items)
 
@@ -1583,7 +1669,7 @@ def order_detail(request,id):
         if item_id:
             ordered_item = order.orderitem.get(id=item_id)
 
-            if ordered_item.status=="order_received" or order.payment_method=='cod':
+            if ordered_item.status=="order_received" or ordered_item.payment_status=="pending":
                 ordered_item.status="cancelled"
                 ordered_item.save()
 

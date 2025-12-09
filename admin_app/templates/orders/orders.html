@@ -26,7 +26,7 @@
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 text-sm text-gray-900">{{order.orderID}}</td>
                 
-                        <td class="px-6 py-4 text-sm text-gray-900">{{order.user.firstname}}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{order.user.firstname |default_if_none:"" }}</td>
 
                         <td class="px-6 py-4 text-sm text-gray-900">{{order.created_at|date:"Y-m-d"}}</td>
                             

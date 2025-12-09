@@ -536,3 +536,620 @@ Traceback (most recent call last):
     raise NoReverseMatch(msg)
 django.urls.exceptions.NoReverseMatch: Reverse for 'addWishlist' with arguments '('',)' not found. 2 pattern(s) tried: ['user/wishlist/add/(?P<id>[0-9]+)/\\Z', 'wishlist/add/(?P<id>[0-9]+)/\\Z']
 [ERROR] 2025-12-09 07:01:16,363 django.server: "GET /user/products/1/ HTTP/1.1" 500 221628
+[ERROR] 2025-12-09 07:15:29,154 django.request: Internal Server Error: /user/cart/add/25
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 81, in _view_wrapper
+    add_never_cache_headers(response)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/utils/cache.py", line 293, in add_never_cache_headers
+    patch_response_headers(response, cache_timeout=-1)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/utils/cache.py", line 284, in patch_response_headers
+    if not response.has_header("Expires"):
+           ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'has_header'
+[ERROR] 2025-12-09 07:15:29,158 django.server: "POST /user/cart/add/25 HTTP/1.1" 500 82641
+[ERROR] 2025-12-09 07:15:43,874 django.request: Internal Server Error: /user/cart/add/25
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 81, in _view_wrapper
+    add_never_cache_headers(response)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/utils/cache.py", line 293, in add_never_cache_headers
+    patch_response_headers(response, cache_timeout=-1)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/utils/cache.py", line 284, in patch_response_headers
+    if not response.has_header("Expires"):
+           ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'has_header'
+[ERROR] 2025-12-09 07:15:43,875 django.server: "POST /user/cart/add/25 HTTP/1.1" 500 82641
+[ERROR] 2025-12-09 07:53:15,273 django.request: Internal Server Error: /user/order-list/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 510, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'static'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 1572, in orders_list
+    return render(request,"order/orders_lists.html",{"orders":orders})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/defaulttags.py", line 976, in do_if
+    nodelist = parser.parse(("endif",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 512, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 567, in invalid_block_tag
+    raise self.error(
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 82: 'static', expected 'endif'. Did you forget to register or load this tag?
+[ERROR] 2025-12-09 07:53:15,280 django.server: "GET /user/order-list/ HTTP/1.1" 500 215314
+[ERROR] 2025-12-09 07:54:02,238 django.request: Internal Server Error: /user/order-list/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 510, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'static'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 1572, in orders_list
+    return render(request,"order/orders_lists.html",{"orders":orders})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/defaulttags.py", line 976, in do_if
+    nodelist = parser.parse(("endif",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 512, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 567, in invalid_block_tag
+    raise self.error(
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 82: 'static', expected 'endif'. Did you forget to register or load this tag?
+[ERROR] 2025-12-09 07:54:02,240 django.server: "GET /user/order-list/ HTTP/1.1" 500 216982
+[ERROR] 2025-12-09 07:54:46,675 django.request: Internal Server Error: /user/order-list/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 510, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'static'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 1572, in orders_list
+    return render(request,"order/orders_lists.html",{"orders":orders})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/defaulttags.py", line 976, in do_if
+    nodelist = parser.parse(("endif",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 512, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 567, in invalid_block_tag
+    raise self.error(
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 82: 'static', expected 'endif'. Did you forget to register or load this tag?
+[ERROR] 2025-12-09 07:54:46,678 django.server: "GET /user/order-list/ HTTP/1.1" 500 216672
+[ERROR] 2025-12-09 07:54:52,946 django.request: Internal Server Error: /user/order-list/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 510, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'static'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 1572, in orders_list
+    return render(request,"order/orders_lists.html",{"orders":orders})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/defaulttags.py", line 976, in do_if
+    nodelist = parser.parse(("endif",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 512, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 567, in invalid_block_tag
+    raise self.error(
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 82: 'static', expected 'endif'. Did you forget to register or load this tag?
+[ERROR] 2025-12-09 07:54:52,948 django.server: "GET /user/order-list/ HTTP/1.1" 500 216838
+[DEBUG] 2025-12-09 07:56:06,757 urllib3.connectionpool: Starting new HTTPS connection (1): oauth2.googleapis.com:443
+[DEBUG] 2025-12-09 07:56:07,125 urllib3.connectionpool: https://oauth2.googleapis.com:443 "POST /token HTTP/1.1" 200 None
+[DEBUG] 2025-12-09 09:11:10,240 urllib3.connectionpool: Starting new HTTPS connection (1): oauth2.googleapis.com:443
+[DEBUG] 2025-12-09 09:11:10,550 urllib3.connectionpool: https://oauth2.googleapis.com:443 "POST /token HTTP/1.1" 200 None
+[DEBUG] 2025-12-09 09:26:26,887 PIL.Image: Importing AvifImagePlugin
+[DEBUG] 2025-12-09 09:26:26,889 PIL.Image: Importing BlpImagePlugin
+[DEBUG] 2025-12-09 09:26:26,890 PIL.Image: Importing BmpImagePlugin
+[DEBUG] 2025-12-09 09:26:26,890 PIL.Image: Importing BufrStubImagePlugin
+[DEBUG] 2025-12-09 09:26:26,890 PIL.Image: Importing CurImagePlugin
+[DEBUG] 2025-12-09 09:26:26,890 PIL.Image: Importing DcxImagePlugin
+[DEBUG] 2025-12-09 09:26:26,891 PIL.Image: Importing DdsImagePlugin
+[DEBUG] 2025-12-09 09:26:26,892 PIL.Image: Importing EpsImagePlugin
+[DEBUG] 2025-12-09 09:26:26,893 PIL.Image: Importing FitsImagePlugin
+[DEBUG] 2025-12-09 09:26:26,893 PIL.Image: Importing FliImagePlugin
+[DEBUG] 2025-12-09 09:26:26,893 PIL.Image: Importing FpxImagePlugin
+[DEBUG] 2025-12-09 09:26:26,893 PIL.Image: Image: failed to import FpxImagePlugin: No module named 'olefile'
+[DEBUG] 2025-12-09 09:26:26,893 PIL.Image: Importing FtexImagePlugin
+[DEBUG] 2025-12-09 09:26:26,894 PIL.Image: Importing GbrImagePlugin
+[DEBUG] 2025-12-09 09:26:26,894 PIL.Image: Importing GifImagePlugin
+[DEBUG] 2025-12-09 09:26:26,894 PIL.Image: Importing GribStubImagePlugin
+[DEBUG] 2025-12-09 09:26:26,894 PIL.Image: Importing Hdf5StubImagePlugin
+[DEBUG] 2025-12-09 09:26:26,894 PIL.Image: Importing IcnsImagePlugin
+[DEBUG] 2025-12-09 09:26:26,895 PIL.Image: Importing IcoImagePlugin
+[DEBUG] 2025-12-09 09:26:26,896 PIL.Image: Importing ImImagePlugin
+[DEBUG] 2025-12-09 09:26:26,896 PIL.Image: Importing ImtImagePlugin
+[DEBUG] 2025-12-09 09:26:26,896 PIL.Image: Importing IptcImagePlugin
+[DEBUG] 2025-12-09 09:26:26,897 PIL.Image: Importing JpegImagePlugin
+[DEBUG] 2025-12-09 09:26:26,897 PIL.Image: Importing Jpeg2KImagePlugin
+[DEBUG] 2025-12-09 09:26:26,897 PIL.Image: Importing McIdasImagePlugin
+[DEBUG] 2025-12-09 09:26:26,897 PIL.Image: Importing MicImagePlugin
+[DEBUG] 2025-12-09 09:26:26,897 PIL.Image: Image: failed to import MicImagePlugin: No module named 'olefile'
+[DEBUG] 2025-12-09 09:26:26,897 PIL.Image: Importing MpegImagePlugin
+[DEBUG] 2025-12-09 09:26:26,898 PIL.Image: Importing MpoImagePlugin
+[DEBUG] 2025-12-09 09:26:26,899 PIL.Image: Importing MspImagePlugin
+[DEBUG] 2025-12-09 09:26:26,900 PIL.Image: Importing PalmImagePlugin
+[DEBUG] 2025-12-09 09:26:26,900 PIL.Image: Importing PcdImagePlugin
+[DEBUG] 2025-12-09 09:26:26,900 PIL.Image: Importing PcxImagePlugin
+[DEBUG] 2025-12-09 09:26:26,900 PIL.Image: Importing PdfImagePlugin
+[DEBUG] 2025-12-09 09:26:26,903 PIL.Image: Importing PixarImagePlugin
+[DEBUG] 2025-12-09 09:26:26,904 PIL.Image: Importing PngImagePlugin
+[DEBUG] 2025-12-09 09:26:26,904 PIL.Image: Importing PpmImagePlugin
+[DEBUG] 2025-12-09 09:26:26,904 PIL.Image: Importing PsdImagePlugin
+[DEBUG] 2025-12-09 09:26:26,904 PIL.Image: Importing QoiImagePlugin
+[DEBUG] 2025-12-09 09:26:26,905 PIL.Image: Importing SgiImagePlugin
+[DEBUG] 2025-12-09 09:26:26,905 PIL.Image: Importing SpiderImagePlugin
+[DEBUG] 2025-12-09 09:26:26,905 PIL.Image: Importing SunImagePlugin
+[DEBUG] 2025-12-09 09:26:26,905 PIL.Image: Importing TgaImagePlugin
+[DEBUG] 2025-12-09 09:26:26,905 PIL.Image: Importing TiffImagePlugin
+[DEBUG] 2025-12-09 09:26:26,905 PIL.Image: Importing WebPImagePlugin
+[DEBUG] 2025-12-09 09:26:26,907 PIL.Image: Importing WmfImagePlugin
+[DEBUG] 2025-12-09 09:26:26,907 PIL.Image: Importing XbmImagePlugin
+[DEBUG] 2025-12-09 09:26:26,907 PIL.Image: Importing XpmImagePlugin
+[DEBUG] 2025-12-09 09:26:26,908 PIL.Image: Importing XVThumbImagePlugin
+[ERROR] 2025-12-09 09:55:00,336 django.request: Internal Server Error: /user/dashboard/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 602, in user_dashboard
+    return render(request,"profile/dashboard.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 489, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 487, in parse
+    filter_expression = self.compile_filter(token.contents)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 609, in compile_filter
+    return FilterExpression(token, self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 682, in __init__
+    raise TemplateSyntaxError(
+django.template.exceptions.TemplateSyntaxError: Could not parse some characters: user.firstname| || |default_if_none:""
+[ERROR] 2025-12-09 09:55:00,339 django.server: "GET /user/dashboard/ HTTP/1.1" 500 210282
+[DEBUG] 2025-12-09 09:58:37,173 urllib3.connectionpool: Starting new HTTPS connection (1): api.razorpay.com:443
+[DEBUG] 2025-12-09 09:58:38,535 urllib3.connectionpool: https://api.razorpay.com:443 "POST /v1/orders HTTP/1.1" 200 211
+[DEBUG] 2025-12-09 09:59:26,178 urllib3.connectionpool: Starting new HTTPS connection (1): api.razorpay.com:443
+[DEBUG] 2025-12-09 09:59:26,573 urllib3.connectionpool: https://api.razorpay.com:443 "POST /v1/orders HTTP/1.1" 200 211
+[DEBUG] 2025-12-09 10:26:48,477 PIL.Image: Importing AvifImagePlugin
+[DEBUG] 2025-12-09 10:26:48,479 PIL.Image: Importing BlpImagePlugin
+[DEBUG] 2025-12-09 10:26:48,480 PIL.Image: Importing BmpImagePlugin
+[DEBUG] 2025-12-09 10:26:48,480 PIL.Image: Importing BufrStubImagePlugin
+[DEBUG] 2025-12-09 10:26:48,480 PIL.Image: Importing CurImagePlugin
+[DEBUG] 2025-12-09 10:26:48,480 PIL.Image: Importing DcxImagePlugin
+[DEBUG] 2025-12-09 10:26:48,481 PIL.Image: Importing DdsImagePlugin
+[DEBUG] 2025-12-09 10:26:48,484 PIL.Image: Importing EpsImagePlugin
+[DEBUG] 2025-12-09 10:26:48,485 PIL.Image: Importing FitsImagePlugin
+[DEBUG] 2025-12-09 10:26:48,485 PIL.Image: Importing FliImagePlugin
+[DEBUG] 2025-12-09 10:26:48,485 PIL.Image: Importing FpxImagePlugin
+[DEBUG] 2025-12-09 10:26:48,486 PIL.Image: Image: failed to import FpxImagePlugin: No module named 'olefile'
+[DEBUG] 2025-12-09 10:26:48,486 PIL.Image: Importing FtexImagePlugin
+[DEBUG] 2025-12-09 10:26:48,486 PIL.Image: Importing GbrImagePlugin
+[DEBUG] 2025-12-09 10:26:48,487 PIL.Image: Importing GifImagePlugin
+[DEBUG] 2025-12-09 10:26:48,487 PIL.Image: Importing GribStubImagePlugin
+[DEBUG] 2025-12-09 10:26:48,487 PIL.Image: Importing Hdf5StubImagePlugin
+[DEBUG] 2025-12-09 10:26:48,487 PIL.Image: Importing IcnsImagePlugin
+[DEBUG] 2025-12-09 10:26:48,488 PIL.Image: Importing IcoImagePlugin
+[DEBUG] 2025-12-09 10:26:48,489 PIL.Image: Importing ImImagePlugin
+[DEBUG] 2025-12-09 10:26:48,490 PIL.Image: Importing ImtImagePlugin
+[DEBUG] 2025-12-09 10:26:48,490 PIL.Image: Importing IptcImagePlugin
+[DEBUG] 2025-12-09 10:26:48,491 PIL.Image: Importing JpegImagePlugin
+[DEBUG] 2025-12-09 10:26:48,491 PIL.Image: Importing Jpeg2KImagePlugin
+[DEBUG] 2025-12-09 10:26:48,491 PIL.Image: Importing McIdasImagePlugin
+[DEBUG] 2025-12-09 10:26:48,491 PIL.Image: Importing MicImagePlugin
+[DEBUG] 2025-12-09 10:26:48,492 PIL.Image: Image: failed to import MicImagePlugin: No module named 'olefile'
+[DEBUG] 2025-12-09 10:26:48,492 PIL.Image: Importing MpegImagePlugin
+[DEBUG] 2025-12-09 10:26:48,492 PIL.Image: Importing MpoImagePlugin
+[DEBUG] 2025-12-09 10:26:48,494 PIL.Image: Importing MspImagePlugin
+[DEBUG] 2025-12-09 10:26:48,494 PIL.Image: Importing PalmImagePlugin
+[DEBUG] 2025-12-09 10:26:48,495 PIL.Image: Importing PcdImagePlugin
+[DEBUG] 2025-12-09 10:26:48,495 PIL.Image: Importing PcxImagePlugin
+[DEBUG] 2025-12-09 10:26:48,495 PIL.Image: Importing PdfImagePlugin
+[DEBUG] 2025-12-09 10:26:48,503 PIL.Image: Importing PixarImagePlugin
+[DEBUG] 2025-12-09 10:26:48,504 PIL.Image: Importing PngImagePlugin
+[DEBUG] 2025-12-09 10:26:48,504 PIL.Image: Importing PpmImagePlugin
+[DEBUG] 2025-12-09 10:26:48,504 PIL.Image: Importing PsdImagePlugin
+[DEBUG] 2025-12-09 10:26:48,504 PIL.Image: Importing QoiImagePlugin
+[DEBUG] 2025-12-09 10:26:48,505 PIL.Image: Importing SgiImagePlugin
+[DEBUG] 2025-12-09 10:26:48,505 PIL.Image: Importing SpiderImagePlugin
+[DEBUG] 2025-12-09 10:26:48,505 PIL.Image: Importing SunImagePlugin
+[DEBUG] 2025-12-09 10:26:48,506 PIL.Image: Importing TgaImagePlugin
+[DEBUG] 2025-12-09 10:26:48,506 PIL.Image: Importing TiffImagePlugin
+[DEBUG] 2025-12-09 10:26:48,506 PIL.Image: Importing WebPImagePlugin
+[DEBUG] 2025-12-09 10:26:48,507 PIL.Image: Importing WmfImagePlugin
+[DEBUG] 2025-12-09 10:26:48,507 PIL.Image: Importing XbmImagePlugin
+[DEBUG] 2025-12-09 10:26:48,508 PIL.Image: Importing XpmImagePlugin
+[DEBUG] 2025-12-09 10:26:48,509 PIL.Image: Importing XVThumbImagePlugin
+[DEBUG] 2025-12-09 10:28:14,264 PIL.PngImagePlugin: STREAM b'IHDR' 16 13
+[DEBUG] 2025-12-09 10:28:14,265 PIL.PngImagePlugin: STREAM b'sBIT' 41 4
+[DEBUG] 2025-12-09 10:28:14,265 PIL.PngImagePlugin: b'sBIT' 41 4 (unknown)
+[DEBUG] 2025-12-09 10:28:14,265 PIL.PngImagePlugin: STREAM b'tEXt' 57 25
+[DEBUG] 2025-12-09 10:28:14,265 PIL.PngImagePlugin: STREAM b'tEXt' 94 45
+[DEBUG] 2025-12-09 10:28:14,266 PIL.PngImagePlugin: STREAM b'IDAT' 151 8192
+[DEBUG] 2025-12-09 10:28:14,286 urllib3.connectionpool: Starting new HTTPS connection (1): api.cloudinary.com:443
+[DEBUG] 2025-12-09 10:28:18,563 urllib3.connectionpool: https://api.cloudinary.com:443 "POST /v1_1/dy7qagebv/image/upload HTTP/1.1" 200 None
+[ERROR] 2025-12-09 11:38:11,075 django.request: Internal Server Error: /user/forgot-password-otp/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 273, in verify_forgot_otp
+    return render(request,"forgot_otp.html",{"remaining_seconds": remaining_seconds})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'resend_forgot_otp' not found. 'resend_forgot_otp' is not a valid view function or pattern name.
+[ERROR] 2025-12-09 11:38:11,078 django.server: "GET /user/forgot-password-otp/ HTTP/1.1" 500 145197

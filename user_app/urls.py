@@ -10,6 +10,7 @@ urlpatterns=[
     path("home/",views.home_page,name="home"),
     path("forgot-password/",views.forgot_password,name="forgotpswd"),
     path("forgot-password-otp/",views.verify_forgot_otp,name="forgot_password_otp"),
+    path("resendOtp/",views.resend_forgot_otp,name="resend_forgot_otp"),
     path("reset-password/",views.reset_password,name="reset_password"),
     path("logout/",views.signout,name="signout"),
     path("category/<int:id>/products/",views.products_by_category,name="products_on_category"),

@@ -71,29 +71,19 @@
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
                 <div class="flex-shrink-0">
-                    <a href=""><span class="text-2xl font-bold text-gray-900">Nuts & Seeds</span></a>
+                    <a href="{% url 'signin' %}"><span class="text-2xl font-bold text-gray-900">Nuts & Seeds</span></a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="" class="text-gray-900 font-medium hover:text-gray-600 transition">Home</a>
-                    <a href="" class="text-gray-600 hover:text-gray-900 transition">Products</a>
-                    <a href="#" class="text-gray-600 hover:text-gray-900 transition">About Us</a>
-                    <a href="#" class="text-gray-600 hover:text-gray-900 transition">Contact</a>
+                    <a href="{% url 'signin' %}" class="text-gray-900 font-medium hover:text-gray-600 transition">Home</a>
+                    <a href="{% url 'signin' %}" class="text-gray-600 hover:text-gray-900 transition">Products</a>
+                    <a href="{% url 'signin' %}" class="text-gray-600 hover:text-gray-900 transition">About Us</a>
+                    <a href="{% url 'signin' %}" class="text-gray-600 hover:text-gray-900 transition">Contact</a>
                 </div>
 
                 <!-- Right Side Icons -->
                 <div class="flex items-center space-x-4">
-                    <!-- Search Bar -->
-                    <form action="">
-                        <div class="hidden sm:block">
-                            <input type="hidden" id="category-id" name="category_id" value="{{ cat.id|default:'' }}">
-                            <input type="text" name="search" placeholder="Search..."
-                                class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-48 lg:w-64"
-                                hx-get="{% url 'filtering' %}" hx-trigger="keyup changed delay:300ms"
-                                hx-target="#category-product" hx-swap="innerHTML" hx-include="#category-id">
-                        </div>
-                    </form>
 
                     <a href="{% url 'signin' %}" class="text-gray-600 hover:text-gray-900 transition">Login</a>
                     <a href="{% url 'signup' %}" class="text-gray-600 hover:text-gray-900 transition">Signup</a>
@@ -115,10 +105,10 @@
     <footer class="bg-white border-t border-gray-200 mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="flex flex-wrap justify-center gap-8 mb-8">
-                <a href="#" class="text-gray-600 hover:text-gray-900 transition">About Us</a>
-                <a href="#" class="text-gray-600 hover:text-gray-900 transition">Contact</a>
-                <a href="#" class="text-gray-600 hover:text-gray-900 transition">Privacy Policy</a>
-                <a href="#" class="text-gray-600 hover:text-gray-900 transition">Terms of Service</a>
+                <a href="{% url 'signin' %}" class="text-gray-600 hover:text-gray-900 transition">About Us</a>
+                <a href="{% url 'signin' %}" class="text-gray-600 hover:text-gray-900 transition">Contact</a>
+                <a href="{% url 'signin' %}" class="text-gray-600 hover:text-gray-900 transition">Privacy Policy</a>
+                <a href="{% url 'signin' %}" class="text-gray-600 hover:text-gray-900 transition">Terms of Service</a>
             </div>
             <div class="text-center text-gray-500 text-sm">
                 <p>&copy; 2025 ShopSmart. All rights reserved.</p>
@@ -149,7 +139,7 @@ function togglePassword(fieldId, iconId) {
 </script>
 
 
-<!-- Timer reset script for otp verification -->
+<!-- Timer reset script for register otp verification -->
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -165,8 +155,9 @@ document.addEventListener("DOMContentLoaded", function() {
     function updateTimer() {
         let m = Math.floor(timeLeft / 60);
         let s = timeLeft % 60;
-        minutes.innerHTML = m.toString().padStart(2,"0");
-        seconds.innerHTML = s.toString().padStart(2,"0");
+
+        minutes.innerHTML = m.toString().padStart(2, "0");
+        seconds.innerHTML = s.toString().padStart(2, "0");
     }
 
     function startTimer() {
@@ -175,18 +166,18 @@ document.addEventListener("DOMContentLoaded", function() {
         resendBtn.classList.add("bg-gray-400", "cursor-not-allowed", "pointer-events-none");
         resendBtn.classList.remove("bg-red-600");
 
-        verifyBtn.disabled = false;              
-        verifyBtn.classList.remove("opacity-50"); 
+        verifyBtn.disabled = false;
+        verifyBtn.classList.remove("opacity-50");
 
         countdown = setInterval(() => {
-            if(timeLeft <= 0) {
+            if (timeLeft <= 0) {
                 clearInterval(countdown);
 
                 resendBtn.classList.remove("bg-gray-400", "cursor-not-allowed", "pointer-events-none");
                 resendBtn.classList.add("bg-red-600");
 
-                verifyBtn.disabled = true;        
-                verifyBtn.classList.add("opacity-50");   
+                verifyBtn.disabled = true;
+                verifyBtn.classList.add("opacity-50");
 
             } else {
                 timeLeft--;
@@ -195,14 +186,17 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 1000);
     }
 
-    startTimer();
+    if (timeLeft > 0) {
+        startTimer();
+    } else {
+        updateTimer();
+    }
 
-    // RESEND OTP
     resendBtn.addEventListener("click", function(event) {
         event.preventDefault();
 
         if (resendBtn.classList.contains("cursor-not-allowed")) {
-            return;
+            return;  
         }
 
         fetch("{% url 'resend_otp' %}", {
@@ -210,45 +204,124 @@ document.addEventListener("DOMContentLoaded", function() {
             headers: {
                 "X-CSRFToken": "{{ csrf_token }}",
                 "Content-Type": "application/json"
-            },
-        }).then(response => {
-            if(response.ok) {
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
 
+            if (data.success) {
+           
                 timeLeft = 60;
+
+                clearInterval(countdown);
                 startTimer();
 
-                alert("OTP resent successfully");
+                showSnackbar(data.message, "#3b82f6");
 
             } else {
-                alert("Failed to resend OTP");
+                showSnackbar(data.message, "#ef4444");
             }
+
+        })
+        .catch(err => {
+            showSnackbar("Error sending OTP", "#ef4444");
         });
     });
+
 });
 </script>
 
 
-<!-- resent otp message display -->
-
+<!-- Resend otp for forgot password -->
 <script>
-    document.getElementById("resendBtn").addEventListener("click", function() {
-    fetch("{% url 'resend_otp' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
+document.addEventListener("DOMContentLoaded", function() {
+
+    let timeLeft = {{ remaining_seconds|default:60 }};
+    const invalidOtp = {{ invalid_otp|yesno:"true,false" }};
+    const minutes = document.getElementById("minutes");
+    const seconds = document.getElementById("seconds");
+    const resendBtn = document.getElementById("resendBtnForgot");
+    const verifyBtn = document.getElementById("verifyBtnForgot");
+    let countdown;
+
+    function updateTimer() {
+        let m = Math.floor(timeLeft / 60);
+        let s = timeLeft % 60;
+        minutes.innerHTML = m.toString().padStart(2, "0");
+        seconds.innerHTML = s.toString().padStart(2, "0");
+    }
+
+    function startTimer() {
+        updateTimer();
+
+        resendBtn.classList.add("bg-gray-400", "cursor-not-allowed", "pointer-events-none");
+        resendBtn.classList.remove("bg-red-600");
+
+        verifyBtn.disabled = false;
+        verifyBtn.classList.remove("opacity-50");
+
+        countdown = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+
+                resendBtn.classList.remove("bg-gray-400", "cursor-not-allowed", "pointer-events-none");
+                resendBtn.classList.add("bg-red-600");
+
+                verifyBtn.disabled = true;
+                verifyBtn.classList.add("opacity-50");
+
+            } else {
+                timeLeft--;
+                updateTimer();
+            }
+        }, 1000);
+    }
+
+    if (timeLeft > 0) {
+        startTimer();
+    } else {
+        updateTimer();
+    }
+
+    resendBtn.addEventListener("click", function(event) {
+        event.preventDefault();
+
+        if (resendBtn.classList.contains("cursor-not-allowed")) {
+            return;
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-          
-            showSnackbar(data.message, "#3b82f6");
-        } else {
-            showSnackbar(data.message, "#ef4444");
-        }
+
+        fetch("{% url 'resend_forgot_otp' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            if (data.success) {
+    
+                timeLeft = 60;
+
+                clearInterval(countdown);
+                startTimer();
+
+                showSnackbar("OTP resent successfully", "#3b82f6");
+
+            } else {
+                showSnackbar(data.message, "#ef4444");
+            }
+
+        })
+        .catch(() => {
+            showSnackbar("Error sending OTP", "#ef4444");
+        });
     });
+
 });
 </script>
+
     
 </body>
 

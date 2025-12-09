@@ -139,6 +139,7 @@ def blockUser(request,id):
 def admin_login(request):
     if request.user.is_authenticated:
         return redirect("dashboard_home")
+
     
     if request.method=="POST":
         form=AdminLoginForm(request.POST)
@@ -153,6 +154,7 @@ def admin_login(request):
                 return redirect("dashboard_home")
             else:
                 messages.error(request,"Invalid Credentials or not and Admin!!")
+                return redirect("admin_signin")
     else:
         form=AdminLoginForm()
 

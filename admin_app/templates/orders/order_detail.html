@@ -22,7 +22,7 @@
                 <!-- Name -->
                 <div>
                     <label class="text-sm font-medium text-gray-600">Name:</label>
-                    <p class="text-base font-semibold text-gray-900 mt-1">{{order.user.firstname}}</p>
+                    <p class="text-base font-semibold text-gray-900 mt-1">{{order.user.firstname | default_if_none:""}}</p>
                 </div>
 
                 <!-- Email -->
@@ -34,14 +34,9 @@
                 <!-- Phone -->
                 <div>
                     <label class="text-sm font-medium text-gray-600">Phone:</label>
-                    <p class="text-base text-gray-900 mt-1">{{order.user.phone_number}}</p>
+                    <p class="text-base text-gray-900 mt-1">{{order.user.phone_number | default_if_none:""}}</p>
                 </div>
 
-                <!-- Estimated Delivery -->
-                <!-- <div>
-                        <label class="text-sm font-medium text-gray-600">Estimated Delivery:</label>
-                        <p class="text-base text-gray-900 mt-1">2025-05-07</p>
-                    </div> -->
             </div>
         </div>
 
@@ -60,7 +55,7 @@
                         <h3 class="text-lg font-semibold text-gray-900">Shipping Information</h3>
                     </div>
                     <div class="space-y-2 text-sm text-gray-700">
-                        <p class="font-medium first-letter:uppercase">{{order.user.firstname}}</p>
+                        <p class="font-medium first-letter:uppercase">{{order.user.firstname | default_if_none:"" }}</p>
                         <p class="first-letter:uppercase">{{order.address.house_name}}</p>
                         <p class="first-letter:uppercase">{{order.address.landmark}}</p>
                         <p class="first-letter:uppercase">{{order.address.street}}</p>
@@ -234,8 +229,7 @@
                         Pending
                     </span>
 
-                    {% elif order.payment_method == 'razorpay' and item.payment_status == 'paid' or 
-                        order.payment_method == 'wallet' and item.payment_status == 'paid' %}
+                    {% elif order.payment_method == 'razorpay' and item.payment_status == 'paid' or order.payment_method == 'wallet' and item.payment_status == 'paid' %}
         
                     <span class="inline-block mt-1 px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded">
                         Paid

@@ -96,16 +96,22 @@
  
     </style>
 
-    <!-- Navbar -->
+    <!-- Navbar for mobile + desktop view -->
     <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-orange-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
+
                 <div class="flex-shrink-0">
-                    <a href="{% url 'home' %}"><span class="text-2xl font-bold text-orange-500">Nuts & Seeds</span></a>
+                    <a href="{% url 'home' %}">
+                        <span class="text-2xl font-bold text-orange-500">Nuts & Seeds</span>
+                    </a>
                 </div>
 
-                <!-- Navigation Links -->
+                <button id="mobile-menu-btn" 
+                    class="md:hidden text-orange-600 hover:text-orange-700 focus:outline-none">
+                    <i class="fa-solid fa-bars fa-xl"></i>
+                </button>
+
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="{% url 'home' %}" class="text-orange-600 font-medium hover:text-orange-700 transition">Home</a>
                     <a href="{% url 'all_products' %}" class="text-gray-600 hover:text-orange-600 transition">Products</a>
@@ -113,9 +119,8 @@
                     <a href="" class="text-gray-600 hover:text-orange-600 transition">Contact</a>
                 </div>
 
-                <!-- Right Side Icons -->
-                <div class="flex items-center space-x-4">
-                    <!-- Search Bar -->
+                <div class="hidden md:flex items-center space-x-4">
+                    
                     <form action="">
                         <div class="hidden sm:block">
                             <input type="hidden" id="category-id" name="category_id" value="{{ cat.id|default:'' }}">
@@ -126,30 +131,60 @@
                         </div>
                     </form>
 
-                    <!-- Wishlist Icon -->
-                     <a href="{% url 'allWishlist' %}"><button class="p-2 hover:bg-orange-100 rounded-lg transition">
-                        <i class="fa-regular fa-heart fa-lg text-orange-600"></i>
-                    </button>
+                    <a href="{% url 'allWishlist' %}">
+                        <button class="p-2 hover:bg-orange-100 rounded-lg transition">
+                            <i class="fa-regular fa-heart fa-lg text-orange-600"></i>
+                        </button>
                     </a>
 
-                    <!-- Cart Icon -->
                     <a href="{% url 'showCart' %}">
                         <button class="p-2 hover:bg-orange-100 rounded-lg transition relative">
                             <i class="fa-solid fa-cart-shopping fa-lg text-orange-600"></i>
                             <span id="cart-count"
-                            class="absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full shadow">
-                            {{ cart_item_count }}
+                                class="absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full shadow">
+                                {{ cart_item_count }}
                             </span>
                         </button>
                     </a>
 
+                    <a href="{% url 'userDasboard' %}">
+                        <i class="fa-regular fa-user fa-lg text-orange-600 hover:text-orange-700"></i>
+                    </a>
 
-                    <!-- Profile icon -->
-                    <a href="{% url 'userDasboard' %}"><i class="fa-regular fa-user fa-lg text-orange-600 hover:text-orange-700"></i></a>
+                </div>
+
+            </div>
+
+            <div id="mobile-menu" class="md:hidden hidden flex flex-col gap-4 py-4">
+
+                <a href="{% url 'home' %}" class="text-orange-600 font-medium hover:text-orange-700">Home</a>
+                <a href="{% url 'all_products' %}" class="text-gray-600 hover:text-orange-600">Products</a>
+                <a href="{% url 'aboutUs' %}" class="text-gray-600 hover:text-orange-600">About Us</a>
+                <a href="" class="text-gray-600 hover:text-orange-600">Contact</a>
+
+                <div class="flex items-center gap-6 pt-2 border-t border-orange-200">
+
+                    <a href="{% url 'allWishlist' %}">
+                        <i class="fa-regular fa-heart fa-lg text-orange-600"></i>
+                    </a>
+
+                    <a href="{% url 'showCart' %}" class="relative">
+                        <i class="fa-solid fa-cart-shopping fa-lg text-orange-600"></i>
+                        <span class="absolute -top-1 -right-3 bg-orange-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full shadow">
+                            {{ cart_item_count }}
+                        </span>
+                    </a>
+
+                    <a href="{% url 'userDasboard' %}">
+                        <i class="fa-regular fa-user fa-lg text-orange-600"></i>
+                    </a>
+
                 </div>
             </div>
+
         </div>
     </nav>
+
 
     <!-- Global Loader -->
     <div id="loader"
@@ -171,7 +206,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
         <div class="flex flex-wrap justify-center gap-8 mb-8">
-            <a href="#" class="text-orange-700 hover:text-orange-900 transition">About Us</a>
+            <a href="{% url 'aboutUs' %}" class="text-orange-700 hover:text-orange-900 transition">About Us</a>
             <a href="#" class="text-orange-700 hover:text-orange-900 transition">Contact</a>
             <a href="#" class="text-orange-700 hover:text-orange-900 transition">Privacy Policy</a>
             <a href="#" class="text-orange-700 hover:text-orange-900 transition">Terms of Service</a>
@@ -184,14 +219,23 @@
     </footer>
 
 
-<meta name="csrf-token" content="{{ csrf_token }}">
-<script>
-  document.body.addEventListener('htmx:configRequest', (event) => {
-    event.detail.headers['X-CSRFToken'] = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
-                                          document.querySelector('meta[name="csrf-token"]')?.content;
-  });
-</script>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <script>
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                                            document.querySelector('meta[name="csrf-token"]')?.content;
+    });
+    </script>
 
+
+    <script>
+        const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+        const mobileMenu = document.getElementById("mobile-menu");
+
+        mobileMenuBtn.addEventListener("click", () => {
+            mobileMenu.classList.toggle("hidden");
+        });
+    </script>
 
 
     <!-- Modal for hidding after delete address confirmation -->
