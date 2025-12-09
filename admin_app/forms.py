@@ -15,7 +15,11 @@ class AdminLoginForm(forms.Form):
 
 
 class CategoryForm(forms.ModelForm):
-    image=forms.ImageField()
+    image=forms.ImageField(
+        error_messages={
+            "invalid_image": "Only PNG, JPG, JPEG, WEBP files are allowed.",
+        }
+    )
 
     class Meta:
         model=Category

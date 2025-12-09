@@ -92,7 +92,7 @@
             </div>
             {% endfor %}
 
-            {% for i in "1234"|make_list %}
+            {% for i in "123"|make_list %}
             {% if forloop.counter > images|length %}
             <div class="relative w-24 h-24 border-2 border-dashed border-gray-300 rounded bg-gray-50 image-slot"
                 data-index="{{ forloop.counter }}">

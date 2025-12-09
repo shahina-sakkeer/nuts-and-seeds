@@ -17,6 +17,8 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from admin_app.helper import get_sales_data,get_ordered_products,get_ordered_categories,get_recent_orders
 from decimal import Decimal
+import logging
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
@@ -256,7 +258,6 @@ def add_products(request):
         if form.is_valid() and variant_formset.is_valid():
             try:
                 product = form.save()
-                print("product",product)
             
                 for variant_form in variant_formset:
                     if variant_form.cleaned_data:
@@ -265,12 +266,17 @@ def add_products(request):
                         variant.save()
 
                  
-                for i in range(1, 5):
+                for i in range(1, 4):
                     cropped_data = request.POST.get(f"cropped_image_{i}")
                     print(f"Image {i} data:", cropped_data[:50] if cropped_data else "No data")
                     if cropped_data:
                         format, imgstr = cropped_data.split(';base64,')
                         ext = format.split('/')[-1]
+
+                        allowed = ["png", "jpeg", "jpg", "webp"]
+                        if ext not in allowed:
+                            messages.error(request, "Only PNG, JPG, JPEG, WEBP images are allowed.")
+                            return redirect("addProduct")
         
                         img_bytes = base64.b64decode(imgstr)
 
@@ -280,7 +286,6 @@ def add_products(request):
                         print(f"Image {i} uploaded successfully")
 
                 messages.success(request, "Product successfully added")
-                print(messages)
                 return redirect("listProduct")
 
             except Exception as e:
@@ -322,7 +327,7 @@ def edit_product(request,id):
                     ProductImage.objects.filter(id__in=remove_ids).delete()
 
                 remove_variant_id=request.POST.getlist("remove_variant")
-                print(remove_variant_id)
+    
                 if remove_variant_id:
                     ProductVariant.objects.filter(id__in=remove_variant_id).delete()
 
@@ -336,7 +341,6 @@ def edit_product(request,id):
                         
                         result = upload(img_bytes, folder="products")
                         ProductImage.objects.create(product=product, image=result['secure_url'])
-                        print(f"Image {i} uploaded successfully")
 
                 messages.success(request,"Product updated!!!")
                 return redirect("listProduct")

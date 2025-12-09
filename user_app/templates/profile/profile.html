@@ -20,16 +20,29 @@
             <div class="flex items-center justify-between mb-3">
                 <label class="block text-sm font-medium text-gray-900">First Name</label>
             </div>
-            <input type="email" placeholder="Missing first name : Please edit the field" readonly
+
+            {% if user.firstname %}
+            <input type="text" value="{{user.firstname}}" readonly
                 class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+            {% else %}
+            <input type="text" placeholder="Missing first name : Please edit the field" readonly
+                class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+            {% endif %}
         </div>
 
         <div class="mb-8">
             <div class="flex items-center justify-between mb-3">
                 <label class="block text-sm font-medium text-gray-900">Last Name</label>
             </div>
-            <input type="email" placeholder="Missing last name : Please edit the field" readonly
+
+            {% if user.lastname %}
+            <input type="text" value="{{user.lastname}}" readonly
                 class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+            {% else %}
+            <input type="text" placeholder="Missing last name : Please edit the field" readonly
+                class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+            {% endif %}
+
         </div>
         
 
@@ -49,8 +62,15 @@
         <div class="flex items-center justify-between mb-3">
             <label class="block text-sm font-medium text-gray-900">Mobile Number</label>
         </div>
+
+        {% if user.phone_number %}
+        <input type="tel" value="{{user.phone_number}}" readonly
+            class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+        {% else %}
         <input type="tel" placeholder="Missing phone number : Please edit the field" readonly
             class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
+        {% endif %}
+
     </div>
 
 
@@ -73,7 +93,7 @@
             <div class="flex items-center justify-between mb-3">
                 <label class="block text-sm font-medium text-gray-900">First Name</label>
             </div>
-            <input type="email" value="{{user.firstname}}" readonly
+            <input type="text" value="{{user.firstname}}" readonly
                 class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
         </div>
 
@@ -81,7 +101,7 @@
             <div class="flex items-center justify-between mb-3">
                 <label class="block text-sm font-medium text-gray-900">Last Name</label>
             </div>
-            <input type="email" value="{{user.lastname}}" readonly
+            <input type="text" value="{{user.lastname}}" readonly
                 class="w-full md:w-2/3 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-900 focus:outline-none">
         </div>
         

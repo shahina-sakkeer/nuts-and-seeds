@@ -23,6 +23,8 @@ from decimal import Decimal
 from user_app.helpers import checkout_access, get_offer_price
 from django.core.signing import TimestampSigner,BadSignature,SignatureExpired
 from django.core.paginator import Paginator
+import logging
+logger = logging.getLogger(__name__)
 
 signer = TimestampSigner()
 
@@ -348,7 +350,7 @@ def products_by_category(request,id):
 @login_required(login_url='/user/login/')
 def list_products(request):
     categories=Category.objects.all().order_by("-id")
-    products=Products.objects.prefetch_related("variants","images").all()
+    products=Products.objects.prefetch_related("variants","images").all().order_by("id")
 
     wishlist_items = set(WishlistItem.objects.filter(wishlist__user=request.user).values_list('product_id', flat=True))
 
@@ -414,7 +416,8 @@ def filterProducts(request,id=None):
             max_price=float(max_price)
 
             if min_price < max_price:
-                products=products.filter(variants__price__gte=min_price,variants__price__lte=max_price).distinct()
+                products=products.annotate(minimum_variant_price=Min("variants__price")
+                                           ).filter(minimum_variant_price__gte=min_price,minimum_variant_price__lte=max_price).distinct()
         except ValueError:
             pass
 
@@ -680,32 +683,72 @@ def verify_email_change(request):
 @login_required(login_url='/user/login/')
 def edit_password(request):
     user=request.user
+    is_normal_user=user.has_usable_password()
     if request.method=="POST":
-        current_pswd=request.POST.get("current_password")
-        new_pswrd=request.POST.get("new_password")
+        if is_normal_user :
+            current_pswd=request.POST.get("current_password")
+            new_pswrd=request.POST.get("new_password")
 
-        if not user.check_password(current_pswd):
-            response=render(request,"profile/edit_password.html")
+            if not user.check_password(current_pswd):
+                response=render(request,"profile/edit_password.html")
 
+                response["HX-Trigger"] = json.dumps({
+                    "toast_message": "Incorrect Password",
+                    "toast_type": "error",
+                })
+                return response
+        
+
+            user.set_password(new_pswrd)
+            user.save()
+            update_session_auth_hash(request,user)
+
+            incomplete=( not user.firstname or not user.lastname or not user.phone_number)
+
+            context={
+                "incomplete":incomplete,"normal_user":True,"user":user
+            }
+            response=render(request,"profile/profile.html",context)
+                    
             response["HX-Trigger"] = json.dumps({
-                "toast_message": "Incorrect Password",
-                "toast_type": "error",
+                    "toast_message": "Password Updated",
+                    "toast_type": "success",
             })
             return response
-    
+        
+        else:
+            nw_password=request.POST.get("nw_password")
+            c_password=request.POST.get("c_password")
 
-        user.set_password(new_pswrd)
-        user.save()
-        update_session_auth_hash(request,user)
-        response=render(request,"profile/profile.html")
-                
-        response["HX-Trigger"] = json.dumps({
-                "toast_message": "Password Updated",
-                "toast_type": "success",
-        })
-        return response
+            if nw_password != c_password:
+                response=render(request,"profile/edit_password.html")
+
+                response["HX-Trigger"] = json.dumps({
+                    "toast_message": "Password doesnot match",
+                    "toast_type": "error",
+                })
+                return response
+            
+            user.set_password(nw_password)
+            user.save()
+            update_session_auth_hash(request,user)
+
+            incomplete=( not user.firstname or not user.lastname or not user.phone_number)
+
+            context={
+                "incomplete":incomplete,"normal_user":False,"user":user
+            }
+
+            response=render(request,"profile/profile.html",context)
+                    
+            response["HX-Trigger"] = json.dumps({
+                    "toast_message": "New password created",
+                    "toast_type": "success",
+            })
+            return response
+
     
-    return render(request,"profile/edit_password.html")
+    return render(request,"profile/edit_password.html",{"normal_user":is_normal_user})
 
 
 #ADD PRODUCT TO CART
@@ -736,6 +779,7 @@ def add_to_cart(request,id):
                 cart_item.save()
 
                 wishlist_item=WishlistItem.objects.filter(wishlist=wishlist,product=product).first()
+
                 if wishlist_item:
                     wishlist_item.delete()
     
@@ -812,6 +856,7 @@ def update_quantity(request,id=id):
     for ci in cart_item:
         price,_=get_offer_price(ci.product)
         cart_total+=ci.quantity * price
+        logger.info("total price",cart_total)
 
 
     return render(request,"cart/partial_quantity.html",{"product":item,"price":row_total,"total":cart_total})
@@ -839,7 +884,6 @@ def list_address(request):
 
     if request.method=="POST":
         selected_address_id=request.POST.get("selected_address")
-        print("selected address id",selected_address_id)
 
         if selected_address_id:
             addresses.update(is_primary=False)
@@ -1044,7 +1088,6 @@ def checkout(request):
 
                 
                 except Exception as e:
-                    print(f"Razorpay order creation failed: {e}")
                     return JsonResponse({"error": "Failed to create Razorpay order."}, status=500)
 
             elif payment_method=="wallet":
@@ -1117,7 +1160,6 @@ def checkout(request):
                                 referral_records.save()
 
                             except Exception as e:
-                                print("exception",e)
                                 pass
 
                     # create a session of coupon details to pass inside order_placed view
@@ -1178,7 +1220,6 @@ def partial_coupon(request):
                 usage=CouponUsage.objects.filter(user=request.user,coupon=coupon).first()
 
                 if usage and coupon.usage_limit is not None and usage.used_count >= coupon.usage_limit:
-                    print(usage.used_count)
                     error_message="Coupon usage limit reached"
     
                 else:
@@ -1271,7 +1312,6 @@ def verify_payment(request):
                     referral_records.save()
 
                 except Exception as e:
-                    print("exception",e)
                     pass
 
             cart = Cart.objects.get(user=request.user)
@@ -1302,7 +1342,6 @@ def verify_payment(request):
                     if coupon:
                         usage,created=CouponUsage.objects.get_or_create(user=request.user,coupon=coupon)
                         usage.used_count+=1
-                        print(usage.used_count)
                         usage.save()
 
                 # the getted session is deleted 
@@ -1471,7 +1510,6 @@ def retry_payment_success(request):
                     referral_records.save()
 
                 except Exception as e:
-                    print("exception",e)
                     pass
 
             cart = Cart.objects.get(user=request.user)
@@ -1597,7 +1635,6 @@ def order_detail(request,id):
 @login_required(login_url='/user/login/')
 def return_order_item(request,id=id):
     item=get_object_or_404(OrderItem,id=id,status="delivered")
-    print(item)
 
     if request.method=="POST":
         form=OrderReturnForm(request.POST,request.FILES)
