@@ -137,6 +137,7 @@ def verify_otp(request):
             cache.delete(f"otp:{email}")
             cache.delete(f"user_data:{email}")
             request.session.pop("pending_email", None)
+            request.session.pop("code", None)
 
             user.backend="django.contrib.auth.backends.ModelBackend"
             login(request,user)
@@ -879,7 +880,7 @@ def add_to_cart(request,id):
             wishlist_item=WishlistItem.objects.filter(wishlist=wishlist,product=product).first()
             if wishlist_item:
                 wishlist_item.delete()
-            messages.success(request,"Product added to cart")
+            messages.success(request,"Item added to cart")
             return redirect("product_details",product.product.id)
         
     return redirect("product_details",product.product.id)

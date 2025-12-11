@@ -27,7 +27,8 @@
                                         class="mt-1 w-4 h-4">
 
                                     <span class="ml-3 text-gray-900"><i>
-                                        {{ user.firstname }}, {{ address.house_name }}, {{ address.street }},
+                                        {{ user.firstname|default_if_none:""|default:"" }},
+                                         {{ address.house_name }}, {{ address.street }},
                                         {{ address.pincode }}, {{ address.state }}</i>
                                     </span>
                                 </label>
