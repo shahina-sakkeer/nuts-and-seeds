@@ -23,6 +23,8 @@ from django.utils import timezone
 from decimal import Decimal
 from user_app.helpers import checkout_access, get_offer_price
 from django.core.signing import TimestampSigner,BadSignature,SignatureExpired
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 from django.core.paginator import Paginator
 import logging
 logger = logging.getLogger(__name__)
@@ -880,7 +882,7 @@ def add_to_cart(request,id):
             wishlist_item=WishlistItem.objects.filter(wishlist=wishlist,product=product).first()
             if wishlist_item:
                 wishlist_item.delete()
-            messages.success(request,"Item added to cart")
+            messages.success(request,"Product added to cart")
             return redirect("product_details",product.product.id)
         
     return redirect("product_details",product.product.id)
@@ -1715,6 +1717,29 @@ def order_detail(request,id):
 
     return render(request,"order/order_detail.html",{"orders":ordered_item_details,"order":order,"og_total":original_total,
                                                      "is_payment_failed":is_payment_failed})
+
+
+#DOWNLOAD INVOICE
+def download_invoice(request,id=id):
+    order=get_object_or_404(Orders,id=id,user=request.user)
+    order_items=order.orderitem.all()
+
+    original_total = sum(item.price for item in order_items)
+
+    template = get_template("order/invoice.html")
+    html = template.render({
+        "order": order,
+        "orders": order_items,
+        "og_total": original_total
+    })
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = (
+        f'attachment; filename="invoice_{order.orderID}.pdf"'
+    )
+
+    pisa.CreatePDF(html, dest=response)
+    return response
 
 
 #RETURN ORDER REQUEST SUBMIT

@@ -35,5 +35,7 @@ urlpatterns=[
     path("wallet/<int:id>/",views.wallet_details,name="walletDetail"),
     path("banner/",views.list_banner,name="bannerList"),
     path("banner/add/",views.add_banner,name="bannerAdd"),
-    path("banner/delete/<int:id>/",views.delete_banner,name="bannerDelete")
+    path("banner/delete/<int:id>/",views.delete_banner,name="bannerDelete"),
+    path("reportPdf/",views.dashboard_report_pdf,name="dashboard_report_pdf"),
+    path("excelSheet/",views.dashboard_report_excel,name="dashboard_report_excel")
 ]

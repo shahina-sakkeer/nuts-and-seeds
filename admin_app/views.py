@@ -14,8 +14,12 @@ import base64
 from cloudinary.uploader import upload
 from datetime import date,timedelta,datetime
 from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from openpyxl import Workbook
+from datetime import date
 from django.template.loader import render_to_string
-from admin_app.helper import get_sales_data,get_ordered_products,get_ordered_categories,get_recent_orders
+from admin_app.helper import get_sales_data,get_ordered_products,get_ordered_categories,get_recent_orders,resolve_date_range
 from decimal import Decimal
 import logging
 logger = logging.getLogger(__name__)
@@ -100,7 +104,6 @@ def admin_dashboard(request):
         "category_show":categories_show,
         "orders":recent_order["order"]
     })
-
 
 
 #CUSTOMER MANAGEMENT    
@@ -677,6 +680,76 @@ def delete_banner(request,id):
     messages.success(request,"Banner deleted")
     return redirect("bannerList")
     
+
+#DOWNLOAD SALES REPORT PDF
+@staff_required
+def dashboard_report_pdf(request):
+    filter_type = request.GET.get("filter", "today")
+    start_param = request.GET.get("start")
+    end_param = request.GET.get("end")
+
+    start_date, end_date = resolve_date_range(filter_type, start_param, end_param)
+
+    filtered_data = get_sales_data(start_date, end_date)
+    products = get_ordered_products(start_date, end_date)
+    categories = get_ordered_categories(start_date, end_date)
+    orders = get_recent_orders(start_date, end_date)["order"]
+
+    template = get_template("dashboard_report_pdf.html")
+    html = template.render({
+        "start": start_date,
+        "end": end_date,
+        "sales": filtered_data,
+        "products": products,
+        "categories": categories,
+        "orders": orders,
+    })
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = "attachment; filename=sales_report.pdf"
+    pisa.CreatePDF(html, dest=response)
+    return response
+
+
+
+#EXCEL SHEET DOWNLOAD
+@staff_required
+def dashboard_report_excel(request):
+    filter_type = request.GET.get("filter", "today")
+    start_param = request.GET.get("start")
+    end_param = request.GET.get("end")
+
+    start_date, end_date = resolve_date_range(filter_type, start_param, end_param)
+
+    sales = get_sales_data(start_date, end_date)
+    products = get_ordered_products(start_date, end_date)
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Sales Report"
+
+    ws.append(["Sales Report"])
+    ws.append(["From", start_date, "To", end_date])
+    ws.append([])
+
+    ws.append(["Total Orders", sales["count"]])
+    ws.append(["Gross Sales", sales["sales"]])
+    ws.append(["Discount", sales["discount"]])
+    ws.append(["Net Sales", sales["net"]])
+
+    ws.append([])
+    ws.append(["Product", "Quantity", "Revenue"])
+    for p in products:
+        ws.append([p["name"], p["quantity"], p["revenue"]])
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = "attachment; filename=sales_report.xlsx"
+
+    wb.save(response)
+    return response
+
 
 
 

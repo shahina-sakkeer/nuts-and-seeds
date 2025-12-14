@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: DejaVu Sans, Arial;
+            font-size: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f3f3f3;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Nuts & Seeds Market</h2>
+<p><strong>Invoice ID:</strong> {{ order.orderID }}</p>
+<p><strong>Date:</strong> {{ order.created_at|date:"d M Y" }}</p>
+<p><strong>Payment Method:</strong> {{ order.get_payment_method_display }}</p>
+
+<hr>
+
+<h3>Bill To</h3>
+<p>
+    {{order.user.firstname}} <br>
+    {{order.address.house_name}}<br>
+    {{order.address.street}}, {{order.address.landmark}} <br>
+    {{order.address.pincode}}<br>
+    {{order.address.state}}
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Rate</th>
+            <th>Total</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in orders %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ item.product.product.name }} ({{ item.product.weight }}g)</td>
+            <td>{{ item.quantity }}</td>
+            <td>Rs. {{ item.price }}</td>
+            <td>Rs. {{ item.price|floatformat:2 }}</td>
+            <td>{{ item.get_status_display }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+
+<p><strong>Subtotal:</strong> Rs. {{ og_total }}</p>
+<p><strong>Coupon Appied:</strong>{{ order.coupon.code }}</p>
+<p><strong>Discount:</strong> Rs. {{ order.discount }}</p>
+<p><strong>Total:</strong> Rs. {{ order.total_price }}</p>
+
+<br>
+
+<hr>
+<p style="text-align:center">Thank you for shopping with us!</p>
+
+</body>
+</html>

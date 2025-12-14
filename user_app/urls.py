@@ -53,6 +53,7 @@ urlpatterns=[
     path("wishlist/add/<int:id>/",views.add_to_wishlist,name="addWishlist"),
     path("wishlist/delete/<int:id>/",views.remove_from_wishlist,name="removeWishlist"),
     path("review/add/<int:id>/",views.add_review,name="addReview"),
-    path("about/",views.about,name="aboutUs")
+    path("about/",views.about,name="aboutUs"),
+    path("invoice/<int:id>/",views.download_invoice,name="invoiceDownload")
 ]
 

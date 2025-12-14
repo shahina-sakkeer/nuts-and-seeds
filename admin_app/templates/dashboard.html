@@ -2,11 +2,11 @@
 
 {% block content%}
 
-<div class="p-4 md:p-6 lg:p-8" id="dashboard-section">
+<div class="p-4 md:p-6 lg:p-8">
     <!-- Analytics and Sales Chart Section -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-4">
         <div>
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
 
 
                 <form action="{% url 'dashboard_home' %}" method="get" id="filter-form">
@@ -65,29 +65,28 @@
                 </form>
 
                 <!-- Download Dropdown -->
-                <div class="mt-3 sm:mt-0">
-                    <div class="relative inline-block text-left">
-                        <button id="downloadMenuBtn"
-                            class="px-4 py-2 bg-gray-800 text-white rounded-lg flex items-center gap-2 hover:bg-gray-700">
-                            Download
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
+                <div class="relative shrink-0">
+                    <button id="downloadMenuBtn"
+                        class="px-4 py-2 bg-gray-800 text-white rounded-lg flex items-center gap-2 hover:bg-gray-700">
+                        Download
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
 
-                        <div id="downloadMenu"
-                            class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+                    <div id="downloadMenu"
+                        class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
 
-                            <button id="download" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700">
-                                Download PDF
-                            </button>
+                        <a href="{% url 'dashboard_report_pdf' %}?filter={{ request.GET.filter }}&start={{ request.GET.start }}&end={{ request.GET.end }}"
+                        class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                            Download PDF
+                        </a>
 
-                            <button id="downloadExcel"
-                                class="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700">
-                                Download Excel
-                            </button>
-                        </div>
+                        <a href="{% url 'dashboard_report_excel' %}?filter={{ request.GET.filter }}&start={{ request.GET.start }}&end={{ request.GET.end }}"
+                        class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                            Download Excel
+                        </a>
                     </div>
                 </div>
 
@@ -339,6 +338,23 @@
     </div>
 
 </div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.getElementById("downloadMenuBtn");
+    const menu = document.getElementById("downloadMenu");
+
+    btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        menu.classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", function () {
+        menu.classList.add("hidden");
+    });
+});
+</script>
 
 
 {% endblock %}

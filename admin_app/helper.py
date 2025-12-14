@@ -1,6 +1,6 @@
 from user_app.models import Orders
 from django.db.models import Sum,F
-from datetime import date,timedelta
+from datetime import date, datetime,timedelta
 from user_app.models import OrderItem
 
 
@@ -114,3 +114,25 @@ def get_ordered_categories(start,end):
     return result
 
 
+
+def resolve_date_range(filter_type, start_date=None, end_date=None):
+    today = date.today()
+    start_of_week = today - timedelta(days=today.weekday())
+    start_of_month = today.replace(day=1)
+    start_of_year = today - timedelta(days=365)
+
+    if filter_type == "today":
+        return today, today
+    if filter_type == "weekly":
+        return start_of_week, today
+    if filter_type == "monthly":
+        return start_of_month, today
+    if filter_type == "yearly":
+        return start_of_year, today
+    if filter_type == "custom" and start_date and end_date:
+        return (
+            datetime.strptime(start_date, "%Y-%m-%d").date(),
+            datetime.strptime(end_date, "%Y-%m-%d").date(),
+        )
+
+    return today, today

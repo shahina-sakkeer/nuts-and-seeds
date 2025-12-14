@@ -5,7 +5,7 @@
     checked 
     {% endif %} >
 
-    <span class="ml-3 text-gray-900"><i>{{user.firstname}},
+    <span class="ml-3 text-gray-900"><i> <b>{{user.firstname|default_if_none:""|default:""}}</b>
         {{address.house_name}},
         {{address.street}},
         {{address.pincode}},

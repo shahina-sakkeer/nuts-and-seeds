@@ -1437,3 +1437,1515 @@ Traceback (most recent call last):
     raise TemplateSyntaxError(
 django.template.exceptions.TemplateSyntaxError: default_if_none requires 2 arguments, 1 provided
 [ERROR] 2025-12-10 19:06:03,020 django.server: "GET /user/checkout/ HTTP/1.1" 500 291770
+[DEBUG] 2025-12-13 07:01:15,408 urllib3.connectionpool: Starting new HTTPS connection (1): api.razorpay.com:443
+[DEBUG] 2025-12-13 07:01:16,412 urllib3.connectionpool: https://api.razorpay.com:443 "POST /v1/orders HTTP/1.1" 200 211
+[ERROR] 2025-12-13 07:01:43,240 django.request: Internal Server Error: /user/order-detail/89/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 1718, in order_detail
+    return render(request,"order/order_detail.html",{"orders":ordered_item_details,"order":order,"og_total":original_total,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'invoiceDownload' with arguments '(89,)' not found. 2 pattern(s) tried: ['user/invoice/\\Z', 'invoice/\\Z']
+[ERROR] 2025-12-13 07:01:43,242 django.server: "GET /user/order-detail/89/ HTTP/1.1" 500 179128
+[ERROR] 2025-12-13 07:27:19,821 django.request: Internal Server Error: /user/invoice/89/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: download_invoice() got an unexpected keyword argument 'id'
+[ERROR] 2025-12-13 07:27:19,821 django.server: "GET /user/invoice/89/ HTTP/1.1" 500 70207
+[DEBUG] 2025-12-13 07:27:38,687 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 626BE0CF</p>\n<p><strong>Date:</strong> 13 Dec 2025</p>\n<p><strong>Payment Method:</strong> razorpay</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    priya <br>\n    Pathiyaparambath house<br>\n    nnnnn, hhhhhhhhhhh <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Ajwa Dates (250g)</td>\n            <td>1</td>\n            <td>₹500.00</td>\n            <td>₹500.00</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 500.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 500.00</p>\n\n<br>\n<p><strong>Status:</strong> </p>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-13 07:27:38,697 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:38,697 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:38,697 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:38,698 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:38,699 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:38,700 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:38,700 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:38,700 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:38,700 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:38,701 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-13 07:27:43,737 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 626BE0CF</p>\n<p><strong>Date:</strong> 13 Dec 2025</p>\n<p><strong>Payment Method:</strong> razorpay</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    priya <br>\n    Pathiyaparambath house<br>\n    nnnnn, hhhhhhhhhhh <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Ajwa Dates (250g)</td>\n            <td>1</td>\n            <td>₹500.00</td>\n            <td>₹500.00</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 500.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 500.00</p>\n\n<br>\n<p><strong>Status:</strong> </p>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-13 07:27:43,744 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:43,745 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:43,745 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:43,745 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:43,746 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:43,746 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:43,746 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:43,746 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:43,746 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:27:43,746 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-13 07:28:13,794 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 626BE0CF</p>\n<p><strong>Date:</strong> 13 Dec 2025</p>\n<p><strong>Payment Method:</strong> razorpay</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    priya <br>\n    Pathiyaparambath house<br>\n    nnnnn, hhhhhhhhhhh <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Ajwa Dates (250g)</td>\n            <td>1</td>\n            <td>₹500.00</td>\n            <td>₹500.00</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 500.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 500.00</p>\n\n<br>\n<p><strong>Status:</strong> </p>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-13 07:28:13,802 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:28:13,802 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:28:13,802 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:28:13,802 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:28:13,803 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:28:13,803 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:28:13,803 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:28:13,803 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:28:13,804 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:28:13,804 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-13 07:29:13,854 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 626BE0CF</p>\n<p><strong>Date:</strong> 13 Dec 2025</p>\n<p><strong>Payment Method:</strong> razorpay</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    priya <br>\n    Pathiyaparambath house<br>\n    nnnnn, hhhhhhhhhhh <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Ajwa Dates (250g)</td>\n            <td>1</td>\n            <td>₹500.00</td>\n            <td>₹500.00</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 500.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 500.00</p>\n\n<br>\n<p><strong>Status:</strong> </p>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-13 07:29:13,861 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:29:13,861 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:29:13,861 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:29:13,862 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:29:13,863 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:29:13,863 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:29:13,863 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:29:13,863 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:29:13,863 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:29:13,863 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-13 07:30:44,652 urllib3.connectionpool: Starting new HTTPS connection (1): api.razorpay.com:443
+[DEBUG] 2025-12-13 07:30:44,951 urllib3.connectionpool: https://api.razorpay.com:443 "POST /v1/orders HTTP/1.1" 200 213
+[DEBUG] 2025-12-13 07:31:14,876 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 8A575EBE</p>\n<p><strong>Date:</strong> 13 Dec 2025</p>\n<p><strong>Payment Method:</strong> razorpay</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    priya <br>\n    Pathiyaparambath house<br>\n    nnnnn, hhhhhhhhhhh <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>#</th>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Dried Dates (250g)</td>\n            <td>2</td>\n            <td>₹260.00</td>\n            <td>₹260.00</td>\n        </tr>\n        \n        <tr>\n            <td>2</td>\n            <td>Almond (1000g)</td>\n            <td>3</td>\n            <td>₹4050.00</td>\n            <td>₹4050.00</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 4310.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 4310.00</p>\n\n<br>\n<p><strong>Status:</strong> </p>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-13 07:31:14,885 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,885 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,885 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,886 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,886 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,887 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,887 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,887 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,887 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,887 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,888 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,888 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,888 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,888 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,888 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:31:14,888 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-13 07:32:52,673 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 80C22680</p>\n<p><strong>Date:</strong> 13 Dec 2025</p>\n<p><strong>Payment Method:</strong> wallet</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    priya <br>\n    Pathiyaparambath house<br>\n    nnnnn, hhhhhhhhhhh <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>#</th>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Kiwi Green (250g)</td>\n            <td>2</td>\n            <td>Rs. 360.00</td>\n            <td>Rs. 360.00</td>\n        </tr>\n        \n        <tr>\n            <td>2</td>\n            <td>Pistachio (250g)</td>\n            <td>1</td>\n            <td>Rs. 390.00</td>\n            <td>Rs. 390.00</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 750.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 750.00</p>\n\n<br>\n<p><strong>Status:</strong> </p>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-13 07:32:52,681 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,681 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,681 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,681 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,681 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,682 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,682 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,683 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,683 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,683 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,683 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,683 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,683 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,684 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,684 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:32:52,684 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-13 07:39:08,399 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 80C22680</p>\n<p><strong>Date:</strong> 13 Dec 2025</p>\n<p><strong>Payment Method:</strong> wallet</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    priya <br>\n    Pathiyaparambath house<br>\n    nnnnn, hhhhhhhhhhh <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>#</th>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Kiwi Green (250g)</td>\n            <td>2</td>\n            <td>Rs. 360.00</td>\n            <td>Rs. 360.00</td>\n        </tr>\n        \n        <tr>\n            <td>2</td>\n            <td>Pistachio (250g)</td>\n            <td>1</td>\n            <td>Rs. 390.00</td>\n            <td>Rs. 390.00</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 750.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 750.00</p>\n\n<br>\n<p><strong>Status:</strong> </p>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-13 07:39:08,406 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,406 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,406 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,406 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,406 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,408 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,408 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,408 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,408 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,408 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,409 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,409 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,409 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,409 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,409 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:39:08,409 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-13 07:40:08,839 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 80C22680</p>\n<p><strong>Date:</strong> 13 Dec 2025</p>\n<p><strong>Payment Method:</strong> wallet</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    priya <br>\n    Pathiyaparambath house<br>\n    nnnnn, hhhhhhhhhhh <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>#</th>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Kiwi Green (250g)</td>\n            <td>2</td>\n            <td>Rs. 360.00</td>\n            <td>Rs. 360.00</td>\n        </tr>\n        \n        <tr>\n            <td>2</td>\n            <td>Pistachio (250g)</td>\n            <td>1</td>\n            <td>Rs. 390.00</td>\n            <td>Rs. 390.00</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 750.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 750.00</p>\n\n<br>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-13 07:40:08,847 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,847 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,848 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,848 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,848 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,849 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,849 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,849 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,849 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,849 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,850 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,850 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,850 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,850 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,850 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:08,850 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-13 07:40:19,445 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 80C22680</p>\n<p><strong>Date:</strong> 13 Dec 2025</p>\n<p><strong>Payment Method:</strong> wallet</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    priya <br>\n    Pathiyaparambath house<br>\n    nnnnn, hhhhhhhhhhh <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>#</th>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Kiwi Green (250g)</td>\n            <td>2</td>\n            <td>Rs. 360.00</td>\n            <td>Rs. 360.00</td>\n        </tr>\n        \n        <tr>\n            <td>2</td>\n            <td>Pistachio (250g)</td>\n            <td>1</td>\n            <td>Rs. 390.00</td>\n            <td>Rs. 390.00</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 750.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 750.00</p>\n\n<br>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-13 07:40:19,452 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,453 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,453 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,453 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,453 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,454 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,454 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,454 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,455 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,455 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,455 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,455 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,455 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,456 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,456 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:19,456 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-13 07:40:38,434 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 80C22680</p>\n<p><strong>Date:</strong> 13 Dec 2025</p>\n<p><strong>Payment Method:</strong> wallet</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    priya <br>\n    Pathiyaparambath house<br>\n    nnnnn, hhhhhhhhhhh <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>#</th>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Kiwi Green (250g)</td>\n            <td>2</td>\n            <td>Rs. 360.00</td>\n            <td>Rs. 360.00</td>\n        </tr>\n        \n        <tr>\n            <td>2</td>\n            <td>Pistachio (250g)</td>\n            <td>1</td>\n            <td>Rs. 390.00</td>\n            <td>Rs. 390.00</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 750.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 750.00</p>\n\n<br>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-13 07:40:38,441 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,441 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,442 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,442 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,442 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,443 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,443 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,443 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,443 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,443 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,444 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,444 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,444 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,444 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,444 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:40:38,444 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-13 07:44:10,782 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 80C22680</p>\n<p><strong>Date:</strong> 13 Dec 2025</p>\n<p><strong>Payment Method:</strong> wallet</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    priya <br>\n    Pathiyaparambath house<br>\n    nnnnn, hhhhhhhhhhh <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>#</th>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Kiwi Green (250g)</td>\n            <td>2</td>\n            <td>Rs. 360.00</td>\n            <td>Rs. 360.00</td>\n        </tr>\n        \n        <tr>\n            <td>2</td>\n            <td>Pistachio (250g)</td>\n            <td>1</td>\n            <td>Rs. 390.00</td>\n            <td>Rs. 390.00</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 750.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 750.00</p>\n\n<br>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-13 07:44:10,789 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,789 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,789 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,789 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,789 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,790 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,790 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,791 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,791 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,791 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,791 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,792 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,792 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,792 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,792 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:44:10,792 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-13 07:46:22,285 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 80C22680</p>\n<p><strong>Date:</strong> 13 Dec 2025</p>\n<p><strong>Payment Method:</strong> wallet</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    priya <br>\n    Pathiyaparambath house<br>\n    nnnnn, hhhhhhhhhhh <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>#</th>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Kiwi Green (250g)</td>\n            <td>2</td>\n            <td>Rs. 360.00</td>\n            <td>Rs. 360.00</td>\n        </tr>\n        \n        <tr>\n            <td>2</td>\n            <td>Pistachio (250g)</td>\n            <td>1</td>\n            <td>Rs. 390.00</td>\n            <td>Rs. 390.00</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 750.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 750.00</p>\n\n<br>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-13 07:46:22,293 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,293 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,293 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,293 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,294 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,295 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,295 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,295 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,295 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,295 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,295 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,296 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,296 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,296 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,296 xhtml2pdf.tables: None
+[DEBUG] 2025-12-13 07:46:22,296 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-14 05:25:24,786 xhtml2pdf.document: pisaDocument options:
+  src = '<html>\n<head>\n    <style>\n        body { font-family: Arial; font-size: 12px; }\n        table { width: 100%; border-collapse: collapse; margin-top: 10px; }\n        th, td { border: 1px solid #444; padding: 6px; }\n        th { background: #f0f0f0; }\n        h2, h3 { margin-bottom: 5px; }\n    </style>\n</head>\n<body>\n\n<h2>Sales Report</h2>\n<p>Period: Dec. 8, 2025 to Dec. 14, 2025</p>\n\n<h3>Summary</h3>\n<table>\n<tr>\n    <th>Total Orders</th>\n    <th>Gross Sales</th>\n    <th>Discount</th>\n    <th>Net Sales</th>\n</tr>\n<tr>\n    <td>24</td>\n    <td>23626.00</td>\n    <td>234.00</td>\n    <td>23392.00</td>\n</tr>\n</table>\n\n<h3>Top Products</h3>\n<table>\n<tr><th>Product</th><th>Qty</th><th>Revenue</th></tr>\n\n<tr>\n    <td>Almond</td>\n    <td>10</td>\n    <td>23700.00</td>\n</tr>\n\n<tr>\n    <td>Chia Seeds</td>\n    <td>10</td>\n    <td>5600.00</td>\n</tr>\n\n<tr>\n    <td>Pistachio</td>\n    <td>10</td>\n    <td>9300.00</td>\n</tr>\n\n<tr>\n    <td>Kiwi Green</td>\n    <td>6</td>\n    <td>2340.00</td>\n</tr>\n\n<tr>\n    <td>Dried Dates</td>\n    <td>4</td>\n    <td>780.00</td>\n</tr>\n\n<tr>\n    <td>Ajwa Dates</td>\n    <td>2</td>\n    <td>2000.00</td>\n</tr>\n\n</table>\n\n<h3>Top Categories</h3>\n<table>\n<tr><th>Category</th><th>Qty</th><th>Revenue</th></tr>\n\n<tr>\n    <td>Nuts</td>\n    <td>20</td>\n    <td>33000.00</td>\n</tr>\n\n<tr>\n    <td>Seeds</td>\n    <td>10</td>\n    <td>5600.00</td>\n</tr>\n\n<tr>\n    <td>Dates</td>\n    <td>6</td>\n    <td>2780.00</td>\n</tr>\n\n<tr>\n    <td>Dry Fruits</td>\n    <td>6</td>\n    <td>2340.00</td>\n</tr>\n\n</table>\n\n<h3>Recent Orders</h3>\n<table>\n<tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Total</th></tr>\n\n<tr>\n    <td>80C22680</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>750.00</td>\n</tr>\n\n<tr>\n    <td>8A575EBE</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>4310.00</td>\n</tr>\n\n<tr>\n    <td>626BE0CF</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>500.00</td>\n</tr>\n\n<tr>\n    <td>43667990</td>\n    <td>priya</td>\n    <td>2025-12-10</td>\n    <td>720.00</td>\n</tr>\n\n<tr>\n    <td>96D834BA</td>\n    <td>sssss</td>\n    <td>2025-12-10</td>\n    <td>1500.00</td>\n</tr>\n\n</table>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-14 05:25:24,806 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,807 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,807 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,808 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,809 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,810 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,810 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,811 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,811 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:25:24,814 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,815 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,817 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,818 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,818 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,818 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,819 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,819 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,820 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,821 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,821 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,822 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,823 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,824 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,824 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,826 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,826 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,827 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,828 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,828 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,829 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,830 xhtml2pdf.tables: Col widths: [None, None, None]
+[DEBUG] 2025-12-14 05:25:24,833 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,833 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,833 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,834 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,834 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,835 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,836 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,836 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,837 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,837 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,838 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,838 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,839 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,839 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,840 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,840 xhtml2pdf.tables: Col widths: [None, None, None]
+[DEBUG] 2025-12-14 05:25:24,842 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,843 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,843 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,843 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,844 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,844 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,845 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,845 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,846 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,847 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,847 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,847 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,848 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,848 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,849 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,849 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,851 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,852 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,853 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,853 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,855 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,856 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,857 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,857 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:25:24,858 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:26:58,839 xhtml2pdf.document: pisaDocument options:
+  src = '<html>\n<head>\n    <style>\n        body { font-family: Arial; font-size: 12px; }\n        table { width: 100%; border-collapse: collapse; margin-top: 10px; }\n        th, td { border: 1px solid #444; padding: 6px; }\n        th { background: #f0f0f0; }\n        h2, h3 { margin-bottom: 5px; }\n    </style>\n</head>\n<body>\n\n<h2>Sales Report</h2>\n<p>Period: Dec. 14, 2025 to Dec. 14, 2025</p>\n\n<h3>Summary</h3>\n<table>\n<tr>\n    <th>Total Orders</th>\n    <th>Gross Sales</th>\n    <th>Discount</th>\n    <th>Net Sales</th>\n</tr>\n<tr>\n    <td>0</td>\n    <td>0</td>\n    <td>0</td>\n    <td>0</td>\n</tr>\n</table>\n\n<h3>Top Products</h3>\n<table>\n<tr><th>Product</th><th>Qty</th><th>Revenue</th></tr>\n\n</table>\n\n<h3>Top Categories</h3>\n<table>\n<tr><th>Category</th><th>Qty</th><th>Revenue</th></tr>\n\n</table>\n\n<h3>Recent Orders</h3>\n<table>\n<tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Total</th></tr>\n\n</table>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-14 05:26:58,875 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,876 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,877 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,878 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,882 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,883 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,887 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,889 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,891 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:26:58,902 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,904 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,905 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,906 xhtml2pdf.tables: Col widths: [None, None, None]
+[DEBUG] 2025-12-14 05:26:58,915 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,916 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,917 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,918 xhtml2pdf.tables: Col widths: [None, None, None]
+[DEBUG] 2025-12-14 05:26:58,923 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,924 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,925 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,926 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:26:58,927 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:27:48,584 xhtml2pdf.document: pisaDocument options:
+  src = '<html>\n<head>\n    <style>\n        body { font-family: Arial; font-size: 12px; }\n        table { width: 100%; border-collapse: collapse; margin-top: 10px; }\n        th, td { border: 1px solid #444; padding: 6px; }\n        th { background: #f0f0f0; }\n        h2, h3 { margin-bottom: 5px; }\n    </style>\n</head>\n<body>\n\n<h2>Sales Report</h2>\n<p>Period: Dec. 1, 2025 to Dec. 14, 2025</p>\n\n<h3>Summary</h3>\n<table>\n<tr>\n    <th>Total Orders</th>\n    <th>Gross Sales</th>\n    <th>Discount</th>\n    <th>Net Sales</th>\n</tr>\n<tr>\n    <td>26</td>\n    <td>27226.00</td>\n    <td>234.00</td>\n    <td>26992.00</td>\n</tr>\n</table>\n\n<h3>Top Products</h3>\n<table>\n<tr><th>Product</th><th>Qty</th><th>Revenue</th></tr>\n\n<tr>\n    <td>Pistachio</td>\n    <td>12</td>\n    <td>15500.00</td>\n</tr>\n\n<tr>\n    <td>Almond</td>\n    <td>10</td>\n    <td>23700.00</td>\n</tr>\n\n<tr>\n    <td>Chia Seeds</td>\n    <td>10</td>\n    <td>5600.00</td>\n</tr>\n\n<tr>\n    <td>Kiwi Green</td>\n    <td>6</td>\n    <td>2340.00</td>\n</tr>\n\n<tr>\n    <td>Dried Dates</td>\n    <td>4</td>\n    <td>780.00</td>\n</tr>\n\n<tr>\n    <td>Ajwa Dates</td>\n    <td>3</td>\n    <td>2500.00</td>\n</tr>\n\n</table>\n\n<h3>Top Categories</h3>\n<table>\n<tr><th>Category</th><th>Qty</th><th>Revenue</th></tr>\n\n<tr>\n    <td>Nuts</td>\n    <td>22</td>\n    <td>39200.00</td>\n</tr>\n\n<tr>\n    <td>Seeds</td>\n    <td>10</td>\n    <td>5600.00</td>\n</tr>\n\n<tr>\n    <td>Dates</td>\n    <td>7</td>\n    <td>3280.00</td>\n</tr>\n\n<tr>\n    <td>Dry Fruits</td>\n    <td>6</td>\n    <td>2340.00</td>\n</tr>\n\n</table>\n\n<h3>Recent Orders</h3>\n<table>\n<tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Total</th></tr>\n\n<tr>\n    <td>80C22680</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>750.00</td>\n</tr>\n\n<tr>\n    <td>8A575EBE</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>4310.00</td>\n</tr>\n\n<tr>\n    <td>626BE0CF</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>500.00</td>\n</tr>\n\n<tr>\n    <td>43667990</td>\n    <td>priya</td>\n    <td>2025-12-10</td>\n    <td>720.00</td>\n</tr>\n\n<tr>\n    <td>96D834BA</td>\n    <td>sssss</td>\n    <td>2025-12-10</td>\n    <td>1500.00</td>\n</tr>\n\n</table>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-14 05:27:48,621 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,622 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,622 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,623 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,624 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,625 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,625 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,625 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,625 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:27:48,628 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,628 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,628 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,629 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,629 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,629 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,630 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,630 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,630 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,631 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,631 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,632 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,633 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,633 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,633 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,635 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,635 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,636 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,637 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,637 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,637 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,638 xhtml2pdf.tables: Col widths: [None, None, None]
+[DEBUG] 2025-12-14 05:27:48,640 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,640 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,640 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,641 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,641 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,642 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,642 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,643 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,643 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,643 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,644 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,644 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,645 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,645 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,645 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,645 xhtml2pdf.tables: Col widths: [None, None, None]
+[DEBUG] 2025-12-14 05:27:48,647 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,647 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,648 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,648 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,649 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,649 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,649 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,649 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,650 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,650 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,650 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,651 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,651 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,652 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,652 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,652 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,653 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,653 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,653 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,653 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,654 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,654 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,654 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,654 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:27:48,655 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:32:42,815 xhtml2pdf.document: pisaDocument options:
+  src = '<html>\n<head>\n    <style>\n        body { font-family: Arial; font-size: 12px; }\n        table { width: 100%; border-collapse: collapse; margin-top: 10px; }\n        th, td { border: 1px solid #444; padding: 6px; }\n        th { background: #f0f0f0; }\n        h2, h3 { margin-bottom: 5px; }\n    </style>\n</head>\n<body>\n\n<h2>Sales Report</h2>\n<p>Period: Dec. 8, 2025 to Dec. 14, 2025</p>\n\n<h3>Summary</h3>\n<table>\n<tr>\n    <th>Total Orders</th>\n    <th>Gross Sales</th>\n    <th>Discount</th>\n    <th>Net Sales</th>\n</tr>\n<tr>\n    <td>24</td>\n    <td>23626.00</td>\n    <td>234.00</td>\n    <td>23392.00</td>\n</tr>\n</table>\n\n<h3>Top Products</h3>\n<table>\n<tr><th>Product</th><th>Qty</th><th>Revenue</th></tr>\n\n<tr>\n    <td>Almond</td>\n    <td>10</td>\n    <td>23700.00</td>\n</tr>\n\n<tr>\n    <td>Chia Seeds</td>\n    <td>10</td>\n    <td>5600.00</td>\n</tr>\n\n<tr>\n    <td>Pistachio</td>\n    <td>10</td>\n    <td>9300.00</td>\n</tr>\n\n<tr>\n    <td>Kiwi Green</td>\n    <td>6</td>\n    <td>2340.00</td>\n</tr>\n\n<tr>\n    <td>Dried Dates</td>\n    <td>4</td>\n    <td>780.00</td>\n</tr>\n\n<tr>\n    <td>Ajwa Dates</td>\n    <td>2</td>\n    <td>2000.00</td>\n</tr>\n\n</table>\n\n<h3>Top Categories</h3>\n<table>\n<tr><th>Category</th><th>Qty</th><th>Revenue</th></tr>\n\n<tr>\n    <td>Nuts</td>\n    <td>20</td>\n    <td>33000.00</td>\n</tr>\n\n<tr>\n    <td>Seeds</td>\n    <td>10</td>\n    <td>5600.00</td>\n</tr>\n\n<tr>\n    <td>Dates</td>\n    <td>6</td>\n    <td>2780.00</td>\n</tr>\n\n<tr>\n    <td>Dry Fruits</td>\n    <td>6</td>\n    <td>2340.00</td>\n</tr>\n\n</table>\n\n<h3>Recent Orders</h3>\n<table>\n<tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Total</th></tr>\n\n<tr>\n    <td>80C22680</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>750.00</td>\n</tr>\n\n<tr>\n    <td>8A575EBE</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>4310.00</td>\n</tr>\n\n<tr>\n    <td>626BE0CF</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>500.00</td>\n</tr>\n\n<tr>\n    <td>43667990</td>\n    <td>priya</td>\n    <td>2025-12-10</td>\n    <td>720.00</td>\n</tr>\n\n<tr>\n    <td>96D834BA</td>\n    <td>sssss</td>\n    <td>2025-12-10</td>\n    <td>1500.00</td>\n</tr>\n\n</table>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-14 05:32:42,874 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,875 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,875 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,876 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,877 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,878 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,878 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,879 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,880 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:32:42,889 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,890 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,891 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,892 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,892 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,893 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,894 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,894 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,895 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,898 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,899 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,899 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,902 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,903 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,906 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,912 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,914 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,916 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,922 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,923 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,925 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,926 xhtml2pdf.tables: Col widths: [None, None, None]
+[DEBUG] 2025-12-14 05:32:42,936 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,937 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,938 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,940 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,941 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,941 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,943 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,944 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,944 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,946 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,946 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,947 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,948 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,949 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,949 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,949 xhtml2pdf.tables: Col widths: [None, None, None]
+[DEBUG] 2025-12-14 05:32:42,954 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,955 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,955 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,955 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,957 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,957 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,957 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,958 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,959 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,959 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,959 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,959 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,961 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,961 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,961 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,961 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,962 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,963 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,963 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,963 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,964 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,964 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,964 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,964 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:32:42,965 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:36:44,953 xhtml2pdf.document: pisaDocument options:
+  src = '<html>\n<head>\n    <style>\n        body { font-family: Arial; font-size: 12px; }\n        table { width: 100%; border-collapse: collapse; margin-top: 10px; }\n        th, td { border: 1px solid #444; padding: 6px; }\n        th { background: #f0f0f0; }\n        h2, h3 { margin-bottom: 5px; }\n    </style>\n</head>\n<body>\n\n<h2>Sales Report</h2>\n<p>Period: Dec. 1, 2025 to Dec. 14, 2025</p>\n\n<h3>Summary</h3>\n<table>\n<tr>\n    <th>Total Orders</th>\n    <th>Gross Sales</th>\n    <th>Discount</th>\n    <th>Net Sales</th>\n</tr>\n<tr>\n    <td>26</td>\n    <td>27226.00</td>\n    <td>234.00</td>\n    <td>26992.00</td>\n</tr>\n</table>\n\n<h3>Top Products</h3>\n<table>\n<tr><th>Product</th><th>Qty</th><th>Revenue</th></tr>\n\n<tr>\n    <td>Pistachio</td>\n    <td>12</td>\n    <td>15500.00</td>\n    <td>26.67</td>\n</tr>\n\n<tr>\n    <td>Almond</td>\n    <td>10</td>\n    <td>23700.00</td>\n    <td>22.22</td>\n</tr>\n\n<tr>\n    <td>Chia Seeds</td>\n    <td>10</td>\n    <td>5600.00</td>\n    <td>22.22</td>\n</tr>\n\n<tr>\n    <td>Kiwi Green</td>\n    <td>6</td>\n    <td>2340.00</td>\n    <td>13.33</td>\n</tr>\n\n<tr>\n    <td>Dried Dates</td>\n    <td>4</td>\n    <td>780.00</td>\n    <td>8.89</td>\n</tr>\n\n<tr>\n    <td>Ajwa Dates</td>\n    <td>3</td>\n    <td>2500.00</td>\n    <td>6.67</td>\n</tr>\n\n</table>\n\n<h3>Top Categories</h3>\n<table>\n<tr><th>Category</th><th>Qty</th><th>Revenue</th></tr>\n\n<tr>\n    <td>Nuts</td>\n    <td>22</td>\n    <td>39200.00</td>\n    <td>48.89</td>\n</tr>\n\n<tr>\n    <td>Seeds</td>\n    <td>10</td>\n    <td>5600.00</td>\n    <td>22.22</td>\n</tr>\n\n<tr>\n    <td>Dates</td>\n    <td>7</td>\n    <td>3280.00</td>\n    <td>15.56</td>\n</tr>\n\n<tr>\n    <td>Dry Fruits</td>\n    <td>6</td>\n    <td>2340.00</td>\n    <td>13.33</td>\n</tr>\n\n</table>\n\n<h3>Recent Orders</h3>\n<table>\n<tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Total</th></tr>\n\n<tr>\n    <td>80C22680</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>750.00</td>\n</tr>\n\n<tr>\n    <td>8A575EBE</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>4310.00</td>\n</tr>\n\n<tr>\n    <td>626BE0CF</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>500.00</td>\n</tr>\n\n<tr>\n    <td>43667990</td>\n    <td>priya</td>\n    <td>2025-12-10</td>\n    <td>720.00</td>\n</tr>\n\n<tr>\n    <td>96D834BA</td>\n    <td>sssss</td>\n    <td>2025-12-10</td>\n    <td>1500.00</td>\n</tr>\n\n</table>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-14 05:36:44,967 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,967 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,967 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,967 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,968 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,969 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,969 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,969 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,969 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:36:44,972 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,972 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,972 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,973 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,974 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,974 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,974 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,975 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,975 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,975 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,976 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,976 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,977 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,977 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,977 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,978 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,978 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,978 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,979 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,980 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,980 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,980 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,980 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,981 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,981 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,982 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,982 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,982 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:36:44,984 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,985 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,985 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,985 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,986 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,986 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,986 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,987 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,987 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,987 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,988 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,988 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,989 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,989 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,989 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,990 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,990 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,990 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,990 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,990 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:36:44,993 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,993 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,993 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,993 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,994 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,994 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,994 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,994 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,995 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,995 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,996 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,996 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,997 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,997 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,997 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,997 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,998 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,998 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,998 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,999 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,999 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:44,999 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:45,000 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:45,000 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:36:45,000 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:37:28,997 xhtml2pdf.document: pisaDocument options:
+  src = '<html>\n<head>\n    <style>\n        body { font-family: Arial; font-size: 12px; }\n        table { width: 100%; border-collapse: collapse; margin-top: 10px; }\n        th, td { border: 1px solid #444; padding: 6px; }\n        th { background: #f0f0f0; }\n        h2, h3 { margin-bottom: 5px; }\n    </style>\n</head>\n<body>\n\n<h2>Sales Report</h2>\n<p>Period: Dec. 7, 2025 to Dec. 9, 2025</p>\n\n<h3>Summary</h3>\n<table>\n<tr>\n    <th>Total Orders</th>\n    <th>Gross Sales</th>\n    <th>Discount</th>\n    <th>Net Sales</th>\n</tr>\n<tr>\n    <td>16</td>\n    <td>14766.00</td>\n    <td>234.00</td>\n    <td>14532.00</td>\n</tr>\n</table>\n\n<h3>Top Products</h3>\n<table>\n<tr><th>Product</th><th>Qty</th><th>Revenue</th></tr>\n\n<tr>\n    <td>Pistachio</td>\n    <td>9</td>\n    <td>14330.00</td>\n    <td>32.14</td>\n</tr>\n\n<tr>\n    <td>Chia Seeds</td>\n    <td>8</td>\n    <td>3200.00</td>\n    <td>28.57</td>\n</tr>\n\n<tr>\n    <td>Almond</td>\n    <td>5</td>\n    <td>8850.00</td>\n    <td>17.86</td>\n</tr>\n\n<tr>\n    <td>Kiwi Green</td>\n    <td>3</td>\n    <td>900.00</td>\n    <td>10.71</td>\n</tr>\n\n<tr>\n    <td>Dried Dates</td>\n    <td>2</td>\n    <td>260.00</td>\n    <td>7.14</td>\n</tr>\n\n<tr>\n    <td>Ajwa Dates</td>\n    <td>1</td>\n    <td>500.00</td>\n    <td>3.57</td>\n</tr>\n\n</table>\n\n<h3>Top Categories</h3>\n<table>\n<tr><th>Category</th><th>Qty</th><th>Revenue</th></tr>\n\n<tr>\n    <td>Nuts</td>\n    <td>14</td>\n    <td>23180.00</td>\n    <td>50.0</td>\n</tr>\n\n<tr>\n    <td>Seeds</td>\n    <td>8</td>\n    <td>3200.00</td>\n    <td>28.57</td>\n</tr>\n\n<tr>\n    <td>Dates</td>\n    <td>3</td>\n    <td>760.00</td>\n    <td>10.71</td>\n</tr>\n\n<tr>\n    <td>Dry Fruits</td>\n    <td>3</td>\n    <td>900.00</td>\n    <td>10.71</td>\n</tr>\n\n</table>\n\n<h3>Recent Orders</h3>\n<table>\n<tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Total</th></tr>\n\n<tr>\n    <td>A6AA7DC8</td>\n    <td>taajjjj</td>\n    <td>2025-12-09</td>\n    <td>936.00</td>\n</tr>\n\n<tr>\n    <td>DA36765D</td>\n    <td>ajmal</td>\n    <td>2025-12-09</td>\n    <td>130.00</td>\n</tr>\n\n<tr>\n    <td>757F36F5</td>\n    <td>ajmal</td>\n    <td>2025-12-09</td>\n    <td>400.00</td>\n</tr>\n\n<tr>\n    <td>79060302</td>\n    <td>ajmal</td>\n    <td>2025-12-09</td>\n    <td>400.00</td>\n</tr>\n\n<tr>\n    <td>D6AEB05B</td>\n    <td>None</td>\n    <td>2025-12-08</td>\n    <td>770.00</td>\n</tr>\n\n</table>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-14 05:37:29,064 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,066 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,069 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,071 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,075 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,076 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,078 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,080 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,082 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:37:29,095 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,097 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,098 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,101 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,102 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,104 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,105 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,108 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,109 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,110 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,112 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,118 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,119 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,121 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,123 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,127 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,128 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,129 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,131 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,136 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,138 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,139 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,140 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,143 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,144 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,145 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,145 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,146 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:37:29,154 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,155 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,155 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,157 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,157 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,158 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,158 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,160 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,160 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,161 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,162 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,164 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,165 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,165 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,166 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,169 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,170 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,171 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,171 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,172 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:37:29,179 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,180 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,181 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,182 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,185 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,187 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,188 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,189 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,192 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,193 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,194 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,195 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,199 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,202 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,204 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,206 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,210 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,211 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,212 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,212 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,215 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,217 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,217 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,218 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:37:29,219 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:45:05,241 xhtml2pdf.document: pisaDocument options:
+  src = '<html>\n<head>\n    <style>\n        body { font-family: Arial; font-size: 12px; }\n        table { width: 100%; border-collapse: collapse; margin-top: 10px; }\n        th, td { border: 1px solid #444; padding: 6px; }\n        th { background: #f0f0f0; }\n        h2, h3 { margin-bottom: 5px; }\n    </style>\n</head>\n<body>\n\n<h2>Sales Report</h2>\n<p>Period: Dec. 1, 2025 to Dec. 14, 2025</p>\n\n<h3>Summary</h3>\n<table>\n<tr>\n    <th>Total Orders</th>\n    <th>Gross Sales</th>\n    <th>Discount</th>\n    <th>Net Sales</th>\n</tr>\n<tr>\n    <td>26</td>\n    <td>27226.00</td>\n    <td>234.00</td>\n    <td>26992.00</td>\n</tr>\n</table>\n\n<h3>Top Products</h3>\n<table>\n<tr><th>Product</th><th>Qty</th><th>Revenue</th><th>Percentage</th></tr>\n\n<tr>\n    <td>Pistachio</td>\n    <td>12</td>\n    <td>15500.00</td>\n    <td>26.67</td>\n</tr>\n\n<tr>\n    <td>Almond</td>\n    <td>10</td>\n    <td>23700.00</td>\n    <td>22.22</td>\n</tr>\n\n<tr>\n    <td>Chia Seeds</td>\n    <td>10</td>\n    <td>5600.00</td>\n    <td>22.22</td>\n</tr>\n\n<tr>\n    <td>Kiwi Green</td>\n    <td>6</td>\n    <td>2340.00</td>\n    <td>13.33</td>\n</tr>\n\n<tr>\n    <td>Dried Dates</td>\n    <td>4</td>\n    <td>780.00</td>\n    <td>8.89</td>\n</tr>\n\n<tr>\n    <td>Ajwa Dates</td>\n    <td>3</td>\n    <td>2500.00</td>\n    <td>6.67</td>\n</tr>\n\n</table>\n\n<h3>Top Categories</h3>\n<table>\n<tr><th>Category</th><th>Qty</th><th>Revenue</th><th>Percentage</th></tr>\n\n<tr>\n    <td>Nuts</td>\n    <td>22</td>\n    <td>39200.00</td>\n    <td>48.89</td>\n</tr>\n\n<tr>\n    <td>Seeds</td>\n    <td>10</td>\n    <td>5600.00</td>\n    <td>22.22</td>\n</tr>\n\n<tr>\n    <td>Dates</td>\n    <td>7</td>\n    <td>3280.00</td>\n    <td>15.56</td>\n</tr>\n\n<tr>\n    <td>Dry Fruits</td>\n    <td>6</td>\n    <td>2340.00</td>\n    <td>13.33</td>\n</tr>\n\n</table>\n\n<h3>Recent Orders</h3>\n<table>\n<tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Total</th></tr>\n\n<tr>\n    <td>80C22680</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>750.00</td>\n</tr>\n\n<tr>\n    <td>8A575EBE</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>4310.00</td>\n</tr>\n\n<tr>\n    <td>626BE0CF</td>\n    <td>priya</td>\n    <td>2025-12-13</td>\n    <td>500.00</td>\n</tr>\n\n<tr>\n    <td>43667990</td>\n    <td>priya</td>\n    <td>2025-12-10</td>\n    <td>720.00</td>\n</tr>\n\n<tr>\n    <td>96D834BA</td>\n    <td>sssss</td>\n    <td>2025-12-10</td>\n    <td>1500.00</td>\n</tr>\n\n</table>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-14 05:45:05,287 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,289 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,290 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,291 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,295 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,297 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,299 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,300 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,301 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:45:05,308 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,309 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,310 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,311 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,313 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,313 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,314 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,314 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,316 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,317 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,319 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,320 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,322 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,322 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,323 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,324 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,327 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,328 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,329 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,330 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,333 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,333 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,334 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,334 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,335 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,335 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,335 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,336 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,336 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:45:05,339 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,339 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,339 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,339 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,340 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,340 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,341 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,341 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,341 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,342 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,342 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,342 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,343 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,343 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,344 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,344 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,345 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,345 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,345 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,346 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,346 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:45:05,348 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,348 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,349 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,349 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,349 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,350 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,350 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,350 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,351 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,351 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,351 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,351 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,352 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,352 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,352 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,353 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,353 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,354 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,354 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,354 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,355 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,355 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,355 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,355 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 05:45:05,355 xhtml2pdf.tables: Col widths: [None, None, None, None]
+[DEBUG] 2025-12-14 05:53:37,625 urllib3.connectionpool: Starting new HTTPS connection (1): oauth2.googleapis.com:443
+[DEBUG] 2025-12-14 05:53:37,997 urllib3.connectionpool: https://oauth2.googleapis.com:443 "POST /token HTTP/1.1" 200 None
+[DEBUG] 2025-12-14 06:04:44,480 urllib3.connectionpool: Starting new HTTPS connection (1): api.razorpay.com:443
+[DEBUG] 2025-12-14 06:04:46,872 urllib3.connectionpool: https://api.razorpay.com:443 "POST /v1/orders HTTP/1.1" 200 209
+[DEBUG] 2025-12-14 07:15:15,225 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 1E071C21</p>\n<p><strong>Date:</strong> 14 Dec 2025</p>\n<p><strong>Payment Method:</strong> wallet</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    chippu <br>\n    Pathiyaparambath house<br>\n    ghyhhjytjt, jtjt jrtut <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>#</th>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Ajwa Dates (250g)</td>\n            <td>1</td>\n            <td>Rs. 500.00</td>\n            <td>Rs. 500.00</td>\n        </tr>\n        <p><strong>Status:</strong> Order Received</p>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 500.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 500.00</p>\n\n<br>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-14 07:15:15,245 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:15:15,246 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:15:15,246 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:15:15,246 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:15:15,246 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:15:15,247 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:15:15,247 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:15:15,247 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:15:15,247 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:15:15,247 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:15:15,248 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-14 07:15:58,059 urllib3.connectionpool: Starting new HTTPS connection (1): api.razorpay.com:443
+[DEBUG] 2025-12-14 07:15:59,274 urllib3.connectionpool: https://api.razorpay.com:443 "POST /v1/orders HTTP/1.1" 200 213
+[DEBUG] 2025-12-14 07:17:25,470 PIL.Image: Importing AvifImagePlugin
+[DEBUG] 2025-12-14 07:17:25,472 PIL.Image: Importing BlpImagePlugin
+[DEBUG] 2025-12-14 07:17:25,473 PIL.Image: Importing BmpImagePlugin
+[DEBUG] 2025-12-14 07:17:25,473 PIL.Image: Importing BufrStubImagePlugin
+[DEBUG] 2025-12-14 07:17:25,473 PIL.Image: Importing CurImagePlugin
+[DEBUG] 2025-12-14 07:17:25,473 PIL.Image: Importing DcxImagePlugin
+[DEBUG] 2025-12-14 07:17:25,473 PIL.Image: Importing DdsImagePlugin
+[DEBUG] 2025-12-14 07:17:25,475 PIL.Image: Importing EpsImagePlugin
+[DEBUG] 2025-12-14 07:17:25,475 PIL.Image: Importing FitsImagePlugin
+[DEBUG] 2025-12-14 07:17:25,476 PIL.Image: Importing FliImagePlugin
+[DEBUG] 2025-12-14 07:17:25,476 PIL.Image: Importing FpxImagePlugin
+[DEBUG] 2025-12-14 07:17:25,476 PIL.Image: Image: failed to import FpxImagePlugin: No module named 'olefile'
+[DEBUG] 2025-12-14 07:17:25,476 PIL.Image: Importing FtexImagePlugin
+[DEBUG] 2025-12-14 07:17:25,476 PIL.Image: Importing GbrImagePlugin
+[DEBUG] 2025-12-14 07:17:25,477 PIL.Image: Importing GifImagePlugin
+[DEBUG] 2025-12-14 07:17:25,477 PIL.Image: Importing GribStubImagePlugin
+[DEBUG] 2025-12-14 07:17:25,477 PIL.Image: Importing Hdf5StubImagePlugin
+[DEBUG] 2025-12-14 07:17:25,477 PIL.Image: Importing IcnsImagePlugin
+[DEBUG] 2025-12-14 07:17:25,478 PIL.Image: Importing IcoImagePlugin
+[DEBUG] 2025-12-14 07:17:25,479 PIL.Image: Importing ImImagePlugin
+[DEBUG] 2025-12-14 07:17:25,479 PIL.Image: Importing ImtImagePlugin
+[DEBUG] 2025-12-14 07:17:25,479 PIL.Image: Importing IptcImagePlugin
+[DEBUG] 2025-12-14 07:17:25,480 PIL.Image: Importing JpegImagePlugin
+[DEBUG] 2025-12-14 07:17:25,480 PIL.Image: Importing Jpeg2KImagePlugin
+[DEBUG] 2025-12-14 07:17:25,480 PIL.Image: Importing McIdasImagePlugin
+[DEBUG] 2025-12-14 07:17:25,480 PIL.Image: Importing MicImagePlugin
+[DEBUG] 2025-12-14 07:17:25,480 PIL.Image: Image: failed to import MicImagePlugin: No module named 'olefile'
+[DEBUG] 2025-12-14 07:17:25,480 PIL.Image: Importing MpegImagePlugin
+[DEBUG] 2025-12-14 07:17:25,481 PIL.Image: Importing MpoImagePlugin
+[DEBUG] 2025-12-14 07:17:25,482 PIL.Image: Importing MspImagePlugin
+[DEBUG] 2025-12-14 07:17:25,483 PIL.Image: Importing PalmImagePlugin
+[DEBUG] 2025-12-14 07:17:25,483 PIL.Image: Importing PcdImagePlugin
+[DEBUG] 2025-12-14 07:17:25,484 PIL.Image: Importing PcxImagePlugin
+[DEBUG] 2025-12-14 07:17:25,484 PIL.Image: Importing PdfImagePlugin
+[DEBUG] 2025-12-14 07:17:25,488 PIL.Image: Importing PixarImagePlugin
+[DEBUG] 2025-12-14 07:17:25,488 PIL.Image: Importing PngImagePlugin
+[DEBUG] 2025-12-14 07:17:25,489 PIL.Image: Importing PpmImagePlugin
+[DEBUG] 2025-12-14 07:17:25,489 PIL.Image: Importing PsdImagePlugin
+[DEBUG] 2025-12-14 07:17:25,489 PIL.Image: Importing QoiImagePlugin
+[DEBUG] 2025-12-14 07:17:25,489 PIL.Image: Importing SgiImagePlugin
+[DEBUG] 2025-12-14 07:17:25,489 PIL.Image: Importing SpiderImagePlugin
+[DEBUG] 2025-12-14 07:17:25,490 PIL.Image: Importing SunImagePlugin
+[DEBUG] 2025-12-14 07:17:25,490 PIL.Image: Importing TgaImagePlugin
+[DEBUG] 2025-12-14 07:17:25,491 PIL.Image: Importing TiffImagePlugin
+[DEBUG] 2025-12-14 07:17:25,491 PIL.Image: Importing WebPImagePlugin
+[DEBUG] 2025-12-14 07:17:25,492 PIL.Image: Importing WmfImagePlugin
+[DEBUG] 2025-12-14 07:17:25,493 PIL.Image: Importing XbmImagePlugin
+[DEBUG] 2025-12-14 07:17:25,493 PIL.Image: Importing XpmImagePlugin
+[DEBUG] 2025-12-14 07:17:25,494 PIL.Image: Importing XVThumbImagePlugin
+[DEBUG] 2025-12-14 07:17:25,495 urllib3.connectionpool: Starting new HTTPS connection (1): api.cloudinary.com:443
+[DEBUG] 2025-12-14 07:17:27,650 urllib3.connectionpool: https://api.cloudinary.com:443 "POST /v1_1/dy7qagebv/image/upload HTTP/1.1" 200 None
+[DEBUG] 2025-12-14 07:17:43,643 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 0D2C4D49</p>\n<p><strong>Date:</strong> 14 Dec 2025</p>\n<p><strong>Payment Method:</strong> razorpay</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    chippu <br>\n    Pathiyaparambath house<br>\n    ghyhhjytjt, jtjt jrtut <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>#</th>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Ajwa Dates (500g)</td>\n            <td>1</td>\n            <td>Rs. 1000.00</td>\n            <td>Rs. 1000.00</td>\n        </tr>\n        <p><strong>Status:</strong> Order Received</p>\n        \n        <tr>\n            <td>2</td>\n            <td>Almond (1000g)</td>\n            <td>1</td>\n            <td>Rs. 1350.00</td>\n            <td>Rs. 1350.00</td>\n        </tr>\n        <p><strong>Status:</strong> Returned</p>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 2350.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 2350.00</p>\n\n<br>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-14 07:17:43,652 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,653 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,653 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,653 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,653 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,655 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,655 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,655 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,655 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,655 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,656 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,656 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,656 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,656 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,656 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:17:43,656 xhtml2pdf.tables: Col widths: [None, None, None, None, None]
+[DEBUG] 2025-12-14 07:19:17,178 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 0D2C4D49</p>\n<p><strong>Date:</strong> 14 Dec 2025</p>\n<p><strong>Payment Method:</strong> razorpay</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    chippu <br>\n    Pathiyaparambath house<br>\n    ghyhhjytjt, jtjt jrtut <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>#</th>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n            <th>Status</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Ajwa Dates (500g)</td>\n            <td>1</td>\n            <td>Rs. 1000.00</td>\n            <td>Rs. 1000.00</td>\n            <td>Order Received</td>\n        </tr>\n        \n        <tr>\n            <td>2</td>\n            <td>Almond (1000g)</td>\n            <td>1</td>\n            <td>Rs. 1350.00</td>\n            <td>Rs. 1350.00</td>\n            <td>Returned</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 2350.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 2350.00</p>\n\n<br>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-14 07:19:17,187 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,187 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,187 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,187 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,187 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,187 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,188 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,189 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,189 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,189 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,189 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,189 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,190 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,190 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,190 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,190 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,190 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,191 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:19:17,191 xhtml2pdf.tables: Col widths: [None, None, None, None, None, None]
+[DEBUG] 2025-12-14 07:20:18,603 xhtml2pdf.document: pisaDocument options:
+  src = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="utf-8">\n    <style>\n        body {\n            font-family: DejaVu Sans, Arial;\n            font-size: 12px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n        }\n        th {\n            background-color: #f3f3f3;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Nuts & Seeds Market</h2>\n<p><strong>Invoice ID:</strong> 0D2C4D49</p>\n<p><strong>Date:</strong> 14 Dec 2025</p>\n<p><strong>Payment Method:</strong> Razor pay</p>\n\n<hr>\n\n<h3>Bill To</h3>\n<p>\n    chippu <br>\n    Pathiyaparambath house<br>\n    ghyhhjytjt, jtjt jrtut <br>\n    680569<br>\n    Kerala\n</p>\n\n<table>\n    <thead>\n        <tr>\n            <th>#</th>\n            <th>Product</th>\n            <th>Qty</th>\n            <th>Rate</th>\n            <th>Total</th>\n            <th>Status</th>\n        </tr>\n    </thead>\n    <tbody>\n        \n        <tr>\n            <td>1</td>\n            <td>Almond (1000g)</td>\n            <td>1</td>\n            <td>Rs. 1350.00</td>\n            <td>Rs. 1350.00</td>\n            <td>Returned</td>\n        </tr>\n        \n        <tr>\n            <td>2</td>\n            <td>Ajwa Dates (500g)</td>\n            <td>1</td>\n            <td>Rs. 1000.00</td>\n            <td>Rs. 1000.00</td>\n            <td>Cancelled</td>\n        </tr>\n        \n    </tbody>\n</table>\n\n<br>\n\n<p><strong>Subtotal:</strong> Rs. 2350.00</p>\n<p><strong>Coupon Appied:</strong></p>\n<p><strong>Discount:</strong> Rs. 0.00</p>\n<p><strong>Total:</strong> Rs. 2350.00</p>\n\n<br>\n\n<hr>\n<p style="text-align:center">Thank you for shopping with us!</p>\n\n</body>\n</html>\n'
+  dest = <HttpResponse status_code=200, "application/pdf">
+  path = ''
+  link_callback = None
+  xhtml = False
+  context_meta = None
+[DEBUG] 2025-12-14 07:20:18,610 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,611 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,611 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,611 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,611 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,611 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,612 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,612 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,613 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,613 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,613 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,613 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,613 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,613 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,613 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,614 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,614 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,614 xhtml2pdf.tables: None
+[DEBUG] 2025-12-14 07:20:18,614 xhtml2pdf.tables: Col widths: [None, None, None, None, None, None]
+[ERROR] 2025-12-14 07:23:47,649 django.request: Internal Server Error: /user/order-detail/93/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 1718, in order_detail
+    return render(request,"order/order_detail.html",{"orders":ordered_item_details,"order":order,"og_total":original_total,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 489, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 487, in parse
+    filter_expression = self.compile_filter(token.contents)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 609, in compile_filter
+    return FilterExpression(token, self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 706, in __init__
+    self.args_check(filter_name, filter_func, args)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 768, in args_check
+    raise TemplateSyntaxError(
+django.template.exceptions.TemplateSyntaxError: default requires 2 arguments, 1 provided
+[ERROR] 2025-12-14 07:23:47,651 django.server: "GET /user/order-detail/93/ HTTP/1.1" 500 224862
+[ERROR] 2025-12-14 07:26:04,664 django.request: Internal Server Error: /user/order-detail/93/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 1718, in order_detail
+    return render(request,"order/order_detail.html",{"orders":ordered_item_details,"order":order,"og_total":original_total,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/defaulttags.py", line 962, in do_if
+    nodelist = parser.parse(("elif", "else", "endif"))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 489, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 487, in parse
+    filter_expression = self.compile_filter(token.contents)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 609, in compile_filter
+    return FilterExpression(token, self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 710, in __init__
+    raise TemplateSyntaxError(
+django.template.exceptions.TemplateSyntaxError: Could not parse the remainder: '"' from 'order.coupon.code"'
+[ERROR] 2025-12-14 07:26:04,665 django.server: "GET /user/order-detail/93/ HTTP/1.1" 500 238100
+[ERROR] 2025-12-14 07:26:05,658 django.request: Internal Server Error: /user/order-detail/93/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 1718, in order_detail
+    return render(request,"order/order_detail.html",{"orders":ordered_item_details,"order":order,"og_total":original_total,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/defaulttags.py", line 962, in do_if
+    nodelist = parser.parse(("elif", "else", "endif"))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 489, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 487, in parse
+    filter_expression = self.compile_filter(token.contents)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 609, in compile_filter
+    return FilterExpression(token, self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 710, in __init__
+    raise TemplateSyntaxError(
+django.template.exceptions.TemplateSyntaxError: Could not parse the remainder: '"' from 'order.coupon.code"'
+[ERROR] 2025-12-14 07:26:05,659 django.server: "GET /user/order-detail/93/ HTTP/1.1" 500 238100
+[ERROR] 2025-12-14 07:26:36,194 django.request: Internal Server Error: /user/order-detail/93/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 1718, in order_detail
+    return render(request,"order/order_detail.html",{"orders":ordered_item_details,"order":order,"og_total":original_total,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/defaulttags.py", line 962, in do_if
+    nodelist = parser.parse(("elif", "else", "endif"))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 489, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 487, in parse
+    filter_expression = self.compile_filter(token.contents)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 609, in compile_filter
+    return FilterExpression(token, self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 710, in __init__
+    raise TemplateSyntaxError(
+django.template.exceptions.TemplateSyntaxError: Could not parse the remainder: '"' from 'order.coupon.code"'
+[ERROR] 2025-12-14 07:26:36,195 django.server: "GET /user/order-detail/93/ HTTP/1.1" 500 238100
+[ERROR] 2025-12-14 07:26:58,234 django.request: Internal Server Error: /user/order-detail/93/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 1718, in order_detail
+    return render(request,"order/order_detail.html",{"orders":ordered_item_details,"order":order,"og_total":original_total,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/defaulttags.py", line 962, in do_if
+    nodelist = parser.parse(("elif", "else", "endif"))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 489, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 487, in parse
+    filter_expression = self.compile_filter(token.contents)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 609, in compile_filter
+    return FilterExpression(token, self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 710, in __init__
+    raise TemplateSyntaxError(
+django.template.exceptions.TemplateSyntaxError: Could not parse the remainder: '"' from 'order.coupon.code"'
+[ERROR] 2025-12-14 07:26:58,236 django.server: "GET /user/order-detail/93/ HTTP/1.1" 500 238060
+[ERROR] 2025-12-14 07:26:59,103 django.request: Internal Server Error: /user/order-detail/93/
+Traceback (most recent call last):
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/user_app/views.py", line 1718, in order_detail
+    return render(request,"order/order_detail.html",{"orders":ordered_item_details,"order":order,"og_total":original_total,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 518, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/defaulttags.py", line 962, in do_if
+    nodelist = parser.parse(("elif", "else", "endif"))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 489, in parse
+    raise self.error(token, e)
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 487, in parse
+    filter_expression = self.compile_filter(token.contents)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 609, in compile_filter
+    return FilterExpression(token, self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shahina/Documents/nuts-and-seeds/env/lib/python3.12/site-packages/django/template/base.py", line 710, in __init__
+    raise TemplateSyntaxError(
+django.template.exceptions.TemplateSyntaxError: Could not parse the remainder: '"' from 'order.coupon.code"'
+[ERROR] 2025-12-14 07:26:59,104 django.server: "GET /user/order-detail/93/ HTTP/1.1" 500 238060
